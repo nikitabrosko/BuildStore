@@ -4,8 +4,13 @@
     {
         public int Id { get; set; }
 
-        public string Type { get; set; }
+        public PaymentType Type { get; set; }
 
         public bool Allowed { get; set; }
+    }
+
+    public enum PaymentType
+    {
+        CreditCard
     }
 }
