@@ -4,8 +4,14 @@
     {
         public int Id { get; set; }
 
-        public string Type { get; set; }
+        public DeliveryType Type { get; set; }
 
         public bool Fulfilled { get; set; }
+    }
+
+    public enum DeliveryType
+    {
+        Express,
+        Mail
     }
 }
