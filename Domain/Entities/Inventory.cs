@@ -12,6 +12,6 @@
 
         public bool IsInStock { get; set; }
 
-        public int UnitsIsInStock { get; set; }
+        public int UnitsInStock { get; set; }
     }
 }
