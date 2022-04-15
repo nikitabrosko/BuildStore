@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace Domain.Entities
 {
     public class Product
     {
@@ -14,7 +16,7 @@
 
         public Supplier SupplierId { get; set; }
 
-        public Category CategoryId { get; set; }
+        public ICollection<Category> Categories { get; set; }
 
         public float Size { get; set; }
 
