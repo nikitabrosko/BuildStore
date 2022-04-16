@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Interfaces;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         public DbSet<Customer> Customers => Set<Customer>();
 
