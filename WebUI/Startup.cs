@@ -23,8 +23,13 @@ namespace WebUI
             services.AddApplication();
             services.AddInfrastructure(Configuration);
 
+            services.AddHttpContextAccessor();
+
             services.AddControllersWithViews()
-                .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
+                .AddFluentValidation(x => 
+                    x.AutomaticValidationEnabled = false);
+
+            services.AddRazorPages();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -34,7 +39,6 @@ namespace WebUI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -44,6 +48,7 @@ namespace WebUI
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
