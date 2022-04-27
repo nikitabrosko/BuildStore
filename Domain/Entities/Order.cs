@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
@@ -13,5 +14,11 @@ namespace Domain.Entities
         public bool IsPaid { get; set; }
 
         public DateTime PaymentDate { get; set; }
+
+        public Delivery Delivery { get; set; }
+
+        public Payment Payment { get; set; }
+
+        public Customer Customer { get; set; }
     }
 }

@@ -4,11 +4,7 @@
     {
         public int Id { get; set; }
 
-        public Product ProductId { get; set; }
-
-        public float[] AvailableSizes { get; set; }
-
-        public string[] AvailableColors { get; set; }
+        public Product Product { get; set; }
 
         public bool IsInStock { get; set; }
 

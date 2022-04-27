@@ -14,13 +14,9 @@ namespace Domain.Entities
 
         public int QuantityPerUnit { get; set; }
 
-        public Supplier SupplierId { get; set; }
+        public Supplier Supplier { get; set; }
 
-        public ICollection<Category> Categories { get; set; }
-
-        public float Size { get; set; }
-
-        public string Color { get; set; }
+        public Category Category { get; set; }
 
         public float Discount { get; set; }
 

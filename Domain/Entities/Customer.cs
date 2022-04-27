@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace Domain.Entities
 {
     public class Customer
     {
@@ -25,5 +27,7 @@
         public int CardExpMonth { get; set; }
 
         public int CardExpYear { get; set; }
+
+        public ICollection<Order> Orders { get; set; }
     }
 }
