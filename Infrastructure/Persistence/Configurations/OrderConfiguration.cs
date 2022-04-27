@@ -21,6 +21,12 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.Property(o => o.PaymentDate)
                 .IsRequired();
+
+            builder.HasOne(o => o.Delivery);
+
+            builder.HasOne(o => o.Payment);
+
+            builder.HasOne(o => o.Customer);
         }
     }
 }

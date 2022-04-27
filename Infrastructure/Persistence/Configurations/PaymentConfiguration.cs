@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using System;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,6 +12,9 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Type)
+                .HasConversion(
+                    t => t.ToString(), 
+                    t => (PaymentType)Enum.Parse(typeof(PaymentType), t))
                 .IsRequired();
 
             builder.Property(p => p.Allowed)

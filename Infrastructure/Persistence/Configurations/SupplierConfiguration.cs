@@ -38,7 +38,7 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.HasMany(s => s.Products)
-                .WithOne(p => p.SupplierId);
+                .WithOne(p => p.Supplier);
         }
     }
 }

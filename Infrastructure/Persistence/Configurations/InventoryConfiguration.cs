@@ -16,11 +16,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(i => i.UnitsInStock)
                 .IsRequired();
 
-            builder.Property(i => i.AvailableColors);
-
-            builder.Property(i => i.AvailableSizes);
-
-            builder.HasOne(i => i.ProductId);
+            builder.HasOne(i => i.Product);
         }
     }
 }

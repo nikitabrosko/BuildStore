@@ -55,6 +55,9 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(c => c.CardExpYear)
                 .HasMaxLength(4)
                 .IsRequired();
+
+            builder.HasMany(c => c.Orders)
+                .WithOne(o => o.Customer);
         }
     }
 }

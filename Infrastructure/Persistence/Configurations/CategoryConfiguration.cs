@@ -25,7 +25,7 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.HasMany(c => c.Products)
-                .WithMany(p => p.Categories);
+                .WithOne(p => p.Category);
         }
     }
 }

@@ -28,25 +28,15 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(p => p.QuantityPerUnit)
                 .IsRequired();
 
-            builder.HasOne(p => p.SupplierId)
+            builder.HasOne(p => p.Supplier)
                 .WithMany(s => s.Products);
 
-            builder.HasMany(p => p.Categories)
+            builder.HasOne(p => p.Category)
                 .WithMany(c => c.Products);
-
-            builder.Property(p => p.Size)
-                .HasPrecision(7, 2)
-                .IsRequired();
-
-            builder.Property(p => p.Color)
-                .HasMaxLength(50)
-                .IsRequired();
-
-            builder.Property(p => p.Discount)
-                .HasPrecision(7, 2);
+            
+            builder.Property(p => p.Discount);
 
             builder.Property(p => p.Weight)
-                .HasPrecision(7, 2)
                 .IsRequired();
 
             builder.Property(p => p.Picture)
