@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations
 {
-    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    public class SubcategoryConfiguration : IEntityTypeConfiguration<Subcategory>
     {
-        public void Configure(EntityTypeBuilder<Category> builder)
+        public void Configure(EntityTypeBuilder<Subcategory> builder)
         {
             builder.HasKey(c => c.Id);
 
@@ -21,11 +21,11 @@ namespace Infrastructure.Persistence.Configurations
                 .HasMaxLength(500)
                 .IsRequired();
 
-            builder.Property(c => c.Picture)
-                .IsRequired();
+            builder.HasMany(c => c.Products)
+                .WithOne(p => p.Subcategory);
 
-            builder.HasMany(c => c.Subcategories)
-                .WithOne(c => c.Category);
+            builder.HasOne(c => c.Category)
+                .WithMany(c => c.Subcategories);
         }
     }
 }

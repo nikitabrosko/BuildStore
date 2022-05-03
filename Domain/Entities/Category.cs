@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities
 {
-    public class Category
+    public class Category : CategoryBase
     {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
+        [NotMapped]
+        public IFormFile PictureRaw { get; set; }
 
         public byte[] Picture { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Subcategory> Subcategories { get; set; }
+
+        public Category()
+        {
+            Subcategories = new HashSet<Subcategory>();
+        }
     }
 }
