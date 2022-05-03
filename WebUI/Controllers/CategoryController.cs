@@ -1,28 +1,85 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
 using Application.UseCases.Category.Commands.CreateCategory;
+using Application.UseCases.Category.Commands.UpdateCategory;
+using Application.UseCases.Category.Queries.GetCategories;
+using Application.UseCases.Category.Queries.GetCategory;
 
 namespace WebUI.Controllers
 {
     public class CategoryController : ApiControllerBase
     {
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery] GetCategoriesQuery query)
         {
-            ViewBag.Title = "Home page";
+            ViewBag.Title = "Categories";
 
-            var category = new CreateCategoryCommand
+            return View(await Mediator.Send(query));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCategory([FromRoute] int id)
+        {
+            try
             {
-                Name = "Test",
-                Description = "Test",
-                Picture = new byte[10]
-            };
+                var category = await Mediator.Send(new GetCategoryQuery { Id = id });
 
-            await Mediator.Send(category);
+                ViewBag.Title = category.Name;
+
+                return View(category);
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            ViewBag.Title = "Create Category";
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] CreateCategoryCommand command)
+        {
+            try
+            {
+                await Mediator.Send(command);
+            }
+            catch (ItemExistsException exception)
+            {
+                return View("Error", exception.Message);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet("{id:int}")]
+        public IActionResult Update([FromRoute] int id)
+        {
+            ViewBag.Title = "Update Category";
+
+            return View(new UpdateCategoryCommand {Id = id});
+        }
+
+        [HttpPost("{command}")]
+        [Route("Update/{command}")]
+        public async Task<IActionResult> Update([FromForm] UpdateCategoryCommand command)
+        {
+            try
+            {
+                await Mediator.Send(command);
+            }
+            catch (ItemExistsException exception)
+            {
+                return View("Error", exception.Message);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
