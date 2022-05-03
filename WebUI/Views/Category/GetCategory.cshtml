@@ -1,0 +1,16 @@
+﻿@model Domain.Entities.Category
+
+<h2>@Model.Name</h2>
+
+<div>@Html.ActionLink("Create Subcategory", "Create", "Subcategory")</div>
+
+<div>
+    @foreach (var subcategory in Model.Subcategories)
+    {
+        <div>
+            <a asp-action="GetSubcategory" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>
+        </div>
+    }
+</div>
+
+<p>@Model.Description</p>

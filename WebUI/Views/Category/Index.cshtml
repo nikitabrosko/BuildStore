@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Domain.Entities.Category>
+
+<div>@Html.ActionLink("Create Category", "Create", "Category")</div>
+
+<div>
+    @foreach (var category in Model)
+    {
+        <a asp-action="GetCategory" asp-controller="Category" asp-route-id="@category.Id">
+            <div>
+                <div>@category.Name</div>
+                <div>
+                    @{
+                        var base64 = Convert.ToBase64String(category.Picture);
+                        var imgSrc = $"data:image/gif;base64,{base64}";
+                    }
+
+                    <img src="@imgSrc" style="max-width: 300px" alt="@category.Name"/>
+                </div>
+            </div>
+        </a>
+    }
+</div>
