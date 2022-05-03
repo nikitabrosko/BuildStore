@@ -9,6 +9,8 @@ namespace Infrastructure.Persistence
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
+        public DbSet<Subcategory> Subcategories => Set<Subcategory>();
+
         public DbSet<Customer> Customers => Set<Customer>();
 
         public DbSet<Category> Categories => Set<Category>();
@@ -24,11 +26,11 @@ namespace Infrastructure.Persistence
         public DbSet<Product> Products => Set<Product>();
 
         public DbSet<Supplier> Suppliers => Set<Supplier>();
-
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
         {
-            Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

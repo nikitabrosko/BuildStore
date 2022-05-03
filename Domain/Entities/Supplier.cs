@@ -19,5 +19,10 @@ namespace Domain.Entities
         public string Email { get; set; }
 
         public ICollection<Product> Products { get; set; }
+
+        public Supplier()
+        {
+            Products = new HashSet<Product>();
+        }
     }
 }

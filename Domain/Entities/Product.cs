@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities
 {
@@ -16,11 +17,14 @@ namespace Domain.Entities
 
         public Supplier Supplier { get; set; }
 
-        public Category Category { get; set; }
+        public Subcategory Subcategory { get; set; }
 
         public float Discount { get; set; }
 
         public float Weight { get; set; }
+
+        [NotMapped]
+        public IFormFile PictureRaw { get; set; }
 
         public byte[] Picture { get; set; }
     }

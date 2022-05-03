@@ -29,5 +29,10 @@ namespace Domain.Entities
         public int CardExpYear { get; set; }
 
         public ICollection<Order> Orders { get; set; }
+
+        public Customer()
+        {
+            Orders = new HashSet<Order>();
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasOne(p => p.Supplier)
                 .WithMany(s => s.Products);
 
-            builder.HasOne(p => p.Category)
+            builder.HasOne(p => p.Subcategory)
                 .WithMany(c => c.Products);
             
             builder.Property(p => p.Discount);
