@@ -7,6 +7,8 @@ namespace Application.Common.Interfaces
 {
     public interface IApplicationDbContext
     {
+        DbSet<Subcategory> Subcategories { get; }
+
         DbSet<Category> Categories { get; }
 
         DbSet<Customer> Customers { get; }
