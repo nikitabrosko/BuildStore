@@ -1,0 +1,37 @@
+﻿@model Application.UseCases.Subcategory.Commands.CreateSubcategory.CreateSubcategoryCommand
+
+@using (Html.BeginForm("Create", "Subcategory", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div>
+        @Html.Label("Name")
+        @Html.EditorFor(m => m.Name, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                placeholder = "Name",
+                type = "text"
+
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Description")
+        @Html.EditorFor(m => m.Description, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "500",
+                placeholder = "Description",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+} 
