@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
+using Application.UseCases.Subcategory.Commands.AddSubcategory;
 using Application.UseCases.Subcategory.Commands.CreateSubcategory;
 using Application.UseCases.Subcategory.Queries.GetSubcategory;
 
@@ -8,7 +9,7 @@ namespace WebUI.Controllers
 {
     public class SubcategoryController : ApiControllerBase
     {
-        [HttpGet]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetSubcategory([FromRoute] int id)
         {
             try
@@ -46,6 +47,29 @@ namespace WebUI.Controllers
             }
 
             return RedirectToAction("GetCategory", "Category");
+        }
+
+        [HttpGet("{id:int}")]
+        public IActionResult AddSubcategory([FromRoute] int id)
+        {
+            ViewBag.Title = "Add Subcategory";
+
+            return View(new AddSubcategoryCommand { SubcategoryId = id });
+        }
+
+        [HttpPost("{command}")]
+        public async Task<IActionResult> AddSubcategory([FromForm] AddSubcategoryCommand command)
+        {
+            try
+            {
+                var categoryId = await Mediator.Send(command);
+
+                return RedirectToRoute($"CategoryGetCategory/{categoryId}");
+            }
+            catch (ItemExistsException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
     }
 }

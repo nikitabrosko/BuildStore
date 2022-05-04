@@ -18,7 +18,8 @@ namespace WebUI.Controllers
             return View(await Mediator.Send(query));
         }
 
-        [HttpGet]
+        [Route("CategoryGetCategory/{id:int}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCategory([FromRoute] int id)
         {
             try
