@@ -36,7 +36,7 @@ namespace Application.UseCases.Category.Commands.UpdateCategory
 
             entity.Name = request.Name;
             entity.Description = request.Description;
-            entity.Subcategories.Add(request.SubCategory);
+            entity.Subcategories.Add(request.Subcategory);
 
             return Unit.Value;
         }

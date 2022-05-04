@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.Category.Commands.UpdateCategory
@@ -12,9 +11,8 @@ namespace Application.UseCases.Category.Commands.UpdateCategory
 
         public string Description { get; set; }
 
-        [NotMapped]
         public IFormFile Picture { get; set; }
 
-        public Domain.Entities.Subcategory SubCategory { get; set; }
+        public Domain.Entities.Subcategory Subcategory { get; set; }
     }
 }
