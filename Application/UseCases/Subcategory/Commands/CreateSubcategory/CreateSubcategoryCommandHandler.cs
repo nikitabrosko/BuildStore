@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
 {
@@ -19,7 +20,8 @@ namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
         public async Task<Unit> Handle(CreateSubcategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _context.Categories
-                .FindAsync(new object[] {request.CategoryId + 1}, cancellationToken);
+                .Include(s => s.Subcategories)
+                .SingleOrDefaultAsync(s => s.Id.Equals(request.CategoryId), cancellationToken);
 
             if (category is null)
             {
@@ -29,7 +31,8 @@ namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
             var entity = new Domain.Entities.Subcategory
             {
                 Name = request.Name,
-                Description = request.Description
+                Description = request.Description,
+                Category = category
             };
 
             var checkForExistsEntity = _context.Subcategories
@@ -40,11 +43,7 @@ namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
                 throw new ItemExistsException($"{nameof(Domain.Entities.Subcategory)} with this name is already exists!");
             }
 
-            category.Subcategories.Add(entity);
-            entity.Category = category;
-
             await _context.Subcategories.AddAsync(entity, cancellationToken);
-
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
