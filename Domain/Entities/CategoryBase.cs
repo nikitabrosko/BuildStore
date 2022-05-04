@@ -12,9 +12,12 @@ namespace Domain.Entities
 
         public ICollection<Product> Products { get; set; }
 
+        public ICollection<Subcategory> Subcategories { get; set; }
+
         public CategoryBase()
         {
             Products = new HashSet<Product>();
+            Subcategories = new HashSet<Subcategory>();
         }
     }
 }
