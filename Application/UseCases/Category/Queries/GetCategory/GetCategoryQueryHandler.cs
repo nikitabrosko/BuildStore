@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Category.Queries.GetCategory
 {
@@ -18,7 +19,9 @@ namespace Application.UseCases.Category.Queries.GetCategory
         public async Task<Domain.Entities.Category> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
         {
             var entity = await _context.Categories
-                .FindAsync(new object[] {request.Id + 1}, cancellationToken);
+                .Include(c => c.Subcategories)
+                .ThenInclude(c => c.Subcategories)
+                .SingleOrDefaultAsync(c => c.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
             {
