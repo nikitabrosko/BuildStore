@@ -1,7 +1,9 @@
-﻿@model Application.UseCases.Subcategory.Commands.CreateSubcategory.CreateSubcategoryCommand
+﻿@model Application.UseCases.Subcategory.Commands.AddSubcategory.AddSubcategoryCommand
 
-@using (Html.BeginForm("Create", "Subcategory", FormMethod.Post))
+@using (Html.BeginForm("AddSubcategory", "Subcategory", FormMethod.Post))
 {
+    @Html.HiddenFor(m => m.SubcategoryId)
+
     <div>
         @Html.Label("Name")
         @Html.EditorFor(m => m.Name, new
