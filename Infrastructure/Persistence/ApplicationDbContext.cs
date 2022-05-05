@@ -9,12 +9,10 @@ namespace Infrastructure.Persistence
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
-        public DbSet<Subcategory> Subcategories => Set<Subcategory>();
+        public DbSet<CategoryBase> Categories => Set<CategoryBase>();
 
         public DbSet<Customer> Customers => Set<Customer>();
-
-        public DbSet<Category> Categories => Set<Category>();
-
+        
         public DbSet<Delivery> Deliveries => Set<Delivery>();
 
         public DbSet<Inventory> Inventories => Set<Inventory>();
