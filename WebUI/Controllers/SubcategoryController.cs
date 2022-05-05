@@ -26,15 +26,15 @@ namespace WebUI.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult Create()
+        [HttpGet("{id:int}")]
+        public IActionResult Create([FromRoute] int id)
         {
             ViewBag.Title = "Create Subcategory";
 
-            return View();
+            return View(new CreateSubcategoryCommand {CategoryId = id});
         }
 
-        [HttpPost]
+        [HttpPost("{command}")]
         public async Task<IActionResult> Create([FromForm] CreateSubcategoryCommand command)
         {
             try
@@ -46,7 +46,7 @@ namespace WebUI.Controllers
                 return View("Error", exception.Message);
             }
 
-            return RedirectToAction("GetCategory", "Category");
+            return RedirectToAction("GetCategory", "Category", new {id = command.CategoryId});
         }
 
         [HttpGet("{id:int}")]
@@ -64,7 +64,7 @@ namespace WebUI.Controllers
             {
                 var categoryId = await Mediator.Send(command);
 
-                return RedirectToRoute($"CategoryGetCategory/{categoryId}");
+                return RedirectToAction("GetCategory", "Category", new {id = categoryId});
             }
             catch (ItemExistsException exception)
             {
