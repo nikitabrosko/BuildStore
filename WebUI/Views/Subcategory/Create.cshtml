@@ -2,6 +2,8 @@
 
 @using (Html.BeginForm("Create", "Subcategory", FormMethod.Post))
 {
+    @Html.HiddenFor(m => m.CategoryId)
+
     <div>
         @Html.Label("Name")
         @Html.EditorFor(m => m.Name, new
