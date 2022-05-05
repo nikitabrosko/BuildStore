@@ -10,7 +10,7 @@ namespace WebUI.Controllers
     public class SubcategoryController : ApiControllerBase
     {
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetSubcategory([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace WebUI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult AddSubcategory([FromRoute] int id)
+        public IActionResult Add([FromRoute] int id)
         {
             ViewBag.Title = "Add Subcategory";
 
@@ -58,7 +58,7 @@ namespace WebUI.Controllers
         }
 
         [HttpPost("{command}")]
-        public async Task<IActionResult> AddSubcategory([FromForm] AddSubcategoryCommand command)
+        public async Task<IActionResult> Add([FromForm] AddSubcategoryCommand command)
         {
             try
             {
