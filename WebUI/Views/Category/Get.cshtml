@@ -7,14 +7,20 @@
 <div>
     @foreach (var subcategory in Model.Subcategories)
     {
-        <div>
-            <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>
-            <a asp-action="Add" asp-controller="Subcategory" asp-route-id="@subcategory.Id">Add subcategory</a>
-        </div>
+    <div>
+        <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>
+        <a asp-action="Add" asp-controller="Subcategory" asp-route-id="@subcategory.Id">Add subcategory</a>
+        <a asp-action="Update" asp-controller="Subcategory" asp-route-id="@subcategory.Id">Edit</a>
+        <a asp-action="Delete" asp-controller="Subcategory" asp-route-id="@subcategory.Id">Delete</a>
+    </div>
         <div>
             @foreach (var subcategorySubcategory in subcategory.Subcategories)
             {
+            <div>
                 <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategorySubcategory.Id">@subcategorySubcategory.Name</a>
+                <a asp-action="Update" asp-controller="Subcategory" asp-route-id="@subcategorySubcategory.Id">Edit</a>
+                <a asp-action="Delete" asp-controller="Subcategory" asp-route-id="@subcategorySubcategory.Id">Delete</a>
+            </div>
             }
         </div>
     }
