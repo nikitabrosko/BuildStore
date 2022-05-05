@@ -1,0 +1,20 @@
+﻿@model Application.UseCases.Category.Commands.DeleteCategory.DeleteCategoryCommand
+
+@using (Html.BeginForm("Delete", "Category", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.Id);
+
+    <div>
+        @Html.Label("Delete all subcategories of this category?")
+        @Html.EditorFor(m => m.SubcategoriesDeletion)
+    </div>
+
+    <div>
+        @Html.Label("Delete all products of this category?")
+        @Html.EditorFor(m => m.ProductsDeletion)
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}

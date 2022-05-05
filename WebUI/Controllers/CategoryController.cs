@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Category.Commands.CreateCategory;
+using Application.UseCases.Category.Commands.DeleteCategory;
 using Application.UseCases.Category.Commands.UpdateCategory;
 using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Category.Queries.GetCategory;
@@ -19,7 +20,6 @@ namespace WebUI.Controllers
             return View(await Mediator.Send(query));
         }
 
-        [Route("CategoryGetCategory/{id:int}")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
@@ -81,7 +81,6 @@ namespace WebUI.Controllers
         }
 
         [HttpPost("{command}")]
-        [Route("Update/{command}")]
         public async Task<IActionResult> Update([FromForm] UpdateCategoryCommand command)
         {
             try
@@ -92,6 +91,22 @@ namespace WebUI.Controllers
             {
                 return View("Error", exception.Message);
             }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet("{id:int}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            ViewBag.Title = "Delete Category";
+
+            return View();
+        }
+
+        [HttpPost("{command}")]
+        public async Task<IActionResult> Delete([FromForm] DeleteCategoryCommand command)
+        {
+            await Mediator.Send(command);
 
             return RedirectToAction("Index");
         }
