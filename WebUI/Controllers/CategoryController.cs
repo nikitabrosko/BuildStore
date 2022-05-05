@@ -65,19 +65,30 @@ namespace WebUI.Controllers
         {
             ViewBag.Title = "Update Category";
 
-            var entity = await Mediator.Send(new GetCategoryQuery {Id = id});
-            var imgSrc = $"data:image/gif;base64,{Convert.ToBase64String(entity.Picture)}";
-
-            ViewBag.Picture = imgSrc;
-
-            var command = new UpdateCategoryCommand
+            try
             {
-                Id = id,
-                Name = entity.Name,
-                Description = entity.Description
-            };
+                var entity = await Mediator.Send(new GetCategoryQuery {Id = id});
+                var imgSrc = $"data:image/gif;base64,{Convert.ToBase64String(entity.Picture)}";
 
-            return View(command);
+                ViewBag.Picture = imgSrc;
+
+                var command = new UpdateCategoryCommand
+                {
+                    Id = id,
+                    Name = entity.Name,
+                    Description = entity.Description
+                };
+
+                return View(command);
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
+            catch (ItemExistsException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpPost("{command}")]
@@ -86,6 +97,10 @@ namespace WebUI.Controllers
             try
             {
                 await Mediator.Send(command);
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
             }
             catch (ItemExistsException exception)
             {
@@ -100,13 +115,20 @@ namespace WebUI.Controllers
         {
             ViewBag.Title = "Delete Category";
 
-            return View();
+            return View(new DeleteCategoryCommand {Id = id});
         }
 
         [HttpPost("{command}")]
         public async Task<IActionResult> Delete([FromForm] DeleteCategoryCommand command)
         {
-            await Mediator.Send(command);
+            try
+            {
+                await Mediator.Send(command);
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
 
             return RedirectToAction("Index");
         }
