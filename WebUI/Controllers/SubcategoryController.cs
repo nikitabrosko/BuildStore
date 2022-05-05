@@ -46,7 +46,7 @@ namespace WebUI.Controllers
                 return View("Error", exception.Message);
             }
 
-            return RedirectToAction("GetCategory", "Category", new {id = command.CategoryId});
+            return RedirectToAction("Get", "Category", new {id = command.CategoryId});
         }
 
         [HttpGet("{id:int}")]
@@ -64,7 +64,7 @@ namespace WebUI.Controllers
             {
                 var categoryId = await Mediator.Send(command);
 
-                return RedirectToAction("GetCategory", "Category", new {id = categoryId});
+                return RedirectToAction("Get", "Category", new {id = categoryId});
             }
             catch (ItemExistsException exception)
             {

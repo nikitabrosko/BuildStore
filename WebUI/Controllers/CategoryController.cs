@@ -20,7 +20,7 @@ namespace WebUI.Controllers
 
         [Route("CategoryGetCategory/{id:int}")]
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetCategory([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
             try
             {

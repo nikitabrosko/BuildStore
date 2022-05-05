@@ -5,7 +5,7 @@
 <div>
     @foreach (var category in Model)
     {
-        <a asp-action="GetCategory" asp-controller="Category" asp-route-id="@category.Id">
+        <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id">
             <div>
                 <div>@category.Name</div>
                 <div>
