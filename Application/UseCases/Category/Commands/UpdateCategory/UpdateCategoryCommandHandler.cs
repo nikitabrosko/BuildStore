@@ -26,17 +26,29 @@ namespace Application.UseCases.Category.Commands.UpdateCategory
                 throw new NotFoundException(nameof(Category), request.Id);
             }
 
-            var checkForExistsEntity = _context.Categories
-                .Any(category => category.Name.Equals(request.Name));
-
-            if (checkForExistsEntity)
+            if (!request.Name.Equals(entity.Name))
             {
-                throw new ItemExistsException($"{nameof(Category)} with that name is already exists!");
+                var checkForExistsEntity = _context.Categories
+                    .Any(category => category.Name.Equals(request.Name));
+
+                if (checkForExistsEntity)
+                {
+                    throw new ItemExistsException($"{nameof(Category)} with that name is already exists!");
+                }
             }
 
             entity.Name = request.Name;
             entity.Description = request.Description;
-            entity.Subcategories.Add(request.Subcategory);
+
+            if (request.Picture != null)
+            {
+                entity.Picture = new byte[request.Picture.Length];
+
+                await using var stream = request.Picture.OpenReadStream();
+                var count = stream.Read(entity.Picture, 0, (int)request.Picture.Length);
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Category.Commands.CreateCategory;
@@ -60,11 +61,23 @@ namespace WebUI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public IActionResult Update([FromRoute] int id)
+        public async Task<IActionResult> Update([FromRoute] int id)
         {
             ViewBag.Title = "Update Category";
 
-            return View(new UpdateCategoryCommand {Id = id});
+            var entity = await Mediator.Send(new GetCategoryQuery {Id = id});
+            var imgSrc = $"data:image/gif;base64,{Convert.ToBase64String(entity.Picture)}";
+
+            ViewBag.Picture = imgSrc;
+
+            var command = new UpdateCategoryCommand
+            {
+                Id = id,
+                Name = entity.Name,
+                Description = entity.Description
+            };
+
+            return View(command);
         }
 
         [HttpPost("{command}")]

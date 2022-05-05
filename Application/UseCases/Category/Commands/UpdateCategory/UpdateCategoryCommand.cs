@@ -12,7 +12,5 @@ namespace Application.UseCases.Category.Commands.UpdateCategory
         public string Description { get; set; }
 
         public IFormFile Picture { get; set; }
-
-        public Domain.Entities.Subcategory Subcategory { get; set; }
     }
 }

@@ -14,9 +14,10 @@
                         var imgSrc = $"data:image/gif;base64,{base64}";
                     }
 
-                    <img src="@imgSrc" style="max-width: 300px" alt="@category.Name"/>
+                    <img src="@imgSrc" style="max-width: 300px" alt="@category.Name" />
                 </div>
             </div>
         </a>
+        <div><a asp-action="Update" asp-controller="Category" asp-route-id="@category.Id">Edit</a></div>
     }
 </div>
