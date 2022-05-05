@@ -17,13 +17,12 @@ namespace Domain.Entities
 
         public Supplier Supplier { get; set; }
 
-        public Subcategory Subcategory { get; set; }
+        public CategoryBase Category { get; set; }
 
         public float Discount { get; set; }
 
         public float Weight { get; set; }
 
-        [NotMapped]
         public IFormFile PictureRaw { get; set; }
 
         public byte[] Picture { get; set; }

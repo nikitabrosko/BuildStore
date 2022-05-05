@@ -2,7 +2,7 @@
 
 namespace Domain.Entities
 {
-    public class CategoryBase
+    public abstract class CategoryBase
     {
         public int Id { get; set; }
 
@@ -14,7 +14,7 @@ namespace Domain.Entities
 
         public ICollection<Subcategory> Subcategories { get; set; }
 
-        public CategoryBase()
+        protected CategoryBase()
         {
             Products = new HashSet<Product>();
             Subcategories = new HashSet<Subcategory>();

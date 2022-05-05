@@ -2,6 +2,6 @@
 {
     public class Subcategory : CategoryBase
     {
-        public Category Category { get; set; }
+        public CategoryBase Category { get; set; }
     }
 }
