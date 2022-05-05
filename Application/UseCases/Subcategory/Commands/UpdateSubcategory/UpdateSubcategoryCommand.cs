@@ -2,14 +2,12 @@
 
 namespace Application.UseCases.Subcategory.Commands.UpdateSubcategory
 {
-    public class UpdateSubcategoryCommand : IRequest
+    public class UpdateSubcategoryCommand : IRequest<int>
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
         public string Description { get; set; }
-
-        public Domain.Entities.Subcategory Subcategory { get; set; }
     }
 }
