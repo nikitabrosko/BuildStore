@@ -20,6 +20,7 @@ namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
         public async Task<Unit> Handle(CreateSubcategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _context.Categories
+                .OfType<Domain.Entities.Category>()
                 .Include(s => s.Subcategories)
                 .SingleOrDefaultAsync(s => s.Id.Equals(request.CategoryId), cancellationToken);
 
@@ -35,7 +36,7 @@ namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
                 Category = category
             };
 
-            var checkForExistsEntity = _context.Subcategories
+            var checkForExistsEntity = _context.Categories
                 .Any(subcategory => subcategory.Name.Equals(entity.Name));
 
             if (checkForExistsEntity)
@@ -43,7 +44,7 @@ namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
                 throw new ItemExistsException($"{nameof(Domain.Entities.Subcategory)} with this name is already exists!");
             }
 
-            await _context.Subcategories.AddAsync(entity, cancellationToken);
+            await _context.Categories.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

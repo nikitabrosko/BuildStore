@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
@@ -19,6 +20,7 @@ namespace Application.UseCases.Category.Queries.GetCategory
         public async Task<Domain.Entities.Category> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
         {
             var entity = await _context.Categories
+                .OfType<Domain.Entities.Category>()
                 .Include(c => c.Subcategories)
                 .ThenInclude(c => c.Subcategories)
                 .SingleOrDefaultAsync(c => c.Id.Equals(request.Id), cancellationToken);

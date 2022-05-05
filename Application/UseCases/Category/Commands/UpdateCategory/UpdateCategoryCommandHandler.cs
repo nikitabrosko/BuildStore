@@ -18,8 +18,9 @@ namespace Application.UseCases.Category.Commands.UpdateCategory
 
         public async Task<Unit> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.Categories
-                .FindAsync(new object[] {request.Id}, cancellationToken);
+            var entity = _context.Categories
+                .OfType<Domain.Entities.Category>()
+                .SingleOrDefault(c => c.Id.Equals(request.Id));
 
             if (entity is null)
             {

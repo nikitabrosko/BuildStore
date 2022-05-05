@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
@@ -18,7 +19,9 @@ namespace Application.UseCases.Category.Queries.GetCategories
 
         public async Task<IEnumerable<Domain.Entities.Category>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Categories.ToListAsync(cancellationToken);
+            return await _context.Categories
+                .OfType<Domain.Entities.Category>()
+                .ToListAsync(cancellationToken);
         }
     }
 }
