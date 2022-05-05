@@ -31,7 +31,7 @@ namespace Application.UseCases.Subcategory.Commands.AddSubcategory
 
             var entity = new Domain.Entities.Subcategory
             {
-                Category = subcategory.Category,
+                Category = subcategory,
                 Name = request.Name,
                 Description = request.Description
             };
