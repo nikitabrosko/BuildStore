@@ -31,7 +31,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasOne(p => p.Supplier)
                 .WithMany(s => s.Products);
 
-            builder.HasOne(p => p.Subcategory)
+            builder.HasOne(p => p.Category)
                 .WithMany(c => c.Products);
             
             builder.Property(p => p.Discount);
@@ -39,7 +39,9 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(p => p.Weight)
                 .IsRequired();
 
-            builder.Property(p => p.Picture)
+            builder.Ignore(c => c.PictureRaw);
+
+            builder.Property(c => c.Picture)
                 .IsRequired();
         }
     }
