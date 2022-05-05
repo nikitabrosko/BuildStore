@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Subcategory.Commands.AddSubcategory;
 using Application.UseCases.Subcategory.Commands.CreateSubcategory;
+using Application.UseCases.Subcategory.Commands.DeleteSubcategory;
+using Application.UseCases.Subcategory.Commands.UpdateSubcategory;
 using Application.UseCases.Subcategory.Queries.GetSubcategory;
 
 namespace WebUI.Controllers
@@ -67,6 +69,80 @@ namespace WebUI.Controllers
                 return RedirectToAction("Get", "Category", new {id = categoryId});
             }
             catch (ItemExistsException exception)
+            {
+                return View("Error", exception.Message);
+            }
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id)
+        {
+            ViewBag.Title = "Update Subcategory";
+
+            try
+            {
+                var entity = await Mediator.Send(new GetSubcategoryQuery {Id = id});
+
+                var command = new UpdateSubcategoryCommand
+                {
+                    Id = id,
+                    Name = entity.Name,
+                    Description = entity.Description
+                };
+
+                return View(command);
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
+            catch (ItemExistsException exception)
+            {
+                return View("Error", exception.Message);
+            }
+        }
+
+        [HttpPost("{command}")]
+        public async Task<IActionResult> Update([FromForm] UpdateSubcategoryCommand command)
+        {
+            try
+            {
+                var categoryId = await Mediator.Send(command);
+
+                return RedirectToAction("Get", "Category", new { id = categoryId });
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
+            catch (ItemExistsException exception)
+            {
+                return View("Error", exception.Message);
+            }
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            ViewBag.Title = "Delete Category";
+
+            var entity = await Mediator.Send(new GetSubcategoryQuery {Id = id});
+
+            ViewBag.IsHaveSubcategories = entity.Subcategories.Count > 0;
+
+            return View(new DeleteSubcategoryCommand { Id = id });
+        }
+
+        [HttpPost("{command}")]
+        public async Task<IActionResult> Delete([FromForm] DeleteSubcategoryCommand command)
+        {
+            try
+            {
+                var categoryId = await Mediator.Send(command);
+
+                return RedirectToAction("Get", "Category", new {id = categoryId});
+            }
+            catch (NotFoundException exception)
             {
                 return View("Error", exception.Message);
             }
