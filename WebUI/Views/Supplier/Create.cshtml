@@ -1,0 +1,92 @@
+﻿@model Application.UseCases.Supplier.Commands.CreateSupplier.CreateSupplierCommand
+
+@using (Html.BeginForm("Create", "Supplier", FormMethod.Post))
+{
+    <div>
+        @Html.Label("Company name")
+        @Html.EditorFor(m => m.CompanyName, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                placeholder = "Name",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Address")
+        @Html.EditorFor(m => m.Address, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "100",
+                placeholder = "Address",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("City")
+        @Html.EditorFor(m => m.City, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                placeholder = "City",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Country")
+        @Html.EditorFor(m => m.Country, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                placeholder = "Country",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Email")
+        @Html.EditorFor(m => m.Email, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                placeholder = "Email",
+                type = "email"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Phone number")
+        @Html.EditorFor(m => m.PhoneNumber, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                placeholder = "Phone number",
+                type = "tel"
+            }
+        })
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}

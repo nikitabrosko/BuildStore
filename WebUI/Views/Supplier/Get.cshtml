@@ -1,0 +1,32 @@
+﻿@model Domain.Entities.Supplier
+
+<h2>@Model.CompanyName</h2>
+
+<div>
+    <div>
+        <p>Address: @Model.Address</p>
+        <p>City: @Model.City</p>
+        <p>Country: @Model.Country</p>
+        <p>Phone number: @Model.PhoneNumber</p>
+        <p>Email: @Model.Email</p>
+    </div>
+    <h4>Supplier products</h4>
+    <div>
+        @foreach (var product in Model.Products)
+        {
+            <div>
+                <p>Name: @product.Name</p>
+                <p>Price: @product.Price</p>
+                <p>Quantity per unit: @product.QuantityPerUnit</p>
+                <p>Discount: @product.Discount</p>
+                <p>Weight: @product.Weight</p>
+                @{
+                    var base64 = Convert.ToBase64String(product.Picture);
+                    var imgSrc = $"data:image/gif;base64,{base64}";
+                }
+
+                <img src="@imgSrc" style="max-width: 300px" alt="@product.Name" />
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Domain.Entities.Supplier>
+
+<div>@Html.ActionLink("Create Supplier", "Create", "Supplier")</div>
+
+<div>
+    @foreach (var supplier in Model)
+    {
+        <a asp-action="Get" asp-controller="Supplier" asp-route-id="@supplier.Id">
+            <div>
+                <div>@supplier.CompanyName</div>
+            </div>
+        </a>
+        <div>
+            <a asp-action="Update" asp-controller="Supplier" asp-route-id="@supplier.Id">Edit</a>
+            <a asp-action="Delete" asp-controller="Supplier" asp-route-id="@supplier.Id">Delete</a>
+        </div>
+    }
+</div>
