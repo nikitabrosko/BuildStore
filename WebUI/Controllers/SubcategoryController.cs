@@ -124,13 +124,20 @@ namespace WebUI.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            ViewBag.Title = "Delete Category";
+            try
+            {
+                ViewBag.Title = "Delete Category";
 
-            var entity = await Mediator.Send(new GetSubcategoryQuery {Id = id});
+                var entity = await Mediator.Send(new GetSubcategoryQuery { Id = id });
 
-            ViewBag.IsHaveSubcategories = entity.Subcategories.Count > 0;
+                ViewBag.IsHaveSubcategories = entity.Subcategories.Count > 0;
 
-            return View(new DeleteSubcategoryCommand { Id = id });
+                return View(new DeleteSubcategoryCommand { Id = id });
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpPost("{command}")]
