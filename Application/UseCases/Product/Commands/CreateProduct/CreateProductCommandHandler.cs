@@ -40,6 +40,11 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                 Supplier = supplier
             };
 
+            await using (var stream = request.Picture.OpenReadStream())
+            {
+                var count = stream.Read(entity.Picture, 0, (int)request.Picture.Length);
+            }
+
             var checkForExistsEntity = await _context.Products
                 .AnyAsync(p => p.Name.Equals(entity.Name) 
                                && p.Supplier.Equals(entity.Supplier), cancellationToken);
@@ -53,7 +58,6 @@ namespace Application.UseCases.Product.Commands.CreateProduct
             if (request.CategoryId != null)
             {
                 var category = await _context.Categories
-                    .Include(c => c.Subcategories)
                     .Include(c => c.Products)
                     .SingleOrDefaultAsync(c => c.Id.Equals(request.CategoryId), cancellationToken);
 
@@ -63,16 +67,6 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                 }
 
                 entity.Category = category;
-
-                if (category is Domain.Entities.Subcategory subcategory)
-                {
-                    subcategory.Category.Products.Add(entity);
-
-                    if (subcategory.Category is Domain.Entities.Subcategory subcategorySecond)
-                    {
-                        subcategorySecond.Category.Products.Add(entity);
-                    }
-                }
             }
 
             await _context.Products.AddAsync(entity, cancellationToken);

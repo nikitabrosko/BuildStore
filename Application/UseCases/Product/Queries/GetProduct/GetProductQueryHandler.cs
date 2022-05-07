@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Product.Queries.GetProduct
 {
@@ -18,7 +19,9 @@ namespace Application.UseCases.Product.Queries.GetProduct
         public async Task<Domain.Entities.Product> Handle(GetProductQuery request, CancellationToken cancellationToken)
         {
             var entity = await _context.Products
-                .FindAsync(new object[] {request.Id}, cancellationToken);
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .SingleOrDefaultAsync(p => p.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
             {
