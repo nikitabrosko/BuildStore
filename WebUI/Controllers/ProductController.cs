@@ -28,7 +28,7 @@ namespace WebUI.Controllers
         [HttpGet("{id:int}")]
         public IActionResult Create([FromRoute] int id)
         {
-            ViewBag.Title = "Create Subcategory";
+            ViewBag.Title = "Create Product";
 
             return View(new CreateProductCommand { SupplierId = id });
         }

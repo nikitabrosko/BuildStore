@@ -1,0 +1,33 @@
+﻿@model Domain.Entities.Product
+
+<h2>@Model.Name</h2>
+<h4>Category: @Model.Category.Name</h4>
+<h5>Supplier: @Model.Supplier.CompanyName</h5>
+
+<div>
+    <div>
+        <p>Price: @Model.Price</p>
+        <p>Discount: @Model.Discount</p>
+    </div>
+
+    <div>
+        <p>Quantity per unit: @Model.QuantityPerUnit</p>
+    </div>
+
+    <div>
+        <p>Weight: @Model.Weight</p>
+    </div>
+
+    @{
+        var base64 = Convert.ToBase64String(Model.Picture);
+        var imgSrc = $"data:image/gif;base64,{base64}";
+    }
+
+    <div>
+        <img src="@imgSrc" style="max-width: 300px" alt="@Model.Name"/>
+    </div>
+
+    <div>
+        @Model.Description
+    </div>
+</div>

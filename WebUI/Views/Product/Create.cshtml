@@ -1,0 +1,97 @@
+﻿@model Application.UseCases.Product.Commands.CreateProduct.CreateProductCommand
+
+@using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.SupplierId)
+
+    <div>
+        @Html.Label("Name")
+        @Html.EditorFor(m => m.Name, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                placeholder = "Name",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Description")
+        @Html.EditorFor(m => m.Description, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "500",
+                placeholder = "Description",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Price")
+        @Html.EditorFor(m => m.Price, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Quantity per unit")
+        @Html.EditorFor(m => m.QuantityPerUnit, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Weight")
+        @Html.EditorFor(m => m.Weight, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Category id")
+        @Html.EditorFor(m => m.CategoryId, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Picture")
+        @Html.EditorFor(m => m.Picture, new
+        {
+            htmlAttributes = new
+            {
+                accept = "image/*"
+            }
+        })
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
