@@ -1,9 +1,11 @@
-﻿@model Application.UseCases.Supplier.Commands.CreateSupplier.CreateSupplierCommand
+﻿@model Application.UseCases.Supplier.Commands.UpdateSupplier.UpdateSupplierCommand
 
-@using (Html.BeginForm("Create", "Supplier", FormMethod.Post))
+@using (Html.BeginForm("Update", "Supplier", FormMethod.Post))
 {
+    @Html.HiddenFor(m => m.Id)
+
     <div>
-        @Html.Label("Company name")
+        @Html.Label("Change Company name:")
         @Html.EditorFor(m => m.CompanyName, new
         {
             htmlAttributes = new
@@ -18,7 +20,7 @@
     </div>
 
     <div>
-        @Html.Label("Address")
+        @Html.Label("Change Address:")
         @Html.EditorFor(m => m.Address, new
         {
             htmlAttributes = new
@@ -33,7 +35,7 @@
     </div>
 
     <div>
-        @Html.Label("City")
+        @Html.Label("Change City:")
         @Html.EditorFor(m => m.City, new
         {
             htmlAttributes = new
@@ -48,7 +50,7 @@
     </div>
 
     <div>
-        @Html.Label("Country")
+        @Html.Label("Change Country:")
         @Html.EditorFor(m => m.Country, new
         {
             htmlAttributes = new
@@ -63,7 +65,7 @@
     </div>
 
     <div>
-        @Html.Label("Email")
+        @Html.Label("Change Email:")
         @Html.EditorFor(m => m.Email, new
         {
             htmlAttributes = new
@@ -78,7 +80,7 @@
     </div>
 
     <div>
-        @Html.Label("Phone number")
+        @Html.Label("Change Phone number:")
         @Html.EditorFor(m => m.PhoneNumber, new
         {
             htmlAttributes = new
