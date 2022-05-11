@@ -5,13 +5,14 @@
     @Html.HiddenFor(m => m.Id)
 
     <div>
-        @Html.Label("Change Name: ")
+        @Html.Label("Change Name:")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
             {
                 required = "true",
                 maxlength = "50",
+                minlegth = "3",
                 placeholder = "Name",
                 type = "text"
 
@@ -20,7 +21,7 @@
     </div>
 
     <div>
-        @Html.Label("Change Description: ")
+        @Html.Label("Change Description:")
         @Html.EditorFor(m => m.Description, new
         {
             htmlAttributes = new
