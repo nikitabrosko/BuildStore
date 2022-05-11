@@ -24,18 +24,16 @@ namespace Application.UseCases.Category.Commands.UpdateCategory
 
             if (entity is null)
             {
-                throw new NotFoundException(nameof(Category), request.Id);
+                throw new NotFoundException(nameof(Domain.Entities.Category), request.Id);
             }
 
-            if (!request.Name.Equals(entity.Name))
-            {
-                var checkForExistsEntity = _context.Categories
-                    .Any(category => category.Name.Equals(request.Name));
+            var checkForExistsEntity = _context.Categories.AsEnumerable()
+                .SkipWhile(c => c.Id.Equals(request.Id))
+                .Any(category => category.Name.Equals(request.Name));
 
-                if (checkForExistsEntity)
-                {
-                    throw new ItemExistsException($"{nameof(Category)} with that name is already exists!");
-                }
+            if (checkForExistsEntity)
+            {
+                throw new ItemExistsException($"{nameof(Domain.Entities.Category)} with that name is already exists!");
             }
 
             entity.Name = request.Name;
