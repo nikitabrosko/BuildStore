@@ -1,17 +1,17 @@
-﻿@model Application.UseCases.Product.Commands.CreateProduct.CreateProductCommand
+﻿@model Application.UseCases.Product.Commands.UpdateProduct.UpdateProductCommand
 
-@using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Update", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    @Html.HiddenFor(m => m.SupplierId)
+    @Html.HiddenFor(m => m.Id)
 
     <div>
-        @Html.Label("Name")
+        @Html.Label("Change Name:")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
             {
                 required = "true",
-                maxlength = "100",
+                maxlength = "50",
                 minlegth = "3",
                 placeholder = "Name",
                 type = "text"
@@ -20,7 +20,7 @@
     </div>
 
     <div>
-        @Html.Label("Description")
+        @Html.Label("Change Description:")
         @Html.EditorFor(m => m.Description, new
         {
             htmlAttributes = new
@@ -35,7 +35,7 @@
     </div>
 
     <div>
-        @Html.Label("Price")
+        @Html.Label("Change Price:")
         @Html.EditorFor(m => m.Price, new
         {
             htmlAttributes = new
@@ -47,7 +47,7 @@
     </div>
 
     <div>
-        @Html.Label("Quantity per unit")
+        @Html.Label("Change Quantity per unit:")
         @Html.EditorFor(m => m.QuantityPerUnit, new
         {
             htmlAttributes = new
@@ -60,7 +60,7 @@
     </div>
 
     <div>
-        @Html.Label("Weight")
+        @Html.Label("Change Weight:")
         @Html.EditorFor(m => m.Weight, new
         {
             htmlAttributes = new
@@ -72,19 +72,12 @@
     </div>
 
     <div>
-        @Html.Label("Category id")
-        @Html.EditorFor(m => m.CategoryId, new
-        {
-            htmlAttributes = new
-            {
-                required = "true",
-                type = "number"
-            }
-        })
+        <p>Current Picture:</p>
+        <img src="@ViewBag.Picture" style="max-width: 300px" alt="@Model.Name" />
     </div>
 
     <div>
-        @Html.Label("Picture")
+        @Html.Label("Change Picture:")
         @Html.EditorFor(m => m.Picture, new
         {
             htmlAttributes = new
