@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Application;
+using Domain.IdentityEntities;
 using FluentValidation.AspNetCore;
 using Infrastructure;
+using Infrastructure.IdentityPersistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace WebUI
@@ -22,6 +25,13 @@ namespace WebUI
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration);
+
+            services.AddIdentity<User, IdentityRole>(options =>
+                {
+                    options.Password.RequiredLength = 4;
+                    options.Password.RequireNonAlphanumeric = false;
+                })
+                .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
 
             services.AddHttpContextAccessor();
 
@@ -42,6 +52,9 @@ namespace WebUI
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
