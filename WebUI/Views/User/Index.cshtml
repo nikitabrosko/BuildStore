@@ -1,0 +1,115 @@
+﻿@using Application.UseCases.Identity.User.Queries.GetUsersWithPagination
+@model Application.Common.Models.PaginatedList<Domain.IdentityEntities.User>
+
+<h2 class="text-center">Users</h2>
+
+<table class="table text-center">
+    <thead>
+        <tr>
+            <th>
+                <button onclick="showInPopup('@Url.Action("Create", "User", null, Context.Request.Scheme)', 'Create user')"
+                        class="btn btn-secondary">
+                    Create user
+                </button>
+            </th>
+        </tr>
+    </thead>
+</table>
+
+<table class="table text-center">
+    <thead>
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">User name</th>
+        <th scope="col">Email</th>
+        <th scope="col" style="width:100px"></th>
+        <th scope="col" style="width:200px"></th>
+        <th scope="col" style="width:100px"></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model.Items)
+    {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.UserName</td>
+            <td>@user.Email</td>
+            <td>
+                <button onclick="showInPopup('@Url.Action("Update", "User", new { user.Id },
+                                                  Context.Request.Scheme)', 'Edit user')"
+                        class="btn btn-primary">
+                    Edit
+                </button>
+            </td>
+            <td>
+                <button onclick="showInPopup('@Url.Action("ChangePassword", "User", new { user.UserName },
+                                                  Context.Request.Scheme)', 'Change password')"
+                        class="btn btn-info">
+                    Change password
+                </button>
+            </td>
+            <td>
+                <a asp-action="Delete" asp-controller="User" asp-route-id="@user.Id" class="btn btn-danger">
+                    Delete
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Previous", "Index", "User",
+                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                @Html.ActionLink("Previous", "Index", "User",
+                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber - 1 }, 
+                    new { @class = "page-link" })
+            </li>
+        }
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (Model.PageNumber.Equals(i))
+            {
+                <li class="page-item active">
+                    @Html.ActionLink($"{i}", "Index", "User",
+                    new GetUsersWithPaginationQuery { PageNumber = i }, 
+                        new { @class = "page-link" })
+            </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @Html.ActionLink($"{i}", "Index", "User",
+                    new GetUsersWithPaginationQuery { PageNumber = i }, 
+                        new { @class = "page-link" })
+                </li>
+            }
+        }
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Next", "Index", "User",
+                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber + 1 }, 
+                    new { @class = "page-link" })
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                @Html.ActionLink("Next", "Index", "User",
+                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
+                    new { @class = "page-link" })
+            </li>
+        }
+    </ul>
+</nav>

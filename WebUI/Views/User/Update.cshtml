@@ -1,0 +1,45 @@
+﻿@model Application.UseCases.Identity.User.Commands.UpdateUser.UpdateUserCommand
+
+@using (Html.BeginForm("Update", "User", FormMethod.Post,
+   new { @id = "updateUserForm" }))
+{
+    @Html.HiddenFor(m => m.Id)
+
+    <div>
+        @Html.Label("New Name")
+        @Html.EditorFor(m => m.Name, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                minlength = "2",
+                maxlength = "40",
+                placeholder = "Name",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("New Email")
+        @Html.EditorFor(m => m.Email, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                minlength = "5",
+                maxlength = "50",
+                placeholder = "Email",
+                type = "email"
+            }
+        })
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
+
+<script>
+    $("#updateUserForm").validate();
+</script>
