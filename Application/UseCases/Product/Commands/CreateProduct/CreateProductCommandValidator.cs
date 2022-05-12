@@ -20,10 +20,10 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                 .NotNull().WithMessage("Name cannot be null!");
 
             RuleFor(v => v.Description)
-                .MaximumLength(500).WithMessage("Name length cannot be more than 500!")
-                .MinimumLength(50).WithMessage("Name length cannot be less than 50!")
-                .NotEmpty().WithMessage("Name cannot be empty!")
-                .NotNull().WithMessage("Name cannot be null!");
+                .MaximumLength(500).WithMessage("Description length cannot be more than 500!")
+                .MinimumLength(50).WithMessage("Description length cannot be less than 50!")
+                .NotEmpty().WithMessage("Description cannot be empty!")
+                .NotNull().WithMessage("Description cannot be null!");
 
             RuleFor(v => v.Price)
                 .GreaterThan(0).WithMessage("Price cannot be less than or equal to 0!")
