@@ -5,6 +5,7 @@ using Application.UseCases.Product.Commands.CreateProduct;
 using Application.UseCases.Product.Commands.DeleteProduct;
 using Application.UseCases.Product.Commands.UpdateProduct;
 using Application.UseCases.Product.Queries.GetProduct;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
@@ -28,6 +29,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public IActionResult Create([FromRoute] int id)
         {
@@ -36,6 +38,7 @@ namespace WebUI.Controllers
             return View(new CreateProductCommand { SupplierId = id });
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Create([FromForm] CreateProductCommand command)
         {
@@ -51,6 +54,7 @@ namespace WebUI.Controllers
             return RedirectToAction("Get", "Supplier", new { id = command.SupplierId });
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id)
         {
@@ -86,6 +90,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Update([FromForm] UpdateProductCommand command)
         {
@@ -105,6 +110,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {

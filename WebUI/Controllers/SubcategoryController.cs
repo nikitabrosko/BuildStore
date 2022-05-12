@@ -6,6 +6,7 @@ using Application.UseCases.Subcategory.Commands.CreateSubcategory;
 using Application.UseCases.Subcategory.Commands.DeleteSubcategory;
 using Application.UseCases.Subcategory.Commands.UpdateSubcategory;
 using Application.UseCases.Subcategory.Queries.GetSubcategory;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers
 {
@@ -28,6 +29,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public IActionResult Create([FromRoute] int id)
         {
@@ -36,6 +38,7 @@ namespace WebUI.Controllers
             return View(new CreateSubcategoryCommand {CategoryId = id});
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Create([FromForm] CreateSubcategoryCommand command)
         {
@@ -51,6 +54,7 @@ namespace WebUI.Controllers
             return RedirectToAction("Get", "Category", new {id = command.CategoryId});
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public IActionResult Add([FromRoute] int id)
         {
@@ -59,6 +63,7 @@ namespace WebUI.Controllers
             return View(new AddSubcategoryCommand { SubcategoryId = id });
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Add([FromForm] AddSubcategoryCommand command)
         {
@@ -74,6 +79,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id)
         {
@@ -102,6 +108,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Update([FromForm] UpdateSubcategoryCommand command)
         {
@@ -121,6 +128,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
@@ -140,6 +148,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Delete([FromForm] DeleteSubcategoryCommand command)
         {

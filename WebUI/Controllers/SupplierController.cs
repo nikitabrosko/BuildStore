@@ -5,10 +5,12 @@ using Application.UseCases.Supplier.Commands.DeleteSupplier;
 using Application.UseCases.Supplier.Commands.UpdateSupplier;
 using Application.UseCases.Supplier.Queries.GetSupplier;
 using Application.UseCases.Supplier.Queries.GetSuppliers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class SupplierController : ApiControllerBase
     {
         [HttpGet]

@@ -7,6 +7,7 @@ using Application.UseCases.Category.Commands.DeleteCategory;
 using Application.UseCases.Category.Commands.UpdateCategory;
 using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Category.Queries.GetCategory;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers
 {
@@ -37,6 +38,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -45,6 +47,7 @@ namespace WebUI.Controllers
             return View();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateCategoryCommand command)
         {
@@ -60,6 +63,7 @@ namespace WebUI.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id)
         {
@@ -91,6 +95,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Update([FromForm] UpdateCategoryCommand command)
         {
@@ -110,6 +115,7 @@ namespace WebUI.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public IActionResult Delete([FromRoute] int id)
         {
@@ -118,6 +124,7 @@ namespace WebUI.Controllers
             return View(new DeleteCategoryCommand {Id = id});
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Delete([FromForm] DeleteCategoryCommand command)
         {
