@@ -1,2 +1,6 @@
 ﻿<a asp-action="Index" asp-controller="Category">Categories</a>
-<a asp-action="Index" asp-controller="Supplier">Suppliers</a>
+
+@if (User.IsInRole("admin"))
+{
+    <a asp-action="Index" asp-controller="Supplier">Suppliers</a>
+}
