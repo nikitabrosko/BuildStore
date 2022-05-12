@@ -1,0 +1,77 @@
+﻿@model Application.UseCases.Identity.User.Commands.CreateUser.CreateUserCommand
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post,
+   new { @id = "registerAccountForm" }))
+{
+    @Html.HiddenFor(m => m.ReturnUrl)
+
+    <div>
+        @Html.Label("Name")
+        @Html.EditorFor(m => m.Name, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                minlength = "2",
+                maxlength = "40",
+                placeholder = "Name",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Email")
+        @Html.EditorFor(m => m.Email, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                minlength = "5",
+                maxlength = "50",
+                placeholder = "Email",
+                type = "email"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Password")
+        @Html.EditorFor(m => m.Password, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                minlength = "4",
+                maxlength = "30",
+                type = "password"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Confirm Password")
+        <input type="password" minlength="4" maxlength="30" name="Password_confirmation"
+               id="Password_confirmation" required />
+    </div>
+
+    <div>
+        <input type="submit" value="Register" />
+    </div>
+}
+
+<script>
+    $("#registerAccountForm").validate({
+        rules: {
+            Password: "required",
+            Password_confirmation: {
+                equalTo: "#Password"
+            }
+        },
+        messages: {
+            Password_confirmation: {
+                equalTo: "Invalid confirmation password!"
+            }
+        }
+    });
+</script>
