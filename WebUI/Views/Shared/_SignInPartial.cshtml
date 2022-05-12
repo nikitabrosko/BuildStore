@@ -1,0 +1,52 @@
+﻿@model Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery
+
+<div>
+    <form method="post" asp-controller="Account" asp-action="Login">
+
+        @Html.HiddenFor(m => m.ReturnUrl)
+
+        <div class="form-group">
+            @Html.Label("Name")
+            @Html.EditorFor(m => m.Name, new
+            {
+                htmlAttributes = new
+                {
+                    required = "true",
+                    minlength = "2",
+                    maxlength = "40",
+                    @class = "form-control",
+                    placeholder = "Name",
+                    type = "text"
+                }
+            })
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Password")
+            @Html.EditorFor(m => m.Password, new
+            {
+                htmlAttributes = new
+                {
+                    required = "true",
+                    minlength = "4",
+                    maxlength = "30",
+                    @class = "form-control",
+                    type = "password",
+                    @id = " password",
+                    placeholder = "Password"
+                }
+            })
+        </div>
+
+        <div class="form-check">
+            @Html.EditorFor(m => m.RememberMe,
+                new {htmlAttributes = new {@class = "form-check-input"}})
+            @Html.Label("Remember me", "Remember me",
+                new {@class = "form-check-label"})
+        </div>
+
+        <button type="submit">Sign in</button>
+    </form>
+
+    <a asp-action="Register" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl">Register</a>
+</div>
