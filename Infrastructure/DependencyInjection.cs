@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Infrastructure.IdentityPersistence;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,13 @@ namespace Infrastructure
 
             services.AddScoped<IApplicationDbContext>(provider =>
                 provider.GetRequiredService<ApplicationDbContext>());
+
+            services.AddDbContext<ApplicationIdentityDbContext>(options =>
+                options.UseSqlServer(
+                    configuration.GetConnectionString("IdentityConnection")));
+
+            services.AddScoped<IApplicationIdentityDbContext>(provider =>
+                provider.GetRequiredService<ApplicationIdentityDbContext>());
 
             return services;
         }
