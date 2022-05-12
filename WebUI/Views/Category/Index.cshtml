@@ -1,6 +1,9 @@
 ﻿@model IEnumerable<Domain.Entities.Category>
 
-<div>@Html.ActionLink("Create Category", "Create", "Category")</div>
+@if (User.IsInRole("admin"))
+{
+    <div>@Html.ActionLink("Create Category", "Create", "Category")</div>
+}
 
 <div>
     @foreach (var category in Model)
@@ -18,9 +21,12 @@
                 </div>
             </div>
         </a>
-        <div>
-            <a asp-action="Update" asp-controller="Category" asp-route-id="@category.Id">Edit</a>
-            <a asp-action="Delete" asp-controller="Category" asp-route-id="@category.Id">Delete</a>
-        </div>
+        if (User.IsInRole("admin"))
+        {
+            <div>
+                <a asp-action="Update" asp-controller="Category" asp-route-id="@category.Id">Edit</a>
+                <a asp-action="Delete" asp-controller="Category" asp-route-id="@category.Id">Delete</a>
+            </div>
+        }
     }
 </div>
