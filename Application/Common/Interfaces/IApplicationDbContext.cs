@@ -11,6 +11,8 @@ namespace Application.Common.Interfaces
         
         DbSet<Customer> Customers { get; }
 
+        DbSet<ShoppingCart> ShoppingCarts { get; }
+
         DbSet<Delivery> Deliveries { get; }
 
         DbSet<Inventory> Inventories { get; }
@@ -24,5 +26,9 @@ namespace Application.Common.Interfaces
         DbSet<Supplier> Suppliers { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+
+        void TurnIdentityInsertOn();
+
+        void TurnIdentityInsertOff();
     }
 }

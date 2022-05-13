@@ -13,6 +13,7 @@ namespace Infrastructure.IdentityPersistence
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)
         {
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -26,6 +27,16 @@ namespace Infrastructure.IdentityPersistence
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(builder);
+        }
+
+        public void TurnIdentityInsertOn()
+        {
+            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCart ON");
+        }
+
+        public void TurnIdentityInsertOff()
+        {
+            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCart OFF");
         }
     }
 }

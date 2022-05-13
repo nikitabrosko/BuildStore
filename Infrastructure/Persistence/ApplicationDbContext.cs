@@ -12,6 +12,8 @@ namespace Infrastructure.Persistence
         public DbSet<CategoryBase> Categories => Set<CategoryBase>();
 
         public DbSet<Customer> Customers => Set<Customer>();
+
+        public DbSet<ShoppingCart> ShoppingCarts => Set<ShoppingCart>();
         
         public DbSet<Delivery> Deliveries => Set<Delivery>();
 
@@ -42,6 +44,16 @@ namespace Infrastructure.Persistence
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             base.OnModelCreating(builder);
+        }
+
+        public void TurnIdentityInsertOn()
+        {
+            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCarts ON");
+        }
+
+        public void TurnIdentityInsertOff()
+        {
+            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCarts OFF");
         }
     }
 }

@@ -10,5 +10,9 @@ namespace Application.Common.Interfaces
         DbSet<User> Users { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+
+        void TurnIdentityInsertOn();
+
+        void TurnIdentityInsertOff();
     }
 }
