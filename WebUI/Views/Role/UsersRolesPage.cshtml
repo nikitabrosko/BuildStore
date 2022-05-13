@@ -1,0 +1,105 @@
+﻿@model Application.Common.Models.PaginatedList<UserWithRolesDto>
+@using Application.UseCases.Identity.Role.Queries.GetUsersWithRolesWithPagination
+
+<h2>Users And Roles</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th hidden>id</th>
+            <th>Role name</th>
+            <th>Roles</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Items)
+        {
+            <tr>
+                @Html.Hidden(user.Id)
+                <td>@user.Name</td>
+                <td>
+                    @if (user.Roles.Any())
+                    {
+                        @foreach (var userRole in user.Roles)
+                        {
+                            if (!user.Roles.Last().Equals(userRole))
+                            {
+                                <b>@userRole, </b>
+                            }
+                            else
+                            {
+                                <b>@userRole</b>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        @Html.Label("No Roles")
+                    }
+                </td>
+                <td>
+                    <a asp-action="AddRoleToUser" asp-controller="Role" asp-route-id="@user.Id">Add role</a>
+                </td>
+                <td>
+                    <a asp-action="RemoveRoleFromUser" asp-controller="Role" asp-route-id="@user.Id">Remove role</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Previous", "UsersRolesPage", "Role",
+                new GetUsersWithRolesWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
+                new { @class = "page-link" })
+        </li>
+    }
+    else
+    {
+        <li class="page-item disabled">
+            @Html.ActionLink("Previous", "UsersRolesPage", "Role",
+            new GetUsersWithRolesWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
+            new { @class = "page-link" })
+    </li>
+}
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (Model.PageNumber.Equals(i))
+            {
+                <li class="page-item active">
+                    @Html.ActionLink($"{i}", "UsersRolesPage", "Role",
+                    new GetUsersWithRolesWithPaginationQuery { PageNumber = i },
+                    new { @class = "page-link" })
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                @Html.ActionLink($"{i}", "UsersRolesPage", "Role",
+                new GetUsersWithRolesWithPaginationQuery { PageNumber = i },
+                new { @class = "page-link" })
+        </li>
+    }
+}
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Next", "UsersRolesPage", "Role",
+                new GetUsersWithRolesWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
+                new { @class = "page-link" })
+        </li>
+    }
+    else
+    {
+        <li class="page-item disabled">
+            @Html.ActionLink("Next", "UsersRolesPage", "Role",
+            new GetUsersWithRolesWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
+            new { @class = "page-link" })
+    </li>
+}
+    </ul>
+</nav>

@@ -1,0 +1,11 @@
+﻿@model Application.Common.Models.PaginatedList<Microsoft.AspNetCore.Identity.IdentityRole>
+
+<ul>
+    @foreach (var role in Model.Items)
+    {
+        <li>
+            @role.Name @Html.ActionLink("Add", "AddRoleToUser", "Role", 
+                           new { userId = ViewBag.UserId, roleId = role.Id })
+        </li>
+    }
+</ul>

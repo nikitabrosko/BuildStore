@@ -1,0 +1,11 @@
+﻿@model IList<string>
+
+<ul>
+    @foreach (var role in Model)
+    {
+        <li>
+            @role @Html.ActionLink("Remove", "RemoveRoleFromUser", "Role",
+                      new { userId = ViewBag.UserId, roleName = role })
+        </li>
+    }
+</ul>

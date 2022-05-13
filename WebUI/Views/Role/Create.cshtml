@@ -1,0 +1,28 @@
+﻿@model Application.UseCases.Identity.Role.Commands.CreateRole.CreateRoleCommand
+
+@using (Html.BeginForm("Create", "Role", FormMethod.Post,
+   new { @id = "createRoleForm" }))
+{
+    <div>
+        @Html.Label("Name")
+        @Html.EditorFor(m => m.Name, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                minlength = "2",
+                maxlength = "40",
+                placeholder = "Name",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        <input type="submit" value="Create" />
+    </div>
+}
+
+<script>
+    $("#createRoleForm").validate();
+</script>

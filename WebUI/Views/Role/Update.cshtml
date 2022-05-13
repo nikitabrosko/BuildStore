@@ -1,0 +1,30 @@
+﻿@model Application.UseCases.Identity.Role.Commands.UpdateRole.UpdateRoleCommand
+
+@using (Html.BeginForm("Update", "Role", FormMethod.Post,
+   new { @id = "updateRoleForm" }))
+{
+    @Html.HiddenFor(m => m.Id)
+
+    <div>
+        @Html.Label("New Name")
+        @Html.EditorFor(m => m.Name, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                minlength = "2",
+                maxlength = "40",
+                placeholder = "Name",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
+
+<script>
+    $("#updateRoleForm").validate();
+</script>
