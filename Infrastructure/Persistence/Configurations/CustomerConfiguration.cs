@@ -58,10 +58,6 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasMany(c => c.Orders)
                 .WithOne(o => o.Customer);
-
-            builder.HasOne(c => c.ShoppingCart)
-                .WithOne(s => s.Customer)
-                .HasForeignKey<ShoppingCart>(c => c.CustomerId);
         }
     }
 }

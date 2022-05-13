@@ -43,6 +43,9 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.Property(c => c.Picture)
                 .IsRequired();
+
+            builder.HasMany(p => p.ShoppingCarts)
+                .WithMany(s => s.Products);
         }
     }
 }
