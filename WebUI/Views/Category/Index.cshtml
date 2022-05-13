@@ -2,7 +2,7 @@
 
 @if (User.IsInRole("admin"))
 {
-    <div>@Html.ActionLink("Create Category", "Create", "Category")</div>
+    <a asp-action="Create" asp-controller="Category">Create Category</a>
 }
 
 <div>

@@ -17,5 +17,6 @@
             </div>
             <div>@product.Price</div>
         </a>
+        <a asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-id="@product.Id" asp-route-returnUrl="@Url.Action()">Add to Shopping cart</a>
     }
 </div>

@@ -4,6 +4,8 @@
 <h4>Category: @Model.Category.Name</h4>
 <h5>Supplier: @Model.Supplier.CompanyName</h5>
 
+<a asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-productId="@Model.Id">Add to Shopping cart</a>
+
 <div>
     <div>
         <p>Price: @Model.Price</p>
