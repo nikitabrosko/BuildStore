@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities
 {
@@ -25,5 +27,12 @@ namespace Domain.Entities
         public IFormFile PictureRaw { get; set; }
 
         public byte[] Picture { get; set; }
+
+        public ICollection<ShoppingCart> ShoppingCarts { get; set; }
+
+        public Product()
+        {
+            ShoppingCarts = new HashSet<ShoppingCart>();
+        }
     }
 }

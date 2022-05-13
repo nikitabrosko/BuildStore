@@ -28,10 +28,6 @@ namespace Domain.Entities
 
         public int CardExpYear { get; set; }
 
-        public ShoppingCart ShoppingCart { get; set; }
-
-        public int ShoppingCartId { get; set; }
-
         public ICollection<Order> Orders { get; set; }
 
         public Customer()

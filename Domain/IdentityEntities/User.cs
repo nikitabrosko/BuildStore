@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.IdentityEntities
@@ -6,5 +7,7 @@ namespace Domain.IdentityEntities
     public class User : IdentityUser
     {
         public Customer Customer { get; set; }
+
+        public ShoppingCart ShoppingCart { get; set; }
     }
 }
