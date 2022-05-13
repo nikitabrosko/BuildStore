@@ -1,57 +1,41 @@
 ﻿@using Application.UseCases.Identity.User.Queries.GetUsersWithPagination
 @model Application.Common.Models.PaginatedList<Domain.IdentityEntities.User>
 
-<h2 class="text-center">Users</h2>
+<h2>Users</h2>
 
-<table class="table text-center">
+<table>
     <thead>
         <tr>
             <th>
-                <button onclick="showInPopup('@Url.Action("Create", "User", null, Context.Request.Scheme)', 'Create user')"
-                        class="btn btn-secondary">
-                    Create user
-                </button>
+                <a asp-action="Create" asp-controller="User">Create user</a>
             </th>
         </tr>
     </thead>
 </table>
 
-<table class="table text-center">
+<table>
     <thead>
     <tr>
-        <th scope="col">id</th>
-        <th scope="col">User name</th>
-        <th scope="col">Email</th>
-        <th scope="col" style="width:100px"></th>
-        <th scope="col" style="width:200px"></th>
-        <th scope="col" style="width:100px"></th>
+        <th hidden>id</th>
+        <th>User name</th>
+        <th>Email</th>
     </tr>
     </thead>
     <tbody>
     @foreach (var user in Model.Items)
     {
         <tr>
-            <td>@user.Id</td>
+            <td hidden>@user.Id</td>
             <td>@user.UserName</td>
             <td>@user.Email</td>
             <td>
-                <button onclick="showInPopup('@Url.Action("Update", "User", new { user.Id },
-                                                  Context.Request.Scheme)', 'Edit user')"
-                        class="btn btn-primary">
-                    Edit
-                </button>
+                <a asp-action="Update" asp-controller="User" asp-route-id="@user.Id">Edit</a>
             </td>
             <td>
-                <button onclick="showInPopup('@Url.Action("ChangePassword", "User", new { user.UserName },
-                                                  Context.Request.Scheme)', 'Change password')"
-                        class="btn btn-info">
-                    Change password
-                </button>
+                <a asp-action="ChangePassword" asp-controller="User" asp-route-id="@user.UserName">Change password</a>
             </td>
             <td>
-                <a asp-action="Delete" asp-controller="User" asp-route-id="@user.Id" class="btn btn-danger">
-                    Delete
-                </a>
+                <a asp-action="Delete" asp-controller="User" asp-route-id="@user.Id">Delete</a>
             </td>
         </tr>
     }
