@@ -1,0 +1,145 @@
+﻿@model Application.UseCases.Customer.Commands.CreateCustomer.CreateCustomerCommand
+
+@using (Html.BeginForm("Create", "Customer", FormMethod.Post))
+{
+    <div>
+        @Html.Label("First name")
+        @Html.EditorFor(m => m.FirstName, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                minlegth = "2",
+                placeholder = "First name",
+                type = "text"
+
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Last name")
+        @Html.EditorFor(m => m.LastName, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                minlegth = "2",
+                placeholder = "First name",
+                type = "text"
+
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Address")
+        @Html.EditorFor(m => m.Address, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "100",
+                minlegth = "10",
+                placeholder = "Address",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("City")
+        @Html.EditorFor(m => m.City, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                minlegth = "1",
+                placeholder = "City",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Country")
+        @Html.EditorFor(m => m.Country, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                minlegth = "1",
+                placeholder = "Country",
+                type = "text"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Phone number")
+        @Html.EditorFor(m => m.Phone, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "50",
+                minlegth = "1",
+                placeholder = "Phone number",
+                type = "tel"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Credit card number")
+        @Html.EditorFor(m => m.CreditCardNumber, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "16",
+                minlegth = "16",
+                placeholder = "Credit card number",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Card exp month")
+        @Html.EditorFor(m => m.CardExpMonth, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "2",
+                minlength = "2",
+                placeholder = "Card exp month",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Card exp year")
+        @Html.EditorFor(m => m.CardExpYear, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "4",
+                minlength = "4",
+                placeholder = "Card exp year",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
