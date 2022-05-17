@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
-using Domain.IdentityEntities;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.ShoppingCart.Commands.AddProduct
@@ -12,20 +10,23 @@ namespace Application.UseCases.ShoppingCart.Commands.AddProduct
     public class AddProductCommandHandler : IRequestHandler<AddProductCommand>
     {
         private readonly IApplicationDbContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly IApplicationIdentityDbContext _identityContext;
 
-        public AddProductCommandHandler(IApplicationDbContext context, UserManager<User> userManager)
+        public AddProductCommandHandler(IApplicationDbContext context, IApplicationIdentityDbContext identityContext)
         {
             _context = context;
-            _userManager = userManager;
+            _identityContext = identityContext;
         }
 
         public async Task<Unit> Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
-            var shoppingCartEntity = (await _userManager.Users
+            var userEntity = await _identityContext.Users
                 .Include(u => u.ShoppingCart)
-                .ThenInclude(s => s.Products)
-                .SingleOrDefaultAsync(s => s.UserName.Equals(request.Username), cancellationToken)).ShoppingCart;
+                .SingleOrDefaultAsync(u => u.UserName.Equals(request.Username), cancellationToken);
+
+            var shoppingCartEntity = await _context.ShoppingCarts
+                .Include(s => s.Products)
+                .SingleOrDefaultAsync(s => s.Id.Equals(userEntity.ShoppingCart.Id), cancellationToken);
 
             var productEntity = await _context.Products
                 .SingleOrDefaultAsync(p => p.Id.Equals(request.ProductId), cancellationToken);
