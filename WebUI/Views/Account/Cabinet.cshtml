@@ -1,0 +1,28 @@
+﻿@model Domain.IdentityEntities.User
+
+<h2>User cabinet</h2>
+
+<div>
+    <p>UserName: @Model.UserName</p>
+    <p>Email: @Model.Email</p>
+    @if (Model.Customer is null)
+    {
+        <a asp-action="Create" asp-controller="Customer">Fill information about you</a>
+    }
+    else
+    {
+        <p>First name: @Model.Customer.FirstName</p>
+        <p>Last name: @Model.Customer.LastName</p>
+        <p>Full name: @Model.Customer.FullName</p>
+        <p>Address: @Model.Customer.Address</p>
+        <p>City: @Model.Customer.City</p>
+        <p>Country: @Model.Customer.Country</p>
+        <p>Phone number: @Model.Customer.Phone</p>
+        <h5>Credit Card information:</h5>
+        <p>Credit card number: @Model.Customer.CreditCardNumber</p>
+        <p>Card exp month: @Model.Customer.CardExpMonth</p>
+        <p>Card exp year: @Model.Customer.CardExpYear</p>
+
+        <a asp-action="Update" asp-controller="Customer">Update information about you</a>
+    }
+</div>
