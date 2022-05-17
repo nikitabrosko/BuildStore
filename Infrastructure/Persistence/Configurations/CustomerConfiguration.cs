@@ -39,11 +39,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(c => c.Phone)
                 .HasMaxLength(50)
                 .IsRequired();
-
-            builder.Property(c => c.Email)
-                .HasMaxLength(100)
-                .IsRequired();
-
+            
             builder.Property(c => c.CreditCardNumber)
                 .HasMaxLength(16)
                 .IsRequired();
