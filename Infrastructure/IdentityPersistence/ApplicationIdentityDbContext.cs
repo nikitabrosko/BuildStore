@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
+using Domain.Entities;
 using Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -26,17 +27,10 @@ namespace Infrastructure.IdentityPersistence
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
+            builder.Entity<ShoppingCart>().Property(s => s.Id).ValueGeneratedNever();
+            builder.Entity<Customer>().Property(c => c.Id).ValueGeneratedNever();
+
             base.OnModelCreating(builder);
-        }
-
-        public void TurnIdentityInsertOn()
-        {
-            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCart ON");
-        }
-
-        public void TurnIdentityInsertOff()
-        {
-            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCart OFF");
         }
     }
 }

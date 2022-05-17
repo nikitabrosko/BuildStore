@@ -45,15 +45,5 @@ namespace Infrastructure.Persistence
 
             base.OnModelCreating(builder);
         }
-
-        public void TurnIdentityInsertOn()
-        {
-            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCarts ON");
-        }
-
-        public void TurnIdentityInsertOff()
-        {
-            Database.ExecuteSqlRaw("SET IDENTITY_INSERT dbo.ShoppingCarts OFF");
-        }
     }
 }
