@@ -20,8 +20,6 @@ namespace Domain.Entities
 
         public string Phone { get; set; }
 
-        public string Email { get; set; }
-
         public string CreditCardNumber { get; set; }
 
         public int CardExpMonth { get; set; }
