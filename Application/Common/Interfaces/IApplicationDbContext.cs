@@ -26,9 +26,5 @@ namespace Application.Common.Interfaces
         DbSet<Supplier> Suppliers { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
-
-        void TurnIdentityInsertOn();
-
-        void TurnIdentityInsertOff();
     }
 }
