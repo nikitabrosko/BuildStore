@@ -12,11 +12,30 @@
                     var base64 = Convert.ToBase64String(product.Picture);
                     var imgSrc = $"data:image/gif;base64,{base64}";
                 }
-            
-                <img src="@imgSrc" style="max-width: 300px" alt="@product.Name"/>
+
+                <img src="@imgSrc" style="max-width: 300px" alt="@product.Name" />
             </div>
             <div>@product.Price</div>
         </a>
         <a asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-id="@product.Id" asp-route-returnUrl="@Url.Action()">Add to Shopping cart</a>
+    }
+    @foreach (var modelSubcategory in Model.Subcategories)
+    {
+        @foreach (var product in modelSubcategory.Products)
+        {
+            <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id">
+                <div>@product.Name</div>
+                <div>
+                    @{
+                        var base64 = Convert.ToBase64String(product.Picture);
+                        var imgSrc = $"data:image/gif;base64,{base64}";
+                    }
+
+                    <img src="@imgSrc" style="max-width: 300px" alt="@product.Name" />
+                </div>
+                <div>@product.Price</div>
+            </a>
+            <a asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-id="@product.Id" asp-route-returnUrl="@Url.Action()">Add to Shopping cart</a>
+        }
     }
 </div>

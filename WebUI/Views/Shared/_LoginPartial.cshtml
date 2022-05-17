@@ -7,16 +7,18 @@
                     @User.Identity.Name | Menu
                 </button>
                 <div class="dropdown-menu dropdown-menu-right">
+                    @Html.ActionLink("Cabinet", "Cabinet", "Account",
+                        new {}, new {@class="dropdown-item"})
                     @Html.ActionLink("Logout", "Logout", "Account",
-                        new { returnUrl = Url.Action() }, new { @class = "dropdown-item" })
+                        new {returnUrl = Url.Action()}, new {@class = "dropdown-item"})
                     @if (User.IsInRole("admin"))
                     {
                         @Html.ActionLink("Manage Users", "Index", "User",
-                            new { }, new { @class = "dropdown-item" })
+                            new {}, new {@class = "dropdown-item"})
                         @Html.ActionLink("Manage Roles", "Index", "Role",
-                            new { }, new { @class = "dropdown-item" })
+                            new {}, new {@class = "dropdown-item"})
                         @Html.ActionLink("Manage Users with Roles", "UsersRolesPage", "Role",
-                            new { }, new { @class = "dropdown-item" })
+                            new {}, new {@class = "dropdown-item"})
                     }
                 </div>
             </div>
