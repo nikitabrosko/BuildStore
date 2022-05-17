@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Identity.User.Commands.CreateUser;
+using Application.UseCases.Identity.User.Queries.GetUser;
 using Application.UseCases.Identity.User.Queries.LoginUser;
 using Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
@@ -94,6 +95,12 @@ namespace WebUI.Controllers.IdentityControllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Cabinet()
+        {
+            return View(await Mediator.Send(new GetUserQuery {UserName = User.Identity.Name}));
         }
     }
 }

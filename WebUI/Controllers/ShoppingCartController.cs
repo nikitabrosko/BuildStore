@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.ShoppingCart.Commands.AddProduct;
+using Application.UseCases.ShoppingCart.Commands.RemoveProduct;
 using Application.UseCases.ShoppingCart.Queries.GetShoppingCart;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace WebUI.Controllers
             try
             {
                 return View(await Mediator.Send(
-                    new GetShoppingCartCommand { Username = User.Identity.Name }));
+                    new GetShoppingCartQuery { Username = User.Identity.Name }));
             }
             catch (NotFoundException exception)
             {
@@ -37,6 +38,18 @@ namespace WebUI.Controllers
             {
                 return Redirect(returnUrl);
             }
+
+            return RedirectToAction("Index", "ShoppingCart");
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> RemoveProduct([FromRoute] int id)
+        {
+            await Mediator.Send(new RemoveProductCommand
+            {
+                ProductId = id,
+                Username = User.Identity.Name
+            });
 
             return RedirectToAction("Index", "ShoppingCart");
         }
