@@ -17,11 +17,5 @@ namespace Application.UseCases.Customer.Commands.UpdateCustomer
         public string Country { get; set; }
 
         public string Phone { get; set; }
-
-        public string CreditCardNumber { get; set; }
-
-        public int CardExpMonth { get; set; }
-
-        public int CardExpYear { get; set; }
     }
 }

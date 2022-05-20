@@ -30,9 +30,6 @@ namespace Application.UseCases.Customer.Commands.UpdateCustomer
             entity.City = request.City;
             entity.Country = request.Country;
             entity.Phone = request.Phone;
-            entity.CreditCardNumber = request.CreditCardNumber;
-            entity.CardExpMonth = request.CardExpMonth;
-            entity.CardExpYear = request.CardExpYear;
 
             _context.Customers.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
