@@ -38,10 +38,7 @@ namespace Application.UseCases.Customer.Commands.CreateCustomer
                 Address = request.Address,
                 City = request.City,
                 Country = request.Country,
-                Phone = request.Phone,
-                CreditCardNumber = request.CreditCardNumber,
-                CardExpMonth = request.CardExpMonth,
-                CardExpYear = request.CardExpYear
+                Phone = request.Phone
             };
 
             await _context.Customers.AddAsync(customerEntity, cancellationToken);
