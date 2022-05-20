@@ -9,24 +9,25 @@ namespace Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             builder.HasKey(o => o.Id);
-
-            builder.Property(o => o.IsDeliveryCompleted)
-                .IsRequired();
-
-            builder.Property(o => o.IsPaid)
-                .IsRequired();
-
+            
             builder.Property(o => o.Date)
                 .IsRequired();
 
-            builder.Property(o => o.PaymentDate)
+            builder.HasOne(o => o.Delivery)
+                .WithOne(d => d.Order)
+                .HasForeignKey<Order>(o => o.DeliveryId);
+
+            builder.HasOne(o => o.Payment)
+                .WithOne(p => p.Order)
+                .HasForeignKey<Order>(o => o.PaymentId);
+
+            builder.HasOne(o => o.Customer)
+                .WithMany(c => c.Orders)
+                .HasForeignKey(o => o.CustomerId)
                 .IsRequired();
 
-            builder.HasOne(o => o.Delivery);
-
-            builder.HasOne(o => o.Payment);
-
-            builder.HasOne(o => o.Customer);
+            builder.HasMany(o => o.Products)
+                .WithMany(p => p.Orders);
         }
     }
 }

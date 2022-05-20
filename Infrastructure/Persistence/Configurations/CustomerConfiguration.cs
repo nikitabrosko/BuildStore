@@ -39,18 +39,6 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(c => c.Phone)
                 .HasMaxLength(50)
                 .IsRequired();
-            
-            builder.Property(c => c.CreditCardNumber)
-                .HasMaxLength(16)
-                .IsRequired();
-
-            builder.Property(c => c.CardExpMonth)
-                .HasMaxLength(2)
-                .IsRequired();
-
-            builder.Property(c => c.CardExpYear)
-                .HasMaxLength(4)
-                .IsRequired();
 
             builder.HasMany(c => c.Orders)
                 .WithOne(o => o.Customer);

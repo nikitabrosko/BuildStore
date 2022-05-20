@@ -46,6 +46,9 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasMany(p => p.ShoppingCarts)
                 .WithMany(s => s.Products);
+
+            builder.HasMany(p => p.Orders)
+                .WithMany(p => p.Products);
         }
     }
 }

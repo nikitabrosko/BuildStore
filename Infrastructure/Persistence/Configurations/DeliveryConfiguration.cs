@@ -15,6 +15,11 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.Property(d => d.Fulfilled)
                 .IsRequired();
+
+            builder.HasOne(d => d.Order)
+                .WithOne(o => o.Delivery)
+                .HasForeignKey<Delivery>(o => o.OrderId)
+                .IsRequired();
         }
     }
 }

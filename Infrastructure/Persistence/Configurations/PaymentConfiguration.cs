@@ -19,6 +19,23 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.Property(p => p.Allowed)
                 .IsRequired();
+
+            builder.HasOne(d => d.Order)
+                .WithOne(o => o.Payment)
+                .HasForeignKey<Payment>(o => o.OrderId)
+                .IsRequired();
+
+            builder.Property(c => c.CreditCardNumber)
+                .HasMaxLength(16)
+                .IsRequired();
+
+            builder.Property(c => c.CardExpMonth)
+                .HasMaxLength(2)
+                .IsRequired();
+
+            builder.Property(c => c.CardExpYear)
+                .HasMaxLength(4)
+                .IsRequired();
         }
     }
 }
