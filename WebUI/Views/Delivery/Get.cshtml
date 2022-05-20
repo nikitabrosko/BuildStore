@@ -1,0 +1,10 @@
+﻿@model Domain.Entities.Delivery
+
+<h3>Delivery information</h3>
+
+<div>
+    <p>Id: @Model.Id</p>
+    <p>Type: @Model.Type</p>
+    <p>Fulfilled: @Model.Fulfilled</p>
+    <a asp-action="Get" asp-controller="Order" asp-route-id="@Model.OrderId"><p>Order id: @Model.OrderId</p></a>
+</div>

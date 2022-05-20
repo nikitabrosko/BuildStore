@@ -1,0 +1,19 @@
+﻿@model Application.UseCases.Delivery.Commands.CreateDelivery.CreateDeliveryCommand
+
+@using (Html.BeginForm("Create", "Delivery", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.OrderId)
+
+    <div>
+        @Html.Label("Delivery type:")
+        @Html.EditorFor(m => m.Type)
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+
+    <div>
+        <a asp-action="CancelCreation" asp-controller="Delivery">Cancel</a>
+    </div>
+}

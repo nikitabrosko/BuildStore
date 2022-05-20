@@ -1,0 +1,20 @@
+﻿@model Application.UseCases.Delivery.Commands.UpdateDelivery.UpdateDeliveryCommand
+
+@using (Html.BeginForm("Update", "Delivery", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.Id)
+
+    <div>
+        @Html.Label("Delivery type:")
+        @Html.EditorFor(m => m.Type)
+    </div>
+
+    <div>
+        @Html.Label("Fulfilled?")
+        @Html.EditorFor(m => m.Fulfilled)
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}
