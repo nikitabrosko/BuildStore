@@ -84,10 +84,6 @@ namespace WebUI.Controllers
             {
                 return View("Error", exception.Message);
             }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
         }
 
         [Authorize(Roles = "admin")]
