@@ -4,6 +4,7 @@ using Application.Common.Exceptions;
 using Application.UseCases.Customer.Commands.CreateCustomer;
 using Application.UseCases.Customer.Commands.UpdateCustomer;
 using Application.UseCases.Customer.Queries.GetCustomer;
+using Application.UseCases.Identity.User.Queries.GetUser;
 
 namespace WebUI.Controllers
 {
@@ -13,6 +14,12 @@ namespace WebUI.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            return View(await Mediator.Send(new GetCustomerQuery { Id = id }));
         }
 
         [HttpPost]
@@ -37,10 +44,12 @@ namespace WebUI.Controllers
         {
             try
             {
+                var user = await Mediator.Send(new GetUserQuery {UserName = User.Identity.Name});
+
                 var entity = await Mediator.Send(
                     new GetCustomerQuery
                     {
-                        UserName = User.Identity.Name
+                        Id = user.Customer.Id
                     });
 
                 return View(new UpdateCustomerCommand
@@ -50,10 +59,7 @@ namespace WebUI.Controllers
                     Address = entity.Address,
                     City = entity.City,
                     Country = entity.Country,
-                    Phone = entity.Phone,
-                    CreditCardNumber = entity.CreditCardNumber,
-                    CardExpMonth = entity.CardExpMonth,
-                    CardExpYear = entity.CardExpYear
+                    Phone = entity.Phone
                 });
             }
             catch (NotFoundException exception)
