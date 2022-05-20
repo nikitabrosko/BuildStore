@@ -10,24 +10,21 @@ namespace Application.UseCases.Customer.Queries.GetCustomer
     public class GetCustomerQueryHandler : IRequestHandler<GetCustomerQuery, Domain.Entities.Customer>
     {
         private readonly IApplicationDbContext _context;
-        private readonly IApplicationIdentityDbContext _identityContext;
 
-        public GetCustomerQueryHandler(IApplicationDbContext context,
-            IApplicationIdentityDbContext identityContext)
+        public GetCustomerQueryHandler(IApplicationDbContext context)
         {
             _context = context;
-            _identityContext = identityContext;
         }
 
         public async Task<Domain.Entities.Customer> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
         {
-            var entity = (await _identityContext.Users
-                .Include(u => u.Customer)
-                .SingleOrDefaultAsync(u => u.UserName.Equals(request.UserName), cancellationToken)).Customer;
+            var entity = await _context.Customers
+                .Include(c => c.Orders)
+                .SingleOrDefaultAsync(c => c.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
             {
-                throw new NotFoundException(nameof(Domain.Entities.Customer), request.UserName);
+                throw new NotFoundException(nameof(Domain.Entities.Customer), request.Id);
             }
 
             return entity;
