@@ -7,6 +7,10 @@
         public DeliveryType Type { get; set; }
 
         public bool Fulfilled { get; set; }
+
+        public int OrderId { get; set; }
+
+        public Order Order { get; set; }
     }
 
     public enum DeliveryType

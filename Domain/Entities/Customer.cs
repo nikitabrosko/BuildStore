@@ -20,12 +20,6 @@ namespace Domain.Entities
 
         public string Phone { get; set; }
 
-        public string CreditCardNumber { get; set; }
-
-        public int CardExpMonth { get; set; }
-
-        public int CardExpYear { get; set; }
-
         public ICollection<Order> Orders { get; set; }
 
         public Customer()

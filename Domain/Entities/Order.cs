@@ -1,24 +1,31 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace Domain.Entities
 {
     public class Order
     {
         public int Id { get; set; }
-
-        public bool IsDeliveryCompleted { get; set; }
-
+        
         public DateTime Date { get; set; }
-
-        public bool IsPaid { get; set; }
-
-        public DateTime PaymentDate { get; set; }
 
         public Delivery Delivery { get; set; }
 
+        public int? DeliveryId { get; set; }
+
         public Payment Payment { get; set; }
+        
+        public int? PaymentId { get; set; }
 
         public Customer Customer { get; set; }
+
+        public int CustomerId { get; set; }
+
+        public ICollection<Product> Products { get; set; }
+
+        public Order()
+        {
+            Products = new HashSet<Product>();
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 
@@ -30,9 +31,12 @@ namespace Domain.Entities
 
         public ICollection<ShoppingCart> ShoppingCarts { get; set; }
 
+        public ICollection<Order> Orders { get; set; }
+
         public Product()
         {
             ShoppingCarts = new HashSet<ShoppingCart>();
+            Orders = new HashSet<Order>();
         }
     }
 }
