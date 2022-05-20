@@ -15,11 +15,11 @@ namespace Application.UseCases.Identity.Role.Queries.GetRolesWithPagination
             _roleManager = roleManager;
         }
 
-        public Task<PaginatedList<IdentityRole>> Handle(GetRolesWithPaginationQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<IdentityRole>> Handle(GetRolesWithPaginationQuery request, CancellationToken cancellationToken)
         {
             var query = _roleManager.Roles;
 
-            return PaginatedList<IdentityRole>.CreateAsync(query, request.PageNumber, request.PageSize);
+            return await PaginatedList<IdentityRole>.CreateAsync(query, request.PageNumber, request.PageSize);
         }
     }
 }

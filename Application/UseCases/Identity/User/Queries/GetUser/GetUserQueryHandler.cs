@@ -19,6 +19,8 @@ namespace Application.UseCases.Identity.User.Queries.GetUser
         {
             var user = await _identityContext.Users
                 .Include(u => u.Customer)
+                .ThenInclude(c => c.Orders)
+                .Include(u => u.ShoppingCart)
                 .SingleOrDefaultAsync(u => u.UserName.Equals(request.UserName), cancellationToken);
 
             return user;
