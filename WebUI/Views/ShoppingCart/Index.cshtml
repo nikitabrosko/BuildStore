@@ -2,6 +2,18 @@
 
 <h3>Shopping cart</h3>
 
+@if (ViewBag.User.Customer is null)
+{
+    <p>Для того, чтобы оформить заказ необходимо заполнить данные о вас</p>
+    <a asp-action="Create" asp-controller="Customer">Заполнить</a>
+}
+else
+{
+    <a asp-action="Create" asp-controller="Order">Оформить заказ</a>
+}
+
+<a asp-action="GetOrders" asp-controller="Order">My orders</a>
+
 <h5>Products</h5>
 
 <div>
@@ -16,8 +28,8 @@
                 var imgSrc = $"data:image/gif;base64,{base64}";
             }
             <img src="@imgSrc" style="max-width: 300px" alt="@product.Name" />
-            
-            <a asp-action="RemoveProduct" asp-controller="ShoppingCart" 
+
+            <a asp-action="RemoveProduct" asp-controller="ShoppingCart"
                asp-route-id="@product.Id">Remove</a>
         </div>
     }
