@@ -1,0 +1,65 @@
+﻿@model Application.UseCases.Payment.Commands.UpdatePayment.UpdatePaymentCommand
+
+@using (Html.BeginForm("Update", "Payment", FormMethod.Post))
+{
+    @Html.HiddenFor(m => m.Id)
+
+    <div>
+        @Html.Label("Payment type:")
+        @Html.EditorFor(m => m.Type)
+    </div>
+
+    <div>
+        @Html.Label("Credit card number")
+        @Html.EditorFor(m => m.CreditCardNumber, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "16",
+                minlegth = "16",
+                placeholder = "Credit card number",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Card exp month")
+        @Html.EditorFor(m => m.CardExpMonth, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "2",
+                minlength = "2",
+                placeholder = "Card exp month",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Card exp year")
+        @Html.EditorFor(m => m.CardExpYear, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "4",
+                minlength = "4",
+                placeholder = "Card exp year",
+                type = "number"
+            }
+        })
+    </div>
+
+    <div>
+        @Html.Label("Allowed?")
+        @Html.EditorFor(m => m.Allowed)
+    </div>
+
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}

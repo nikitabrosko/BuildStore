@@ -1,0 +1,13 @@
+﻿@model Domain.Entities.Payment
+
+<h3>Payment information</h3>
+
+<div>
+    <p>Id: @Model.Id</p>
+    <p>Type: @Model.Type</p>
+    <p>Allowed: @Model.Allowed</p>
+    <p>Credit card number: @Model.CreditCardNumber</p>
+    <p>Credit card exp month: @Model.CardExpMonth</p>
+    <p>Credit card exp year: @Model.CardExpYear</p>
+    <a asp-action="Get" asp-controller="Order" asp-route-id="@Model.OrderId"><p>Order id: @Model.OrderId</p></a>
+</div>
