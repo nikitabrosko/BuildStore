@@ -1,0 +1,99 @@
+﻿@using Application.UseCases.Order.Queries.GetOrdersWithPagination
+@model Application.Common.Models.PaginatedList<Domain.Entities.Order>
+
+<h3>Orders</h3>
+
+@foreach (var order in Model.Items)
+{
+    <div>
+        <p>Date: @order.Date</p>
+        <a asp-action="Get" asp-controller="Delivery" asp-route-id="@order.DeliveryId"><p>Delivery id: @order.DeliveryId</p></a>
+        <a asp-action="Get" asp-controller="Payment" asp-route-id="@order.PaymentId"><p>Payment id: @order.PaymentId</p></a>
+        <p>Products:</p>
+
+        @foreach (var product in order.Products)
+        {
+            <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id"><p>Id: @product.Id</p></a>
+        }
+        
+        @if (Model.Items.Count is 1 && Model.TotalPages > 1)
+        {
+            <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" 
+               asp-route-returnUrl="@Url.PageLink(null, null, new {PageNumber = Model.PageNumber - 1, Model.PageSize})">Delete</a>
+        }
+        else
+        {
+            <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" 
+               asp-route-returnUrl="@Url.PageLink(null, null, new {Model.PageNumber, Model.PageSize})">Delete</a>
+        }
+    </div>
+}
+
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Previous", "Index", "Order",
+                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                @Html.ActionLink("Previous", "Index", "Order",
+                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (Model.PageNumber.Equals(i))
+            {
+                <li class="page-item active">
+                    @Html.ActionLink($"{i}", "Index", "Order",
+                    new GetOrdersWithPaginationQuery { PageNumber = i },
+                    new { @class = "page-link" })
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @Html.ActionLink($"{i}", "Index", "Order",
+                    new GetOrdersWithPaginationQuery { PageNumber = i },
+                    new { @class = "page-link" })
+                </li>
+            }
+        }
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Next", "Index", "Order",
+                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                @Html.ActionLink("Next", "Index", "Order",
+                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+    </ul>
+</nav>
+
+<div>
+    @if (Model.HasPreviousPage)
+    {
+        @Html.ActionLink("Previous page", "Index", "Order",
+            new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber - 1 })
+    }
+    @if (Model.HasNextPage)
+    {
+        @Html.ActionLink("Next page", "Index", "Order",
+            new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber + 1 })
+    }
+</div>

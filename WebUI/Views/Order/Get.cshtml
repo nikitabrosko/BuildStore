@@ -1,0 +1,15 @@
+﻿@model Domain.Entities.Order
+
+<h3>Order information</h3>
+
+<div>
+    <p>Date: @Model.Date</p>
+    <a asp-action="Get" asp-controller="Delivery" asp-route-id="@Model.DeliveryId"><p>Delivery id: @Model.DeliveryId</p></a>
+    <a asp-action="Get" asp-controller="Payment" asp-route-id="@Model.PaymentId"><p>Payment id: @Model.PaymentId</p></a>
+    <p>Products:</p>
+
+    @foreach (var product in Model.Products)
+    {
+        <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id"><p>Id: @product.Id</p></a>
+    }
+</div>
