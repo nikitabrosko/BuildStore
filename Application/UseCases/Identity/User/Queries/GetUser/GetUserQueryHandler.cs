@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,11 @@ namespace Application.UseCases.Identity.User.Queries.GetUser
                 .ThenInclude(c => c.Orders)
                 .Include(u => u.ShoppingCart)
                 .SingleOrDefaultAsync(u => u.UserName.Equals(request.UserName), cancellationToken);
+
+            if (user is null)
+            {
+                throw new NotFoundException(nameof(Domain.IdentityEntities.User), request.UserName);
+            }
 
             return user;
         }

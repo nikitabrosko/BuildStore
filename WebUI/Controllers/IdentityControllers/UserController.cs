@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
 using Application.UseCases.Identity.User.Commands.CreateUser;
 using Application.UseCases.Identity.User.Commands.DeleteUser;
 using Application.UseCases.Identity.User.Commands.UpdateUser;
@@ -30,7 +32,12 @@ namespace WebUI.Controllers.IdentityControllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateUserCommand command)
         {
-            await Mediator.Send(command);
+            var result = await Mediator.Send(command);
+
+            if (!result.Result.Succeeded)
+            {
+                return View("IdentityError", result.Result.Errors);
+            }
 
             return RedirectToAction("Index");
         }
@@ -47,18 +54,32 @@ namespace WebUI.Controllers.IdentityControllers
         [Route("Update/{command}")]
         public async Task<IActionResult> Update([FromForm] UpdateUserCommand command)
         {
-            await Mediator.Send(command);
+            try
+            {
+                await Mediator.Send(command);
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         [Route("Delete/{id}")]
         public async Task<IActionResult> Delete([FromRoute] string id)
         {
-            await Mediator.Send(new DeleteUserCommand { Id = id });
+            try
+            {
+                await Mediator.Send(new DeleteUserCommand { Id = id });
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpGet]

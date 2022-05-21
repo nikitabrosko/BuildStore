@@ -8,40 +8,59 @@ using Application.UseCases.Order.Queries.GetOrder;
 using Application.UseCases.Order.Queries.GetOrdersForSpecifiedCustomer;
 using Application.UseCases.Order.Queries.GetOrdersWithPagination;
 using Application.UseCases.ShoppingCart.Queries.GetShoppingCart;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
+    [Authorize]
     public class OrderController : ApiControllerBase
     {
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] GetOrdersWithPaginationQuery query)
         {
             return View(await Mediator.Send(query));
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            return View(await Mediator.Send(new GetOrderQuery { Id = id }));
+            try
+            {
+                return View(await Mediator.Send(new GetOrderQuery { Id = id }));
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var user = await Mediator.Send(new GetUserQuery {UserName = User.Identity.Name});
-            var shoppingCart = await Mediator.Send(new GetShoppingCartQuery {Id = user.ShoppingCart.Id});
-            var customer = await Mediator.Send(new GetCustomerQuery {Id = user.Customer.Id});
-
-            var id = await Mediator.Send(new CreateOrderCommand
+            try
             {
-                Customer = customer,
-                Products = shoppingCart.Products
-            });
+                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+                var shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
+                var customer = await Mediator.Send(new GetCustomerQuery { Id = user.Customer.Id });
 
-            return RedirectToAction("Create", "Delivery", new {orderId = id});
+                var id = await Mediator.Send(new CreateOrderCommand
+                {
+                    Customer = customer,
+                    Products = shoppingCart.Products
+                });
+
+                return RedirectToAction("Create", "Delivery", new { orderId = id });
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id, string returnUrl = null)
         {
@@ -65,18 +84,32 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrders()
         {
-            var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
-            var customer = await Mediator.Send(new GetCustomerQuery {Id = user.Customer.Id});
+            try
+            {
+                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+                var customer = await Mediator.Send(new GetCustomerQuery { Id = user.Customer.Id });
 
-            return View(await Mediator.Send(new GetOrdersForSpecifiedCustomerQuery {CustomerId = customer.Id}));
+                return View(await Mediator.Send(new GetOrdersForSpecifiedCustomerQuery { CustomerId = customer.Id }));
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> CancelCreation(int orderId)
         {
-            await Mediator.Send(new DeleteOrderCommand {Id = orderId});
+            try
+            {
+                await Mediator.Send(new DeleteOrderCommand { Id = orderId });
 
-            return RedirectToAction("Index", "ShoppingCart");
+                return RedirectToAction("Index", "ShoppingCart");
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
     }
 }

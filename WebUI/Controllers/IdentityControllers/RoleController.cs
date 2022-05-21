@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Identity.Role.Commands.AddRoleToUser;
@@ -43,21 +44,14 @@ namespace WebUI.Controllers.IdentityControllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateRoleCommand command)
         {
-            try
-            {
-                var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command);
 
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
-
-                return View("IdentityError", result.Errors);
-            }
-            catch (NotFoundException exception)
+            if (result.Succeeded)
             {
-                return View("Error", exception.Message);
+                return RedirectToAction("Index");
             }
+
+            return View("IdentityError", result.Errors);
         }
 
         [HttpGet("{id}")]
@@ -145,7 +139,14 @@ namespace WebUI.Controllers.IdentityControllers
             ViewBag.Title = "Remove Role from User page";
             ViewBag.UserId = id;
 
-            return View(await Mediator.Send(new GetRolesForSpecifiedUserQuery { UserId = id }));
+            try
+            {
+                return View(await Mediator.Send(new GetRolesForSpecifiedUserQuery { UserId = id }));
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpGet("{userId}/{roleName}")]

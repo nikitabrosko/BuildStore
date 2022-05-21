@@ -7,48 +7,67 @@ using Application.UseCases.Delivery.Queries.GetDeliveriesWithPagination;
 using Application.UseCases.Delivery.Queries.GetDelivery;
 using Application.UseCases.Order.Commands.UpdateOrder;
 using Application.UseCases.Order.Queries.GetOrder;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers
 {
+    [Authorize]
     public class DeliveryController : ApiControllerBase
     {
         private string _returnUrl;
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] GetDeliveriesWithPaginationQuery query)
         {
             return View(await Mediator.Send(query));
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
-            return View(await Mediator.Send(new GetDeliveryQuery { Id = id }));
+            try
+            {
+                return View(await Mediator.Send(new GetDeliveryQuery { Id = id }));
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
         [HttpGet("{orderId:int}")]
         public IActionResult Create(int orderId)
         {
-            return View(new CreateDeliveryCommand {OrderId = orderId});
+            return View(new CreateDeliveryCommand { OrderId = orderId });
         }
 
         [HttpPost("{command}")]
         public async Task<IActionResult> Create([FromForm] CreateDeliveryCommand command)
         {
-            var deliveryId = await Mediator.Send(command);
-
-            var delivery = await Mediator.Send(new GetDeliveryQuery {Id = deliveryId});
-
-            await Mediator.Send(new UpdateOrderCommand
+            try
             {
-                Id = command.OrderId,
-                Delivery = delivery
-            });
+                var deliveryId = await Mediator.Send(command);
 
-            return RedirectToAction("Create", "Payment", new {orderId = command.OrderId});
+                var delivery = await Mediator.Send(new GetDeliveryQuery { Id = deliveryId });
+
+                await Mediator.Send(new UpdateOrderCommand
+                {
+                    Id = command.OrderId,
+                    Delivery = delivery
+                });
+
+                return RedirectToAction("Create", "Payment", new { orderId = command.OrderId });
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, string returnUrl = null)
         {
@@ -75,6 +94,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("{command}")]
         public async Task<IActionResult> Update([FromForm] UpdateDeliveryCommand command)
         {
@@ -95,6 +115,7 @@ namespace WebUI.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id, string returnUrl = null)
         {
@@ -118,10 +139,17 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> CancelCreation(int orderId)
         {
-            var order = await Mediator.Send(new GetOrderQuery {Id = orderId});
-            await Mediator.Send(new DeleteDeliveryCommand {Id = order.DeliveryId});
+            try
+            {
+                var order = await Mediator.Send(new GetOrderQuery { Id = orderId });
+                await Mediator.Send(new DeleteDeliveryCommand { Id = order.DeliveryId });
 
-            return RedirectToAction("CancelCreation", "Order", new { orderId });
+                return RedirectToAction("CancelCreation", "Order", new { orderId });
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
     }
 }

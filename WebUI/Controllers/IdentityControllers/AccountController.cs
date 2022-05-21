@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Identity.User.Commands.CreateUser;
@@ -100,7 +101,14 @@ namespace WebUI.Controllers.IdentityControllers
         [HttpGet]
         public async Task<IActionResult> Cabinet()
         {
-            return View(await Mediator.Send(new GetUserQuery {UserName = User.Identity.Name}));
+            try
+            {
+                return View(await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name }));
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
         }
     }
 }
