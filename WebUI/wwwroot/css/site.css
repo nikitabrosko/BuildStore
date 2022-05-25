@@ -59,8 +59,9 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background-color: whitesmoke;
 }
 .footer {
   position: absolute;
@@ -71,3 +72,145 @@ body {
 }
 /* Custom styles
 -------------------------------------------------- */
+
+.catalog__inner {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+.catalog-col {
+    -ms-flex-preferred-size: 33%;
+    flex-basis: 33%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-bottom: 3px
+}
+
+.catalog-item-xs {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    position: relative;
+    text-decoration: none;
+}
+
+.catalog-item-xs p {
+    position: absolute;
+    left: calc(50% - 100% /2);
+    z-index: 2;
+    font-size: 33px;
+    width: 100%;
+    color: #fff;
+    font-family: "MuseoSansCyrl-700", sans-serif;
+    text-align: center;
+    line-height: 100%;
+    text-transform: uppercase;
+    margin: 0
+}
+
+.catalog-item-xs::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5)
+}
+
+.catalog-item-xs:hover::before {
+    display: none;
+}
+
+.catalog-item-xs img {
+    max-width: 100%
+}
+
+.catalog-item-xs img:first-child {
+    display: block
+}
+
+.catalog-item-img {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center
+}
+
+.catalog-item-img img {
+    max-width: 100%
+}
+
+.ps-title {
+    font-size: 1.1em;
+    border-bottom: 1px solid #eee;
+    margin: 30px 0 0 0;
+}
+
+    .ps-title span {
+        font-family: 'MuseoSansCyrl-900', sans-serif;
+        background-color: #fff;
+        display: inline-block;
+        padding: 8px 25px 5px 25px;
+        border-top: 1px solid #dfdede;
+        border-right: 1px solid #dfdede;
+        border-bottom: 3px solid black;
+        border-left: 1px solid #dfdede;
+        text-transform: uppercase;
+        text-align: center;
+        margin-right: 10px;
+        font-size: 16px;
+        background-color: #f7f7f7;
+    }
+
+@media(max-width:1200px) {
+    .catalog-item-xs p {
+        font-size: 25px;
+    }
+}
+
+@media(max-width:992px) {
+    .catalog-item-xs p {
+        font-size: 18px;
+    }
+
+    .ps-title span {
+        font-size: 13px;
+    }
+}
+
+@media(max-width:768px) {
+    .catalog-item-xs p {
+        font-size: 15px;
+    }
+
+    .catalog-col {
+        -ms-flex-preferred-size: 49.8%;
+        flex-basis: 49.8%;
+    }
+
+    .ps-title span {
+        font-size: 11px;
+    }
+}

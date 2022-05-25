@@ -6,9 +6,16 @@ namespace WebUI.Controllers
     {
         public IActionResult Index()
         {
-            ViewBag.Title = "Home page";
+            if (User.IsInRole("admin"))
+            {
+                ViewBag.Title = "Home page";
 
-            return View();
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Category");
+            }
         }
     }
 }

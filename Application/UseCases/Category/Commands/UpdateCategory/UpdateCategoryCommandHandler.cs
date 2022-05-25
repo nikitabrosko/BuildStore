@@ -27,8 +27,8 @@ namespace Application.UseCases.Category.Commands.UpdateCategory
                 throw new NotFoundException(nameof(Domain.Entities.Category), request.Id);
             }
 
-            var checkForExistsEntity = _context.Categories.AsEnumerable()
-                .SkipWhile(c => c.Id.Equals(request.Id))
+            var checkForExistsEntity = _context.Categories
+                .Where(c => !c.Id.Equals(request.Id))
                 .Any(category => category.Name.Equals(request.Name));
 
             if (checkForExistsEntity)

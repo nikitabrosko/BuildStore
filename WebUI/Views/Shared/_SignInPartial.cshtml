@@ -1,7 +1,13 @@
 ﻿@model Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 <div>
-    <form method="post" asp-controller="Account" asp-action="Login">
+    <form method="post" asp-controller="Account" asp-action="Login" id="signInForm">
 
         @Html.HiddenFor(m => m.ReturnUrl)
 
@@ -40,13 +46,24 @@
 
         <div class="form-check">
             @Html.EditorFor(m => m.RememberMe,
-                new {htmlAttributes = new {@class = "form-check-input"}})
+                new { htmlAttributes = new { @class = "form-check-input" } })
             @Html.Label("Remember me", "Remember me",
-                new {@class = "form-check-label"})
+                new { @class = "form-check-label" })
         </div>
 
         <button type="submit">Sign in</button>
     </form>
-
-    <a asp-action="Register" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl">Register</a>
+    
+    <button onclick="showInPopup('@Url.Action("Register", "Account",
+                                      new {returnUrl = Url.Action()},
+                                      Context.Request.Scheme)', 'Register')">
+        Register
+    </button>
 </div>
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#signInForm").validate();
+</script>

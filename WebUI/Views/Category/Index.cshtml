@@ -5,23 +5,30 @@
     <a asp-action="Create" asp-controller="Category">Create Category</a>
 }
 
-<div>
+<div class="ps-title">
+    <span>Каталог</span>
+</div>
+
+<div class="catalog__inner">
     @foreach (var category in Model)
     {
-        <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id">
-            <div>
-                <div>@category.Name</div>
-                <div>
+        <div class="catalog-col">
+            <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="catalog-item-xs">
+                <div class="catalog-item-img">
+
                     @{
                         var base64 = Convert.ToBase64String(category.Picture);
                         var imgSrc = $"data:image/gif;base64,{base64}";
                     }
 
-                    <img src="@imgSrc" style="max-width: 300px" alt="@category.Name" />
+                    <img src="@imgSrc" alt="@category.Name" />
+                    
                 </div>
-            </div>
-        </a>
-        if (User.IsInRole("admin"))
+                <p>@category.Name</p>
+            </a>
+        </div>
+
+        @if (User.IsInRole("admin"))
         {
             <div>
                 <a asp-action="Update" asp-controller="Category" asp-route-id="@category.Id">Edit</a>
