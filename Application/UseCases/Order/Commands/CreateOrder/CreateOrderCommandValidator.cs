@@ -6,9 +6,9 @@ namespace Application.UseCases.Order.Commands.CreateOrder
     {
         public CreateOrderCommandValidator()
         {
-            RuleFor(v => v.Products)
-                .NotEmpty().WithMessage("Products cannot be empty!")
-                .NotNull().WithMessage("Products cannot be null!");
+            RuleFor(v => v.ProductsDictionary)
+                .NotEmpty().WithMessage("ProductsDictionary cannot be empty!")
+                .NotNull().WithMessage("ProductsDictionary cannot be null!");
         }
     }
 }

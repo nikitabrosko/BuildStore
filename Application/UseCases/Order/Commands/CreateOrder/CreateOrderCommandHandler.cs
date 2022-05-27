@@ -20,7 +20,7 @@ namespace Application.UseCases.Order.Commands.CreateOrder
             var entity = new Domain.Entities.Order
             {
                 Date = DateTime.Now,
-                Products = request.Products,
+                ProductsDictionary = request.ProductsDictionary,
                 Customer = request.Customer,
                 Delivery = request.Delivery,
                 Payment = request.Payment

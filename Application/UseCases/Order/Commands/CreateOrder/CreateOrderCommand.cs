@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.UseCases.Order.Commands.CreateOrder
 {
     public class CreateOrderCommand : IRequest<int>
     {
-        public ICollection<Domain.Entities.Product> Products { get; set; }
+        public ICollection<ProductsDictionary> ProductsDictionary { get; set; }
 
         public Domain.Entities.Customer Customer { get; set; }
 
