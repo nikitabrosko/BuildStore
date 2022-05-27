@@ -81,19 +81,9 @@ namespace WebUI.Controllers.IdentityControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Logout(string returnUrl = null)
+        public async Task<IActionResult> Logout()
         {
-            if (User.IsInRole("admin"))
-            {
-                returnUrl = null;
-            }
-
             await _signInManager.SignOutAsync();
-
-            if (returnUrl != null)
-            {
-                return Redirect(returnUrl);
-            }
 
             return RedirectToAction("Index", "Home");
         }

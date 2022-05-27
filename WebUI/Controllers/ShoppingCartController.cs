@@ -32,27 +32,13 @@ namespace WebUI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> AddProduct([FromRoute] int id, string returnUrl = null)
+        public async Task AddProduct([FromRoute] int id)
         {
-            try
+            await Mediator.Send(new AddProductCommand
             {
-                await Mediator.Send(new AddProductCommand
-                {
-                    ProductId = id,
-                    Username = User.Identity.Name
-                });
-
-                if (returnUrl != null)
-                {
-                    return Redirect(returnUrl);
-                }
-
-                return RedirectToAction("Index", "ShoppingCart");
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
+                ProductId = id,
+                Username = User.Identity.Name
+            });
         }
 
         [HttpGet("{id:int}")]

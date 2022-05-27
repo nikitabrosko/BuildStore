@@ -49,7 +49,7 @@ namespace WebUI.Controllers
                 var id = await Mediator.Send(new CreateOrderCommand
                 {
                     Customer = customer,
-                    Products = shoppingCart.Products
+                    ProductsDictionary = shoppingCart.ProductsDictionary
                 });
 
                 return RedirectToAction("Create", "Delivery", new { orderId = id });
