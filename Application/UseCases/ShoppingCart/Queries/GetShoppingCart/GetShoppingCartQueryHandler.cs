@@ -19,7 +19,8 @@ namespace Application.UseCases.ShoppingCart.Queries.GetShoppingCart
         public async Task<Domain.Entities.ShoppingCart> Handle(GetShoppingCartQuery request, CancellationToken cancellationToken)
         {
             var shoppingCartEntity = await _context.ShoppingCarts
-                .Include(s => s.Products)
+                .Include(s => s.ProductsDictionary)
+                .ThenInclude(p => p.Product)
                 .SingleOrDefaultAsync(s => s.Id.Equals(request.Id), cancellationToken);
 
             if (shoppingCartEntity is null)
