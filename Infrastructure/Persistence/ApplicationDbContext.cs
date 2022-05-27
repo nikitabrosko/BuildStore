@@ -26,6 +26,8 @@ namespace Infrastructure.Persistence
         public DbSet<Product> Products => Set<Product>();
 
         public DbSet<Supplier> Suppliers => Set<Supplier>();
+
+        public DbSet<ProductsDictionary> ProductsDictionaries => Set<ProductsDictionary>();
         
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
