@@ -19,7 +19,7 @@ namespace Application.UseCases.ShoppingCart.Commands.ClearProducts
         public async Task<Unit> Handle(ClearProductsCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.ShoppingCarts
-                .Include(s => s.Products)
+                .Include(s => s.ProductsDictionary)
                 .SingleOrDefaultAsync(s => s.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
@@ -27,7 +27,7 @@ namespace Application.UseCases.ShoppingCart.Commands.ClearProducts
                 throw new NotFoundException(nameof(Domain.Entities.ShoppingCart), request.Id);
             }
 
-            entity.Products.Clear();
+            entity.ProductsDictionary.Clear();
 
             _context.ShoppingCarts.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);

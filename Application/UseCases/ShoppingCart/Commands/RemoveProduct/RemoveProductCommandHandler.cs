@@ -31,7 +31,7 @@ namespace Application.UseCases.ShoppingCart.Commands.RemoveProduct
             }
 
             var shoppingCartEntity = await _context.ShoppingCarts
-                .Include(s => s.Products)
+                .Include(s => s.ProductsDictionary)
                 .SingleOrDefaultAsync(s => s.Id.Equals(userEntity.ShoppingCart.Id), cancellationToken);
 
             var productEntity = await _context.Products
@@ -42,7 +42,16 @@ namespace Application.UseCases.ShoppingCart.Commands.RemoveProduct
                 throw new NotFoundException(nameof(Domain.Entities.Product), request.ProductId);
             }
 
-            shoppingCartEntity.Products.Remove(productEntity);
+            var productsDictionaryEntity = await _context.ProductsDictionaries
+                .Include(p => p.Product)
+                .SingleOrDefaultAsync(p => p.Product.Equals(productEntity), cancellationToken);
+
+            if (productsDictionaryEntity is null)
+            {
+                throw new NotFoundException(nameof(Domain.Entities.ProductsDictionary), productEntity);
+            }
+
+            shoppingCartEntity.ProductsDictionary.Remove(productsDictionaryEntity);
 
             await _context.SaveChangesAsync(cancellationToken);
 
