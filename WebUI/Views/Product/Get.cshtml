@@ -4,7 +4,22 @@
 <h4>Category: @Model.Category.Name</h4>
 <h5>Supplier: @Model.Supplier.CompanyName</h5>
 
-<a asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-productId="@Model.Id">Add to Shopping cart</a>
+@if (User.IsInRole("user"))
+{
+    <button asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-id="@Model.Id" asp-route-returnUrl="@Url.Action()">Add to Shopping cart</button>
+}
+else if (User.IsInRole("admin"))
+{
+    <button onclick="alert('Добавление товара в корзину недоступно с правами администратора!')">Add to Shopping cart</button>
+}
+else
+{
+    <button onclick="showInPopup('@Url.Action("Login", "Account", 
+                                      new {returnUrl = Url.Action()},
+                                      Context.Request.Scheme)', 'Sign In')">
+        Add to Shopping cart
+    </button>
+}
 
 <div>
     <div>

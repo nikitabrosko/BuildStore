@@ -10,7 +10,7 @@
                     @Html.ActionLink("Cabinet", "Cabinet", "Account",
                         new { }, new { @class = "dropdown-item" })
                     @Html.ActionLink("Logout", "Logout", "Account",
-                        new { returnUrl = Url.Action() }, new { @class = "dropdown-item" })
+                        null, new { @class = "dropdown-item" })
                     @if (User.IsInRole("admin"))
                     {
                         @Html.ActionLink("Manage Users", "Index", "User",

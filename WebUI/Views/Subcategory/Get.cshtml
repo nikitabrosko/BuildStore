@@ -17,7 +17,28 @@
             </div>
             <div>@product.Price</div>
         </a>
-        <a asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-id="@product.Id" asp-route-returnUrl="@Url.Action()">Add to Shopping cart</a>
+        @if (User.IsInRole("user"))
+        {
+            <div class="but-wrap">
+                <a onclick="jQueryAjaxAddProduct('@Url.Action("AddProduct", "ShoppingCart",
+                                                           new {id = product.Id}, Context.Request.Scheme)')"
+                        tabindex="0" role="button" class="addToCart" id="addProductToShoppingCart">
+                    <i class="fa fa-shopping-cart"></i>
+                </a>
+            </div>
+        }
+        else if (User.IsInRole("admin"))
+        {
+            <a tabindex="0" role="button" data-toggle="popover"
+               data-trigger="focus" title="Ошибка"
+               data-content="В роли администратора нельзя добавлять товары в корзину"><i class="fa fa-shopping-cart"></i></a>
+        }
+        else
+        {
+            <a tabindex="0" role="button" data-toggle="popover"
+               data-trigger="focus" title="Ошибка" 
+               data-content="Чтобы добавить товар в корзину необходимо авторизоваться!"><i class="fa fa-shopping-cart"></i></a>
+        }
     }
     @foreach (var modelSubcategory in Model.Subcategories)
     {
@@ -35,7 +56,22 @@
                 </div>
                 <div>@product.Price</div>
             </a>
-            <a asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-id="@product.Id" asp-route-returnUrl="@Url.Action()">Add to Shopping cart</a>
+            @if (User.IsInRole("user"))
+            {
+                <button asp-action="AddProduct" asp-controller="ShoppingCart" asp-route-id="@product.Id" asp-route-returnUrl="@Url.Action()">Add to Shopping cart</button>
+            }
+            else if (User.IsInRole("admin"))
+            {
+                <button onclick="alert('Добавление товара в корзину недоступно с правами администратора!')">Add to Shopping cart</button>
+            }
+            else
+            {
+                <button onclick="showInPopup('@Url.Action("Login", "Account", 
+                                                  new {returnUrl = Url.Action()},
+                                                  Context.Request.Scheme)', 'Sign In')">
+                    Add to Shopping cart
+                </button>
+            }
         }
     }
 </div>

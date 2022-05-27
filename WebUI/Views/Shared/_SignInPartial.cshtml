@@ -55,7 +55,7 @@
     </form>
     
     <button onclick="showInPopup('@Url.Action("Register", "Account",
-                                      new {returnUrl = Url.Action()},
+                                      new {returnUrl = Model.ReturnUrl},
                                       Context.Request.Scheme)', 'Register')">
         Register
     </button>

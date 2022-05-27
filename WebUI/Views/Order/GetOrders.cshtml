@@ -11,11 +11,12 @@
         <p>Delivery fulfilled: @order.Delivery.Fulfilled</p>
         <p>Products:</p>
 
-        @foreach (var product in order.Products)
+        @foreach (var productsDictionary in order.ProductsDictionary)
         {
-            <p>Name: @product.Name</p>
-            <p>Price: @product.Price</p>
-            <p>Weight: @product.Weight</p>
+            <p>Name: @productsDictionary.Product.Name</p>
+            <p>Price: @productsDictionary.Product.Price</p>
+            <p>Weight: @productsDictionary.Product.Weight</p>
+            <p>Count: @productsDictionary.Count</p>
         }
     </div>
 }

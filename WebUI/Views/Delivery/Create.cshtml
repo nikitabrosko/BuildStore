@@ -1,4 +1,5 @@
-﻿@model Application.UseCases.Delivery.Commands.CreateDelivery.CreateDeliveryCommand
+﻿@using Domain.Entities
+@model Application.UseCases.Delivery.Commands.CreateDelivery.CreateDeliveryCommand
 
 @using (Html.BeginForm("Create", "Delivery", FormMethod.Post))
 {
@@ -6,7 +7,9 @@
 
     <div>
         @Html.Label("Delivery type:")
-        @Html.EditorFor(m => m.Type)
+        <select asp-for="Type" asp-items="Html.GetEnumSelectList<DeliveryType>()" 
+                class="form-control">
+        </select>
     </div>
 
     <div>

@@ -8,8 +8,11 @@
     <a asp-action="Get" asp-controller="Payment" asp-route-id="@Model.PaymentId"><p>Payment id: @Model.PaymentId</p></a>
     <p>Products:</p>
 
-    @foreach (var product in Model.Products)
+    @foreach (var productsDictionary in Model.ProductsDictionary)
     {
-        <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id"><p>Id: @product.Id</p></a>
+        <a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">
+            <p>Id: @productsDictionary.Product.Id</p>
+            <p>Count: @productsDictionary.Count</p>
+        </a>
     }
 </div>

@@ -17,20 +17,20 @@ else
 <h5>Products</h5>
 
 <div>
-    @foreach (var product in Model.Products)
+    @foreach (var productsDictionary in Model.ProductsDictionary)
     {
         <div>
-            <p>@product.Name</p>
-            <p>@product.Price</p>
-            <p>@product.QuantityPerUnit</p>
+            <p>@productsDictionary.Product.Name</p>
+            <p>@productsDictionary.Product.Price</p>
+            <p>@productsDictionary.Product.QuantityPerUnit</p>
             @{
-                var base64 = Convert.ToBase64String(product.Picture);
+                var base64 = Convert.ToBase64String(productsDictionary.Product.Picture);
                 var imgSrc = $"data:image/gif;base64,{base64}";
             }
-            <img src="@imgSrc" style="max-width: 300px" alt="@product.Name" />
-
+            <img src="@imgSrc" style="max-width: 300px" alt="@productsDictionary.Product.Name" />
+            <p>Count: @productsDictionary.Count</p>
             <a asp-action="RemoveProduct" asp-controller="ShoppingCart"
-               asp-route-id="@product.Id">Remove</a>
+               asp-route-id="@productsDictionary.Product.Id">Remove</a>
         </div>
     }
 </div>

@@ -11,9 +11,12 @@
         <a asp-action="Get" asp-controller="Payment" asp-route-id="@order.PaymentId"><p>Payment id: @order.PaymentId</p></a>
         <p>Products:</p>
 
-        @foreach (var product in order.Products)
+        @foreach (var productsDictionary in order.ProductsDictionary)
         {
-            <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id"><p>Id: @product.Id</p></a>
+            <a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">
+                <p>Id: @productsDictionary.Product.Id</p>
+                <p>Count: @productsDictionary.Count</p>
+            </a>
         }
         
         @if (Model.Items.Count is 1 && Model.TotalPages > 1)
