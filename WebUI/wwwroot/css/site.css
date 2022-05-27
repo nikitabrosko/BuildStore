@@ -9,7 +9,8 @@ a.navbar-brand {
 
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+    color: #0366d6;
+    cursor: pointer;
 }
 
 .btn-primary {
@@ -213,4 +214,10 @@ body {
     .ps-title span {
         font-size: 11px;
     }
+}
+
+.fa-shopping-cart:before {
+    content: "\f07a";
+    font-size: 48px;
+    color: dimgrey;
 }

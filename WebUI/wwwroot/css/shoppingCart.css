@@ -1,0 +1,11 @@
+﻿.but-wrap {
+    position: static;
+    display: inline-block;
+    width: 100%;
+    height: auto;
+}
+
+.addToCart {
+    position: relative;
+    display: table;
+}
