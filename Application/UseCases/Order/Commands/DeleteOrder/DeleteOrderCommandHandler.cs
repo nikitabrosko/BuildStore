@@ -21,7 +21,7 @@ namespace Application.UseCases.Order.Commands.DeleteOrder
             var entity = await _context.Orders
                 .Include(o => o.Delivery)
                 .Include(o => o.Payment)
-                .Include(o => o.Products)
+                .Include(o => o.ProductsDictionary)
                 .SingleOrDefaultAsync(o => o.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
@@ -39,7 +39,14 @@ namespace Application.UseCases.Order.Commands.DeleteOrder
                 _context.Payments.Remove(entity.Payment);
             }
 
-            entity.Products = null;
+            if (entity.ProductsDictionary != null)
+            {
+                foreach (var productsDictionary in entity.ProductsDictionary)
+                {
+                    _context.ProductsDictionaries.Remove(productsDictionary);
+                }
+               
+            }
 
             _context.Orders.Remove(entity);
 
