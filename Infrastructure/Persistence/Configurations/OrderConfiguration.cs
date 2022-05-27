@@ -26,8 +26,8 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(o => o.CustomerId)
                 .IsRequired();
 
-            builder.HasMany(o => o.Products)
-                .WithMany(p => p.Orders);
+            builder.HasMany(o => o.ProductsDictionary)
+                .WithOne(p => p.Order);
         }
     }
 }

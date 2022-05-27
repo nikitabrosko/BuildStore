@@ -21,11 +21,11 @@ namespace Domain.Entities
 
         public int CustomerId { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<ProductsDictionary> ProductsDictionary { get; set; }
 
         public Order()
         {
-            Products = new HashSet<Product>();
+            ProductsDictionary = new HashSet<ProductsDictionary>();
         }
     }
 }

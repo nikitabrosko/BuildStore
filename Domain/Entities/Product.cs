@@ -29,14 +29,11 @@ namespace Domain.Entities
 
         public byte[] Picture { get; set; }
 
-        public ICollection<ShoppingCart> ShoppingCarts { get; set; }
-
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<ProductsDictionary> ProductsDictionaries { get; set; }
 
         public Product()
         {
-            ShoppingCarts = new HashSet<ShoppingCart>();
-            Orders = new HashSet<Order>();
+            ProductsDictionaries = new HashSet<ProductsDictionary>();
         }
     }
 }

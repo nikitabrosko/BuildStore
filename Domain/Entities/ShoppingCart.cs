@@ -7,11 +7,11 @@ namespace Domain.Entities
     {
         public int Id { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<ProductsDictionary> ProductsDictionary { get; set; }
         
         public ShoppingCart()
         {
-            Products = new HashSet<Product>();
+            ProductsDictionary = new HashSet<ProductsDictionary>();
         }
     }
 }

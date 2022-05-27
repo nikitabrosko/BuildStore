@@ -10,10 +10,10 @@ namespace Infrastructure.Persistence.Configurations
         {
             builder.HasKey(s => s.Id);
 
-            builder.HasMany(s => s.Products);
+            builder.HasMany(s => s.ProductsDictionary);
 
-            builder.HasMany(s => s.Products)
-                .WithMany(p => p.ShoppingCarts);
+            builder.HasMany(s => s.ProductsDictionary)
+                .WithOne(p => p.ShoppingCart);
         }
     }
 }
