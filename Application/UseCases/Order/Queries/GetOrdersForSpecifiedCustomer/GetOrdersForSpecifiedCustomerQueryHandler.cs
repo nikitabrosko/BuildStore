@@ -23,6 +23,8 @@ namespace Application.UseCases.Order.Queries.GetOrdersForSpecifiedCustomer
                 .Include(o => o.Customer)
                 .Include(o => o.Delivery)
                 .Include(o => o.Payment)
+                .Include(o => o.ProductsDictionary)
+                .ThenInclude(p => p.Product)
                 .Where(o => o.CustomerId.Equals(request.CustomerId));
 
             return await PaginatedList<Domain.Entities.Order>.CreateAsync(query, request.PageNumber, request.PageSize);

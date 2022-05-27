@@ -21,7 +21,8 @@ namespace Application.UseCases.Order.Queries.GetOrder
             var entity = await _context.Orders
                 .Include(o => o.Delivery)
                 .Include(o => o.Payment)
-                .Include(o => o.Products)
+                .Include(o => o.ProductsDictionary)
+                .ThenInclude(p => p.Product)
                 .SingleOrDefaultAsync(o => o.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)

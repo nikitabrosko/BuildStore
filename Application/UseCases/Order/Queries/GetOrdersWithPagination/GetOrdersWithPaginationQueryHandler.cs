@@ -19,7 +19,8 @@ namespace Application.UseCases.Order.Queries.GetOrdersWithPagination
         public async Task<PaginatedList<Domain.Entities.Order>> Handle(GetOrdersWithPaginationQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Orders
-                .Include(o => o.Products);
+                .Include(o => o.ProductsDictionary)
+                .ThenInclude(o => o.Product);
 
             return await PaginatedList<Domain.Entities.Order>.CreateAsync(query, request.PageNumber, request.PageSize);
         }
