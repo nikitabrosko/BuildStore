@@ -38,20 +38,20 @@ namespace Application.UseCases.ShoppingCart.Commands.AddProduct
                 throw new NotFoundException(nameof(Domain.Entities.Product), request.ProductId);
             }
 
-            var productDictionaryEntity = await _context.ProductsDictionaries
+            var productsDictionaryEntity = await _context.ProductsDictionaries
                 .Include(p => p.Product)
                 .Include(p => p.ShoppingCart)
                 .SingleOrDefaultAsync(p => p.Product.Equals(productEntity) 
                                            && p.ShoppingCart.Id.Equals(shoppingCartEntity.Id), cancellationToken);
 
-            if (productDictionaryEntity is null)
+            if (productsDictionaryEntity is null)
             {
                 await _context.ProductsDictionaries.AddAsync(new Domain.Entities.ProductsDictionary
                     {Product = productEntity, Count = 1, ShoppingCart = shoppingCartEntity}, cancellationToken);
             }
             else
             {
-                shoppingCartEntity.ProductsDictionary.Single(p => p.Equals(productDictionaryEntity)).Count += 1;
+                shoppingCartEntity.ProductsDictionary.Single(p => p.Equals(productsDictionaryEntity)).Count += 1;
             }
 
             await _context.SaveChangesAsync(cancellationToken);
