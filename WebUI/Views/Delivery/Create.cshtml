@@ -6,7 +6,7 @@
     @Html.HiddenFor(m => m.OrderId)
 
     <div>
-        @Html.Label("Delivery type:")
+        @Html.Label("Delivery type")
         <select asp-for="Type" asp-items="Html.GetEnumSelectList<DeliveryType>()" 
                 class="form-control">
         </select>
