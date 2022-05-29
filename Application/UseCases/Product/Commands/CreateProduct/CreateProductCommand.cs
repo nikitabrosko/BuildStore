@@ -15,7 +15,7 @@ namespace Application.UseCases.Product.Commands.CreateProduct
 
         public int SupplierId { get; set; }
 
-        public int? CategoryId { get; set; }
+        public string CategoryName { get; set; }
 
         public float Discount { get; set; }
 

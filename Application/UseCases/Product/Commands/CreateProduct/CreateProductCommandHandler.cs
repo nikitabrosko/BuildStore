@@ -55,15 +55,15 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                     $"{nameof(Domain.Entities.Product)} with this name and supplier is already exists!");
             }
 
-            if (request.CategoryId != null)
+            if (request.CategoryName != null)
             {
                 var category = await _context.Categories
                     .Include(c => c.Products)
-                    .SingleOrDefaultAsync(c => c.Id.Equals(request.CategoryId), cancellationToken);
+                    .SingleOrDefaultAsync(c => c.Name.Equals(request.CategoryName), cancellationToken);
 
                 if (category is null)
                 {
-                    throw new NotFoundException(nameof(Category), request.CategoryId);
+                    throw new NotFoundException(nameof(Category), request.CategoryName);
                 }
 
                 entity.Category = category;
@@ -72,7 +72,7 @@ namespace Application.UseCases.Product.Commands.CreateProduct
             await _context.Products.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return request.CategoryId != null ? entity.Category.Id : entity.Supplier.Id;
+            return request.CategoryName != null ? entity.Category.Id : entity.Supplier.Id;
         }
     }
 }

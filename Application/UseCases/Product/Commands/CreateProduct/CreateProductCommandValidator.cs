@@ -6,8 +6,9 @@ namespace Application.UseCases.Product.Commands.CreateProduct
     {
         public CreateProductCommandValidator()
         {
-            RuleFor(v => v.CategoryId)
-                .GreaterThan(0).WithMessage("CategoryId cannot be less than 1!");
+            RuleFor(v => v.CategoryName)
+                .NotEmpty().WithMessage("CategoryName cannot be empty!")
+                .NotNull().WithMessage("CategoryName cannot be null!");
 
             RuleFor(v => v.SupplierId)
                 .GreaterThan(0).WithMessage("SupplierId cannot be less than 1!")
