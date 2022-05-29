@@ -1,0 +1,89 @@
+﻿@using Domain.Entities
+@model Application.UseCases.Order.Commands.CreateOrder.CreateOrderCommand
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
+@using (Html.BeginForm("Create", "Order", FormMethod.Post, 
+    new
+    {
+        @id = "createOrderForm", 
+        @class = "form-group"
+    }))
+{
+    <div class="form-group">
+        @Html.Label("Delivery type:")
+        <select asp-for="DeliveryType" asp-items="Html.GetEnumSelectList<DeliveryType>()"
+                class="form-control">
+        </select>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Payment type:")
+        <select asp-for="PaymentType" asp-items="Html.GetEnumSelectList<PaymentType>()"
+                class="form-control">
+        </select>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Credit card number")
+        @Html.EditorFor(m => m.CreditCardNumber, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "16",
+                minlegth = "16",
+                placeholder = "Credit card number",
+                type = "number",
+                @class = "form-control"
+            }
+        })
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Card exp month")
+        @Html.EditorFor(m => m.CardExpMonth, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "2",
+                minlength = "2",
+                placeholder = "Card exp month",
+                type = "number",
+                @class = "form-control"
+            }
+        })
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Card exp year")
+        @Html.EditorFor(m => m.CardExpYear, new
+        {
+            htmlAttributes = new
+            {
+                required = "true",
+                maxlength = "4",
+                minlength = "4",
+                placeholder = "Card exp year",
+                type = "number",
+                @class = "form-control"
+            }
+        })
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" style="width:100%" />
+    </div>
+}
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#createOrderForm").validate();
+</script>
