@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
@@ -44,14 +45,11 @@ namespace Application.UseCases.ShoppingCart.Commands.RemoveProduct
 
             var productsDictionaryEntity = await _context.ProductsDictionaries
                 .Include(p => p.Product)
-                .SingleOrDefaultAsync(p => p.Product.Equals(productEntity), cancellationToken);
+                .Include(p => p.ShoppingCart)
+                .SingleOrDefaultAsync(p => p.Product.Equals(productEntity)
+                                           && p.ShoppingCart.Id.Equals(shoppingCartEntity.Id), cancellationToken);
 
-            if (productsDictionaryEntity is null)
-            {
-                throw new NotFoundException(nameof(Domain.Entities.ProductsDictionary), productEntity);
-            }
-
-            shoppingCartEntity.ProductsDictionary.Remove(productsDictionaryEntity);
+            shoppingCartEntity.ProductsDictionary.Single(p => p.Equals(productsDictionaryEntity)).Count -= 1;
 
             await _context.SaveChangesAsync(cancellationToken);
 
