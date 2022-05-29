@@ -21,6 +21,8 @@ namespace Application.UseCases.Category.Queries.GetCategories
         {
             return await _context.Categories
                 .OfType<Domain.Entities.Category>()
+                .Include(c => c.Subcategories)
+                .ThenInclude(s => s.Subcategories)
                 .ToListAsync(cancellationToken);
         }
     }
