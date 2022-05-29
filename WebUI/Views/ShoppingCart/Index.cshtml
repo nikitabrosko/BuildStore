@@ -1,36 +1,27 @@
 ﻿@model Domain.Entities.ShoppingCart
 
-<h3>Shopping cart</h3>
+<h3>Корзина товаров</h3>
 
 @if (ViewBag.User.Customer is null)
 {
     <p>Для того, чтобы оформить заказ необходимо заполнить данные о вас</p>
-    <a asp-action="Create" asp-controller="Customer">Заполнить</a>
+    <button onclick="showInPopup('@Url.Action("Create", "Customer",
+                                      Context.Request.Scheme)', 'Заполнение информации')">
+        Заполнить
+    </button>
 }
 else
 {
-    <a asp-action="Create" asp-controller="Order">Оформить заказ</a>
+    <button onclick="showInPopup('@Url.Action("Create", "Order",
+                                      Context.Request.Scheme)', 'Оформление заказа')">
+        Оформить заказ
+    </button>
 }
 
 <a asp-action="GetOrders" asp-controller="Order">My orders</a>
 
-<h5>Products</h5>
+<h5>Товары</h5>
 
-<div>
-    @foreach (var productsDictionary in Model.ProductsDictionary)
-    {
-        <div>
-            <p>@productsDictionary.Product.Name</p>
-            <p>@productsDictionary.Product.Price</p>
-            <p>@productsDictionary.Product.QuantityPerUnit</p>
-            @{
-                var base64 = Convert.ToBase64String(productsDictionary.Product.Picture);
-                var imgSrc = $"data:image/gif;base64,{base64}";
-            }
-            <img src="@imgSrc" style="max-width: 300px" alt="@productsDictionary.Product.Name" />
-            <p>Count: @productsDictionary.Count</p>
-            <a asp-action="RemoveProduct" asp-controller="ShoppingCart"
-               asp-route-id="@productsDictionary.Product.Id">Remove</a>
-        </div>
-    }
+<div id="productsPartial">
+    @await Html.PartialAsync("_ProductsPartial") 
 </div>

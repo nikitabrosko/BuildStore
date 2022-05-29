@@ -1,0 +1,51 @@
+﻿@model Domain.Entities.ShoppingCart
+
+@{
+    Layout = null;
+}
+
+<div>
+    @foreach (var productsDictionary in Model.ProductsDictionary)
+    {
+        <div>
+            <p>@productsDictionary.Product.Name</p>
+            <p>@productsDictionary.Product.Price</p>
+            <p>@productsDictionary.Product.QuantityPerUnit</p>
+            @{
+                var base64 = Convert.ToBase64String(productsDictionary.Product.Picture);
+                var imgSrc = $"data:image/gif;base64,{base64}";
+            }
+            <img src="@imgSrc" style="max-width: 300px" alt="@productsDictionary.Product.Name" />
+            <p>Count: @productsDictionary.Count</p>
+            
+            @if (productsDictionary.Count > 1)
+            {
+                <button onclick="jQueryAjaxPost('@Url.Action("RemoveProduct", "ShoppingCart",
+                                                new {id = @productsDictionary.Product.Id}, Context.Request.Scheme)', '#productsPartial')"
+                   tabindex="0" role="button" id="removeProductFromShoppingCart">
+                    -
+                </button>
+            }
+            else
+            {
+                <button onclick="jQueryAjaxPost('@Url.Action("RemoveProduct", "ShoppingCart",
+                                                new {id = @productsDictionary.Product.Id}, Context.Request.Scheme)', '#productsPartial')"
+                   tabindex="0" role="button" id="removeProductFromShoppingCart" disabled>
+                    -
+                </button>
+            }
+
+            <button onclick="jQueryAjaxPost('@Url.Action("AddProductPost", "ShoppingCart",
+                                                  new {id = @productsDictionary.Product.Id}, Context.Request.Scheme)', '#productsPartial')"
+               tabindex="0" role="button" id="addProductToShoppingCart">
+                +
+            </button>
+                
+            <button onclick="jQueryAjaxPost('@Url.Action("DeleteProductsDictionary", "ShoppingCart",
+                                                      new {id = @productsDictionary.Id}, Context.Request.Scheme)', '#productsPartial')"
+               tabindex="0" role="button" id="addProductToShoppingCart">
+                X
+            </button>
+        </div>
+    }
+</div>
