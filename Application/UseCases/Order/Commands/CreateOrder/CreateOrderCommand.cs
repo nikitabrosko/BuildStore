@@ -6,12 +6,18 @@ namespace Application.UseCases.Order.Commands.CreateOrder
 {
     public class CreateOrderCommand : IRequest<int>
     {
-        public ICollection<ProductsDictionary> ProductsDictionary { get; set; }
+        public ICollection<Domain.Entities.ProductsDictionary> ProductsDictionary { get; set; }
 
         public Domain.Entities.Customer Customer { get; set; }
 
-        public Domain.Entities.Delivery Delivery { get; set; }
+        public DeliveryType DeliveryType { get; set; }
 
-        public Domain.Entities.Payment Payment { get; set; }
+        public PaymentType PaymentType { get; set; }
+
+        public string CreditCardNumber { get; set; }
+
+        public int CardExpMonth { get; set; }
+
+        public int CardExpYear { get; set; }
     }
 }
