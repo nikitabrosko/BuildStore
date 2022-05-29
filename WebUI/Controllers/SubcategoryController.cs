@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
+using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 using Application.UseCases.Subcategory.Commands.AddSubcategory;
 using Application.UseCases.Subcategory.Commands.CreateSubcategory;
 using Application.UseCases.Subcategory.Commands.DeleteSubcategory;
@@ -21,7 +22,8 @@ namespace WebUI.Controllers
 
                 ViewBag.Title = subcategory.Name;
 
-                return View(subcategory);
+                return RedirectToAction("GetProducts", "Product",
+                    new {subcategoryId = subcategory.Id});
             }
             catch (NotFoundException exception)
             {

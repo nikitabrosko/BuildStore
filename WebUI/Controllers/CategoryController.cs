@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
@@ -7,6 +8,7 @@ using Application.UseCases.Category.Commands.DeleteCategory;
 using Application.UseCases.Category.Commands.UpdateCategory;
 using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Category.Queries.GetCategory;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers
@@ -138,6 +140,12 @@ namespace WebUI.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCategories()
+        {
+            return View("_DropdownCategoriesPartial", await Mediator.Send(new GetCategoriesQuery()));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Customer.Queries.GetCustomer;
 using Application.UseCases.Identity.User.Queries.GetUser;
@@ -38,21 +39,34 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             try
             {
+                return View("Create");
+            }
+            catch (NotFoundException exception)
+            {
+                return View("Error", exception.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] CreateOrderCommand command)
+        {
+            try
+            {
+
                 var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
                 var shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
                 var customer = await Mediator.Send(new GetCustomerQuery { Id = user.Customer.Id });
 
-                var id = await Mediator.Send(new CreateOrderCommand
-                {
-                    Customer = customer,
-                    ProductsDictionary = shoppingCart.ProductsDictionary
-                });
+                command.Customer = customer;
+                command.ProductsDictionary = shoppingCart.ProductsDictionary;
 
-                return RedirectToAction("Create", "Delivery", new { orderId = id });
+                await Mediator.Send(command);
+
+                return RedirectToAction("Clear", "ShoppingCart");
             }
             catch (NotFoundException exception)
             {
