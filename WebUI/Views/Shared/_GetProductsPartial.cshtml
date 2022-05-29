@@ -1,0 +1,102 @@
+﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory
+@model Application.Common.Models.PaginatedList<Domain.Entities.Product>
+
+<h3>@ViewBag.NameForProductsPage</h3>
+
+@foreach (var product in Model.Items)
+{
+    <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id">
+        <div>@product.Name</div>
+        <div>
+            @{
+                var base64 = Convert.ToBase64String(product.Picture);
+                var imgSrc = $"data:image/gif;base64,{base64}";
+            }
+
+            <img src="@imgSrc" style="max-width: 300px" alt="@product.Name" />
+        </div>
+        <div>@product.Price</div>
+    </a>
+    @if (User.IsInRole("user"))
+    {
+        <div class="but-wrap">
+            <button onclick="jQueryAjaxAddProduct('@Url.Action("AddProductGet", "ShoppingCart",
+                                                       new {id = product.Id}, Context.Request.Scheme)', true, 'addProductToShoppingCart')"
+                    tabindex="0" role="button" class="addToCart clear-button" id="addProductToShoppingCart">
+                <i class="fa fa-shopping-cart"></i>
+            </button>
+        </div>
+    }
+    else if (User.IsInRole("admin"))
+    {
+        <button tabindex="0" role="button" data-toggle="popover"
+                data-trigger="focus" title="Ошибка" class="clear-button"
+                data-content="В роли администратора нельзя добавлять товары в корзину">
+            <i class="fa fa-shopping-cart"></i>
+        </button>
+    }
+    else
+    {
+        <button tabindex="0" role="button" data-toggle="popover"
+                data-trigger="focus" title="Ошибка" class="clear-button"
+                data-content="Чтобы добавить товар в корзину необходимо авторизоваться!">
+            <i class="fa fa-shopping-cart"></i>
+        </button>
+    }
+}
+
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Previous", "GetProducts", "Product",
+                new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = ViewBag.SubcategoryId, PageNumber = Model.PageNumber - 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                @Html.ActionLink("Previous", "GetProducts", "Product",
+                    new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = ViewBag.SubcategoryId, PageNumber = Model.PageNumber - 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            if (Model.PageNumber.Equals(i))
+            {
+                <li class="page-item active">
+                    @Html.ActionLink($"{i}", "GetProducts", "Product",
+                        new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = ViewBag.SubcategoryId, PageNumber = i },
+                    new { @class = "page-link" })
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    @Html.ActionLink($"{i}", "GetProducts", "Product",
+                        new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = ViewBag.SubcategoryId, PageNumber = i },
+                    new { @class = "page-link" })
+                </li>
+            }
+        }
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                @Html.ActionLink("Next", "GetProducts", "Product",
+                    new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = ViewBag.SubcategoryId, PageNumber = Model.PageNumber + 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                @Html.ActionLink("Next", "GetProducts", "Product",
+                    new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = ViewBag.SubcategoryId, PageNumber = Model.PageNumber + 1 },
+                new { @class = "page-link" })
+            </li>
+        }
+    </ul>
+</nav>

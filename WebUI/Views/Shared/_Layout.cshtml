@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -17,22 +18,54 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav-justify navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            
+                    <ul class="navbar-nav-custom navbar-nav nav-link">
+                        <li class="navbar-custom-link nav-item">
+                            <div class="category-dropdown">
+                                <a class="navbar-custom-word category-dropbtn text-dark"
+                                   onmouseover="jQueryAjaxPost('@Url.Action("GetCategories", "Category",
+                                                                    null, Context.Request.Scheme)', '#dropdownCategories')">
+                                    Каталог товаров
+                                </a>
+                                <div class="category-dropdown-content" id="dropdownCategories">
+
+                                </div>
+                            </div>
                         </li>
+                        <li class="navbar-custom-link nav-item">
+                            <a class="text-dark navbar-custom-word">О нас</a>
+                        </li>
+                        <li class="navbar-custom-link nav-item">
+                            <a class="text-dark navbar-custom-word">Обратная связь</a>
+                        </li>
+                        <li class="navbar-custom-link nav-item">
+                            <form asp-action="Search" asp-controller="Product" class="input-group" method="post">
+                                <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров" />
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </form>
+                        </li>
+                        
+                        @*<li class="navbar-custom-link nav-item">
+                            <div class="input-group">
+                                <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров"/>
+
+                                <button class="btn btn-primary" onclick="jQuerySearch('@Url.Action("Search", "Product")', '#searchInput')">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </li>*@
+
                         @if (User.IsInRole("admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-action="Index" asp-controller="Supplier">Suppliers</a>
+                            <li class="navbar-custom-link nav-item">
+                                <a class="text-dark navbar-custom-word" asp-action="Index" asp-controller="Supplier">Suppliers</a>
                             </li>
                         }
                     </ul>
-                    @if (User.IsInRole("user"))
-                    {
-                        <a asp-action="Index" asp-controller="ShoppingCart" class="navbar-nav nav-link" id="shoppingCart"><i class="fa fa-shopping-cart"></i></a>
-                    }
 
                     @await Html.PartialAsync("_LoginPartial")
                 </div>

@@ -12,7 +12,7 @@
         @Html.HiddenFor(m => m.ReturnUrl)
 
         <div class="form-group">
-            @Html.Label("Name")
+            @Html.Label("Логин")
             @Html.EditorFor(m => m.Name, new
             {
                 htmlAttributes = new
@@ -28,7 +28,7 @@
         </div>
 
         <div class="form-group">
-            @Html.Label("Password")
+            @Html.Label("Пароль")
             @Html.EditorFor(m => m.Password, new
             {
                 htmlAttributes = new
@@ -44,20 +44,21 @@
             })
         </div>
 
-        <div class="form-check">
+        <div class="form-check form-group">
             @Html.EditorFor(m => m.RememberMe,
                 new { htmlAttributes = new { @class = "form-check-input" } })
-            @Html.Label("Remember me", "Remember me",
+            @Html.Label("Remember me", "Запомнить меня?",
                 new { @class = "form-check-label" })
         </div>
 
-        <button type="submit">Sign in</button>
+        <button type="submit" class="btn btn-primary form-group" style="width: 100%">Войти</button>
     </form>
-    
+
     <button onclick="showInPopup('@Url.Action("Register", "Account",
                                       new {returnUrl = Model.ReturnUrl},
-                                      Context.Request.Scheme)', 'Register')">
-        Register
+                                      Context.Request.Scheme)', 'Регистрация')"
+            class="btn btn-primary" style="width: 100%">
+        Зарегистрироваться
     </button>
 </div>
 

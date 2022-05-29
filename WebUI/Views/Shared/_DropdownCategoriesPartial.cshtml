@@ -1,2 +1,28 @@
 ﻿@model IEnumerable<Domain.Entities.Category>
 
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/css/site.css" />
+
+@foreach (var category in Model)
+{
+    <div class="subcategory-dropdown">
+        <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="subcategory-dropbtn">@category.Name</a>
+        <div class="subcategory-dropdown-content">
+            @foreach (var subcategory in category.Subcategories)
+            {
+                <div class="subsubcategory-dropdown">
+                    <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id" class="subsubcategory-dropbtn">@subcategory.Name</a>
+                    <div class="subsubcategory-dropdown-content">
+                        @foreach (var subcategorySubcategory in subcategory.Subcategories)
+                        {
+                            <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategorySubcategory.Id" class="subsubsubcategory-btn">@subcategorySubcategory.Name</a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
