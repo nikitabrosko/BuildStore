@@ -1,4 +1,10 @@
-﻿@model Application.UseCases.Product.Commands.CreateProduct.CreateProductCommand
+﻿@using Domain.Entities
+@model Application.UseCases.Product.Commands.CreateProduct.CreateProductCommand
+
+@{
+    IEnumerable<Subcategory> subcategories = ViewBag.Subcategories;
+    var subcategoriesNames = subcategories.Select(s => s.Name);
+}
 
 @using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
@@ -72,15 +78,18 @@
     </div>
 
     <div>
-        @Html.Label("Category id")
-        @Html.EditorFor(m => m.CategoryId, new
+        @Html.Label("Category")
+        <select asp-for="CategoryName" asp-items="new SelectList(subcategoriesNames)"
+                class="form-control">
+        </select>
+        @*@Html.EditorFor(m => m.CategoryId, new
         {
             htmlAttributes = new
             {
                 required = "true",
                 type = "number"
             }
-        })
+        })*@
     </div>
 
     <div>
