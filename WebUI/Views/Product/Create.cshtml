@@ -1,17 +1,24 @@
 ﻿@using Domain.Entities
+@using Microsoft.AspNetCore.Http
 @model Application.UseCases.Product.Commands.CreateProduct.CreateProductCommand
 
 @{
+    Layout = null;
+
     IEnumerable<Subcategory> subcategories = ViewBag.Subcategories;
     var subcategoriesNames = subcategories.Select(s => s.Name);
+
+    Model.Pictures = new IFormFile[3];
 }
+
+@await Html.PartialAsync("_StylesImportPartial")
 
 @using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.HiddenFor(m => m.SupplierId)
 
-    <div>
-        @Html.Label("Name")
+    <div  class="form-group">
+        @Html.Label("Название")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
@@ -19,91 +26,90 @@
                 required = "true",
                 maxlength = "100",
                 minlegth = "3",
-                placeholder = "Name",
-                type = "text"
+                placeholder = "Название",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Description")
-        @Html.EditorFor(m => m.Description, new
-        {
-            htmlAttributes = new
-            {
-                required = "true",
-                maxlength = "500",
-                minlegth = "50",
-                placeholder = "Description",
-                type = "text"
-            }
-        })
+    <div class="form-group">
+        @Html.Label("Описание")
+        <textarea asp-for="@Model.Description" required maxlength="500" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
     </div>
 
-    <div>
-        @Html.Label("Price")
+    <div  class="form-group">
+        @Html.Label("Стоимость")
         @Html.EditorFor(m => m.Price, new
         {
             htmlAttributes = new
             {
                 required = "true",
-                type = "number"
+                type = "number",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Quantity per unit")
+    <div  class="form-group">
+        @Html.Label("Количество на единицу товара")
         @Html.EditorFor(m => m.QuantityPerUnit, new
         {
             htmlAttributes = new
             {
                 required = "true",
                 type = "number",
-                min = "1"
+                min = "1",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Weight")
+    <div  class="form-group">
+        @Html.Label("Вес")
         @Html.EditorFor(m => m.Weight, new
         {
             htmlAttributes = new
             {
                 required = "true",
-                type = "number"
+                type = "number",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Category")
+    <div  class="form-group">
+        @Html.Label("Категория")
         <select asp-for="CategoryName" asp-items="new SelectList(subcategoriesNames)"
                 class="form-control">
         </select>
-        @*@Html.EditorFor(m => m.CategoryId, new
-        {
-            htmlAttributes = new
-            {
-                required = "true",
-                type = "number"
-            }
-        })*@
     </div>
 
-    <div>
-        @Html.Label("Picture")
-        @Html.EditorFor(m => m.Picture, new
-        {
-            htmlAttributes = new
-            {
-                accept = "image/*"
-            }
-        })
-    </div>
+    @Html.Label("Изображения")
+    @for (int i = 0; i < Model.Pictures.Length; i++)
+    {
+        <div class="form-group">
+            <div class="custom-file">
+                @Html.EditorFor(m => m.Pictures, new
+                {
+                    htmlAttributes = new
+                    {
+                        accept = "image/*",
+                        @class = "custom-file-input",
+                    }
+                })
+                @Html.Label("Выбрать изображение", "Выбрать изображение", new
+                {
+                    @class = "custom-file-label"
+                })
+            </div>
+        </div>
+    }
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Создать" class="btn btn-primary" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")

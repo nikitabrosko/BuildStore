@@ -1,93 +1,131 @@
-﻿@model Application.UseCases.Product.Commands.UpdateProduct.UpdateProductCommand
+﻿@using Domain.Entities
+@using Microsoft.AspNetCore.Http
+@model Application.UseCases.Product.Commands.UpdateProduct.UpdateProductCommand
+
+@{
+    Layout = null;
+
+    IEnumerable<Subcategory> subcategories = ViewBag.Subcategories;
+    var subcategoriesNames = subcategories.Select(s => s.Name);
+
+    IList<string> previousImages = ViewBag.Pictures;
+    Model.Pictures = new IFormFile[3];
+
+    for (int i = 0; i < Model.Pictures.Length; i++)
+    {
+        Model.Pictures[i] = null;
+    }
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
 
 @using (Html.BeginForm("Update", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.HiddenFor(m => m.Id)
 
-    <div>
-        @Html.Label("Change Name:")
+    <div class="form-group">
+        @Html.Label("Изменить название")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
             {
                 required = "true",
-                maxlength = "50",
+                maxlength = "100",
                 minlegth = "3",
-                placeholder = "Name",
-                type = "text"
+                placeholder = "Название",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Description:")
-        @Html.EditorFor(m => m.Description, new
-        {
-            htmlAttributes = new
-            {
-                required = "true",
-                maxlength = "500",
-                minlegth = "50",
-                placeholder = "Description",
-                type = "text"
-            }
-        })
+    <div class="form-group">
+        @Html.Label("Изменить описание")
+        <textarea asp-for="@Model.Description" required maxlength="500" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
     </div>
 
-    <div>
-        @Html.Label("Change Price:")
+    <div class="form-group">
+        @Html.Label("Изменить стоимость")
         @Html.EditorFor(m => m.Price, new
         {
             htmlAttributes = new
             {
                 required = "true",
-                type = "number"
+                type = "number",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Quantity per unit:")
+    <div class="form-group">
+        @Html.Label("Изменить количество на единицу товара")
         @Html.EditorFor(m => m.QuantityPerUnit, new
         {
             htmlAttributes = new
             {
                 required = "true",
                 type = "number",
-                min = "1"
+                min = "1",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Weight:")
+    <div class="form-group">
+        @Html.Label("Изменить вес")
         @Html.EditorFor(m => m.Weight, new
         {
             htmlAttributes = new
             {
                 required = "true",
-                type = "number"
+                type = "number",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        <p>Current Picture:</p>
-        <img src="@ViewBag.Picture" style="max-width: 300px" alt="@Model.Name" />
+    <div class="form-group">
+        @Html.Label("Изменить категорию")
+        <select asp-for="CategoryName" asp-items="new SelectList(subcategoriesNames)"
+                class="form-control">
+        </select>
     </div>
 
     <div>
-        @Html.Label("Change Picture:")
-        @Html.EditorFor(m => m.Picture, new
+        @Html.Label("Изменить изображения")
+        @for (int i = 0; i < Model.Pictures.Length; i++)
         {
-            htmlAttributes = new
-            {
-                accept = "image/*"
-            }
-        })
+            var pictureNumber = i + 1;
+
+                <p>Изображение: @pictureNumber</p>
+            <div class="form-group">
+                <p>Текущее изображение:</p>
+                <img src="@previousImages[i]" style="width: 150px" alt="@Model.Name" />
+            </div>
+
+            <div class="form-group">
+                <div class="custom-file">
+                    @Html.EditorFor(m => m.Pictures, new
+                    {
+                        htmlAttributes = new
+                        {
+                            accept = "image/*",
+                            @class = "custom-file-input",
+                        }
+                    })
+                    @Html.Label("Выбрать изображение", "Выбрать изображение", new
+                    {
+                        @class = "custom-file-label"
+                    })
+                </div>
+            </div>
+        }
     </div>
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Сохранить" class="btn btn-primary" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
