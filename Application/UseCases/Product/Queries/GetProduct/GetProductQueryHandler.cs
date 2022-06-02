@@ -21,6 +21,7 @@ namespace Application.UseCases.Product.Queries.GetProduct
             var entity = await _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.Supplier)
+                .Include(p => p.Images)
                 .SingleOrDefaultAsync(p => p.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
