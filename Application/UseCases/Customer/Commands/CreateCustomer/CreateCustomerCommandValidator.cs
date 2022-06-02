@@ -20,7 +20,7 @@ namespace Application.UseCases.Customer.Commands.CreateCustomer
 
             RuleFor(v => v.Address)
                 .MaximumLength(100).WithMessage("Address length cannot be more than 100!")
-                .MinimumLength(10).WithMessage("Address length cannot be less than 10!")
+                .MinimumLength(1).WithMessage("Address length cannot be less than 1!")
                 .NotEmpty().WithMessage("Address cannot be empty!")
                 .NotNull().WithMessage("Address cannot be null!");
 
