@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,8 +31,18 @@ namespace WebUI
                 {
                     options.Password.RequiredLength = 4;
                     options.Password.RequireNonAlphanumeric = false;
+                    options.Lockout.MaxFailedAccessAttempts = 100;
+                    options.Lockout.DefaultLockoutTimeSpan = options.Lockout.DefaultLockoutTimeSpan.Add(TimeSpan.FromMinutes(55));
                 })
                 .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                options.LoginPath = "/IdentityControllers/Account/Login";
+                options.AccessDeniedPath = "/Category/Index";
+                options.SlidingExpiration = true;
+            });
 
             services.AddHttpContextAccessor();
 
