@@ -20,12 +20,22 @@ namespace Application.UseCases.Product.Commands.DeleteProduct
         {
             var entity = await _context.Products
                 .Include(p => p.Supplier)
+                .Include(p => p.Images)
+                .ThenInclude(i => i.Product)
                 .SingleOrDefaultAsync(p => p.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
             {
                 throw new NotFoundException(nameof(Domain.Entities.Product), request.Id);
             }
+
+            foreach (var image in entity.Images)
+            {
+                image.Product = null;
+                _context.ProductImages.Remove(image);
+            }
+
+            entity.Images = null;
 
             var supplierId = entity.Supplier.Id;
 
