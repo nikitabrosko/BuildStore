@@ -1,11 +1,17 @@
 ﻿@model Application.UseCases.Subcategory.Commands.CreateSubcategory.CreateSubcategoryCommand
 
-@using (Html.BeginForm("Create", "Subcategory", FormMethod.Post))
-{
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
+<form asp-action="Create" asp-controller="Subcategory" id="createSubcategoryForm">
+
     @Html.HiddenFor(m => m.CategoryId)
 
-    <div>
-        @Html.Label("Name")
+    <div class="form-group">
+        @Html.Label("Название")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
@@ -13,28 +19,22 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "3",
-                placeholder = "Name",
-                type = "text"
-
+                placeholder = "Название",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Description")
-        @Html.EditorFor(m => m.Description, new
-        {
-            htmlAttributes = new
-            {
-                required = "true",
-                maxlength = "500",
-                placeholder = "Description",
-                type = "text"
-            }
-        })
+    <div class="form-group">
+        @Html.Label("Описание")
+        <textarea asp-for="@Model.Description" required maxlength="500" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
     </div>
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Создать" class="btn btn-primary" style="width: 100%" />
     </div>
-} 
+</form>
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
