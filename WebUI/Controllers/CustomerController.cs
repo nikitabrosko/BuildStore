@@ -10,16 +10,16 @@ namespace WebUI.Controllers
 {
     public class CustomerController : ApiControllerBase
     {
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
             return View(await Mediator.Send(new GetCustomerQuery { Id = id }));
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
         }
 
         [HttpPost]

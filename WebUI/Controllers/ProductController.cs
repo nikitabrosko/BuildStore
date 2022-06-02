@@ -11,6 +11,7 @@ using Application.UseCases.Product.Queries.GetProduct;
 using Application.UseCases.Product.Queries.SearchProductWithPagination;
 using Application.UseCases.Subcategory.Queries.GetSubcategories;
 using Application.UseCases.Subcategory.Queries.GetSubcategory;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -104,9 +105,15 @@ namespace WebUI.Controllers
             try
             {
                 var entity = await Mediator.Send(new GetProductQuery { Id = id });
-                var imgSrc = $"data:image/gif;base64,{Convert.ToBase64String(entity.Picture)}";
+                var productImages = entity.Images
+                    .Select(image => $"data:image/gif;base64,{Convert.ToBase64String(image.Picture)}")
+                    .ToList();
 
-                ViewBag.Picture = imgSrc;
+                ViewBag.Pictures = productImages;
+
+                var subcategories = await Mediator.Send(new GetSubcategoriesQuery());
+
+                ViewBag.Subcategories = subcategories;
 
                 var command = new UpdateProductCommand
                 {
@@ -116,7 +123,8 @@ namespace WebUI.Controllers
                     Price = entity.Price,
                     Discount = entity.Discount,
                     QuantityPerUnit = entity.QuantityPerUnit,
-                    Weight = entity.Weight
+                    Weight = entity.Weight,
+                    CategoryName = entity.Category.Name
                 };
 
                 return View(command);
