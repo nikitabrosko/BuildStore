@@ -7,7 +7,10 @@
     <p>Email: @Model.Email</p>
     @if (Model.Customer is null)
     {
-        <a asp-action="Create" asp-controller="Customer">Fill information about you</a>
+        <button onclick="showInPopup('@Url.Action("Create", "Customer",
+                                          Context.Request.Scheme)', 'Заполнение информации')">
+            Заполнить информацию о себе
+        </button>
     }
     else
     {
@@ -19,6 +22,9 @@
         <p>Country: @Model.Customer.Country</p>
         <p>Phone number: @Model.Customer.Phone</p>
 
-        <a asp-action="Update" asp-controller="Customer">Update information about you</a>
+        <button onclick="showInPopup('@Url.Action("Update", "Customer",
+                                          Context.Request.Scheme)', 'Обновление информации')">
+            Обновить информацию о себе
+        </button>
     }
 </div>
