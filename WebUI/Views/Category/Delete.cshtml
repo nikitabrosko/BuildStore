@@ -1,20 +1,43 @@
 ﻿@model Application.UseCases.Category.Commands.DeleteCategory.DeleteCategoryCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Delete", "Category", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id);
 
-    <div>
-        @Html.Label("Delete all subcategories of this category?")
-        @Html.EditorFor(m => m.SubcategoriesDeletion)
+    <div class="form-group">
+        @Html.Label("Удалить все подкатегории, относящиеся к этой категории?")
+        @Html.EditorFor(m => m.SubcategoriesDeletion, null, 
+            new
+            {
+                htmlAttributes = new
+                {
+                    @class="form-check"
+                }
+            })
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Удалить все товары, относящиеся к этой категории?")
+        @Html.EditorFor(m => m.ProductsDeletion, null, 
+            new
+            {
+                htmlAttributes = new
+                {
+                    @class="form-check"
+                }
+            })
     </div>
 
     <div>
-        @Html.Label("Delete all products of this category?")
-        @Html.EditorFor(m => m.ProductsDeletion)
-    </div>
-
-    <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Удалить" class="btn btn-danger" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")

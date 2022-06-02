@@ -1,11 +1,17 @@
 ﻿@model Application.UseCases.Category.Commands.UpdateCategory.UpdateCategoryCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Update", "Category", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.HiddenFor(m => m.Id)
 
-    <div>
-        @Html.Label("Change Name:")
+    <div class="form-group">
+        @Html.Label("Изменить название:")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
@@ -13,44 +19,44 @@
                 required = "true",
                 maxlength = "100",
                 minlegth = "3",
-                placeholder = "Name",
-                type = "text"
-
+                placeholder = "Название",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Description:")
-        @Html.EditorFor(m => m.Description, new
-        {
-            htmlAttributes = new
-            {
-                required = "true",
-                maxlength = "500",
-                placeholder = "Description",
-                type = "text"
-            }
-        })
+    <div class="form-group">
+        @Html.Label("Изменить описание")
+        <textarea asp-for="@Model.Description" required maxlength="500" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
     </div>
 
-    <div>
-        <p>Current Picture:</p>
+    <div class="form-group">
+        <p>Текущее изображение:</p>
         <img src="@ViewBag.Picture" style="max-width: 300px" alt="@Model.Name" />
     </div>
 
-    <div>
-        @Html.Label("Change Picture:")
-        @Html.EditorFor(m => m.Picture, new
-        {
-            htmlAttributes = new
+    <div class="form-group">
+        <div class="custom-file">
+            @Html.EditorFor(m => m.Picture, new
             {
-                accept = "image/*"
-            }
-        })
+                htmlAttributes = new
+                {
+                    accept = "image/*",
+                    @class = "custom-file-input",
+                }
+            })
+            @Html.Label("Выбрать изображение", "Выбрать изображение", new
+            {
+                @class = "custom-file-label"
+            })
+        </div>
     </div>
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Сохранить" class="btn btn-primary" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
