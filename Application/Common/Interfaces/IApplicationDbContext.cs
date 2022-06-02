@@ -27,6 +27,8 @@ namespace Application.Common.Interfaces
 
         DbSet<ProductsDictionary> ProductsDictionaries { get; }
 
+        DbSet<ProductImage> ProductImages { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

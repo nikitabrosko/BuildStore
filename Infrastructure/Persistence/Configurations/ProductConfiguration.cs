@@ -39,10 +39,8 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(p => p.Weight)
                 .IsRequired();
 
-            builder.Ignore(c => c.PictureRaw);
-
-            builder.Property(c => c.Picture)
-                .IsRequired();
+            builder.HasMany(p => p.Images)
+                .WithOne(i => i.Product);
 
             builder.HasMany(p => p.ProductsDictionaries)
                 .WithOne(p => p.Product);

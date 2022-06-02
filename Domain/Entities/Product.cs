@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
 
 namespace Domain.Entities
 {
@@ -25,14 +22,13 @@ namespace Domain.Entities
 
         public float Weight { get; set; }
 
-        public IFormFile PictureRaw { get; set; }
-
-        public byte[] Picture { get; set; }
+        public ICollection<ProductImage> Images { get; set; }
 
         public ICollection<ProductsDictionary> ProductsDictionaries { get; set; }
 
         public Product()
         {
+            Images = new HashSet<ProductImage>();
             ProductsDictionaries = new HashSet<ProductsDictionary>();
         }
     }
