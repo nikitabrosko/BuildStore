@@ -38,7 +38,7 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                 .GreaterThan(0).WithMessage("Weight cannot be less than or equal to 0!")
                 .NotNull().WithMessage("Weight cannot be null!");
 
-            RuleFor(v => v.Picture)
+            RuleFor(v => v.Pictures)
                 .NotNull().WithMessage("Picture cannot be null!");
 
             RuleFor(v => v.Discount)

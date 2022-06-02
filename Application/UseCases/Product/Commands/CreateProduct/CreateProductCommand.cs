@@ -21,6 +21,6 @@ namespace Application.UseCases.Product.Commands.CreateProduct
 
         public float Weight { get; set; }
 
-        public IFormFile Picture { get; set; }
+        public IFormFile[] Pictures { get; set; }
     }
 }

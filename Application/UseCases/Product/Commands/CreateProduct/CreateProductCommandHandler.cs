@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
@@ -36,14 +38,28 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                 QuantityPerUnit = request.QuantityPerUnit,
                 Weight = request.Weight,
                 Discount = request.Discount,
-                Picture = new byte[request.Picture.Length],
                 Supplier = supplier
             };
 
-            await using (var stream = request.Picture.OpenReadStream())
+            var productsImages = new ProductImage[request.Pictures.Length];
+
+            for (int i = 0; i < request.Pictures.Length; i++)
             {
-                var count = stream.Read(entity.Picture, 0, (int)request.Picture.Length);
+                productsImages[i] = new ProductImage
+                {
+                    Picture = new byte[request.Pictures[i].Length],
+                    Product = entity
+                };
+
+                await using (var stream = request.Pictures[i].OpenReadStream())
+                {
+                    var count = stream.Read(productsImages[i].Picture, 0, (int)request.Pictures[i].Length);
+                }
+
+                await _context.ProductImages.AddAsync(productsImages[i], cancellationToken);
             }
+
+            entity.Images = productsImages;
 
             var checkForExistsEntity = await _context.Products
                 .AnyAsync(p => p.Name.Equals(entity.Name) 
