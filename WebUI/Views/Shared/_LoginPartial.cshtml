@@ -41,7 +41,12 @@
     {
         <li class="nav-item">
             <div class="btn-group">
-                @if (ViewBag.AllowReturningWithUrl == null || ViewBag.AllowReturningWithUrl is true)
+                <button class="btn btn-outline-primary"
+                        onclick="showInPopup('@Url.Action("Login", "Account",
+                                                  Context.Request.Scheme)', 'Войти')">
+                    Войти
+                </button>
+                @*@if (ViewBag.AllowReturningWithUrl == null || ViewBag.AllowReturningWithUrl is true)
                 {
                     <button class="btn btn-outline-primary"
                             onclick="showInPopup('@Url.Action("Login", "Account",
@@ -57,7 +62,7 @@
                                                       Context.Request.Scheme)', 'Войти')">
                         Войти
                     </button>
-                }
+                }*@
             </div>
         </li>
     }
