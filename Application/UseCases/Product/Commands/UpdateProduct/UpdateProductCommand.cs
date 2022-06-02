@@ -19,6 +19,8 @@ namespace Application.UseCases.Product.Commands.UpdateProduct
 
         public float Weight { get; set; }
 
-        public IFormFile Picture { get; set; }
+        public string CategoryName { get; set; }
+
+        public IFormFile[] Pictures { get; set; }
     }
 }
