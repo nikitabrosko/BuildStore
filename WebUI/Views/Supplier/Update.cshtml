@@ -1,11 +1,17 @@
 ﻿@model Application.UseCases.Supplier.Commands.UpdateSupplier.UpdateSupplierCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Update", "Supplier", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id)
 
-    <div>
-        @Html.Label("Change Company name:")
+    <div class="form-group">
+        @Html.Label("Изменить название компании:")
         @Html.EditorFor(m => m.CompanyName, new
         {
             htmlAttributes = new
@@ -13,29 +19,31 @@
                 required = "true",
                 maxlength = "100",
                 minlegth = "3",
-                placeholder = "Company name",
-                type = "text"
+                placeholder = "Название компании",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Address:")
+    <div class="form-group">
+        @Html.Label("Изменить адрес:")
         @Html.EditorFor(m => m.Address, new
         {
             htmlAttributes = new
             {
                 required = "true",
                 maxlength = "100",
-                minlegth = "10",
-                placeholder = "Address",
-                type = "text"
+                minlegth = "5",
+                placeholder = "Адрес",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change City:")
+    <div class="form-group">
+        @Html.Label("Изменить город:")
         @Html.EditorFor(m => m.City, new
         {
             htmlAttributes = new
@@ -43,14 +51,15 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "1",
-                placeholder = "City",
-                type = "text"
+                placeholder = "Город",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Country:")
+    <div class="form-group">
+        @Html.Label("Изменить страну:")
         @Html.EditorFor(m => m.Country, new
         {
             htmlAttributes = new
@@ -58,14 +67,15 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "1",
-                placeholder = "Country",
-                type = "text"
+                placeholder = "Страна",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Email:")
+    <div class="form-group">
+        @Html.Label("Изменить Email:")
         @Html.EditorFor(m => m.Email, new
         {
             htmlAttributes = new
@@ -73,14 +83,15 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "5",
-                placeholder = "Email",
-                type = "email"
+                placeholder = "name@example.com",
+                type = "email",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Change Phone number:")
+    <div class="form-group">
+        @Html.Label("Изменить номер телефона:")
         @Html.EditorFor(m => m.PhoneNumber, new
         {
             htmlAttributes = new
@@ -88,13 +99,17 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "1",
-                placeholder = "Phone number",
-                type = "tel"
+                placeholder = "Номер телефона",
+                type = "tel",
+                @class = "form-control",
             }
         })
     </div>
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Сохоанить" class="btn btn-primary" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")

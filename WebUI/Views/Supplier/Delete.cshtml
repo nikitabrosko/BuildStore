@@ -1,15 +1,31 @@
 ﻿@model Application.UseCases.Supplier.Commands.DeleteSupplier.DeleteSupplierCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Delete", "Supplier", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id);
 
-    <div>
+    <div class="form-group">
         @Html.Label("Delete all products of this supplier?")
-        @Html.EditorFor(m => m.ProductsDeletion)
+        @Html.EditorFor(m => m.ProductsDeletion, null,
+            new
+            {
+                htmlAttributes = new
+                {
+                    @class = "form-check"
+                }
+            })
     </div>
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Удалить" class="btn btn-danger" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")

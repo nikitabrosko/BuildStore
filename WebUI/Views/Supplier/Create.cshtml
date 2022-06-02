@@ -1,9 +1,15 @@
 ﻿@model Application.UseCases.Supplier.Commands.CreateSupplier.CreateSupplierCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Create", "Supplier", FormMethod.Post))
 {
-    <div>
-        @Html.Label("Company name")
+    <div class="form-group">
+        @Html.Label("Название компании")
         @Html.EditorFor(m => m.CompanyName, new
         {
             htmlAttributes = new
@@ -11,29 +17,31 @@
                 required = "true",
                 maxlength = "100",
                 minlegth = "3",
-                placeholder = "Company name",
-                type = "text"
+                placeholder = "Название компании",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Address")
+    <div class="form-group">
+        @Html.Label("Адрес")
         @Html.EditorFor(m => m.Address, new
         {
             htmlAttributes = new
             {
                 required = "true",
                 maxlength = "100",
-                minlegth = "10",
-                placeholder = "Address",
-                type = "text"
+                minlegth = "5",
+                placeholder = "Адрес",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("City")
+    <div class="form-group">
+        @Html.Label("Город")
         @Html.EditorFor(m => m.City, new
         {
             htmlAttributes = new
@@ -41,14 +49,15 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "1",
-                placeholder = "City",
-                type = "text"
+                placeholder = "Город",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Country")
+    <div class="form-group">
+        @Html.Label("Страна")
         @Html.EditorFor(m => m.Country, new
         {
             htmlAttributes = new
@@ -56,13 +65,14 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "1",
-                placeholder = "Country",
-                type = "text"
+                placeholder = "Страна",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
+    <div class="form-group">
         @Html.Label("Email")
         @Html.EditorFor(m => m.Email, new
         {
@@ -71,14 +81,15 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "5",
-                placeholder = "Email",
-                type = "email"
+                placeholder = "name@example.com",
+                type = "email",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Phone number")
+    <div class="form-group">
+        @Html.Label("Номер телефона")
         @Html.EditorFor(m => m.PhoneNumber, new
         {
             htmlAttributes = new
@@ -86,13 +97,17 @@
                 required = "true",
                 maxlength = "50",
                 minlegth = "1",
-                placeholder = "Phone number",
-                type = "tel"
+                placeholder = "Номер телефона",
+                type = "tel",
+                @class = "form-control",
             }
         })
     </div>
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Создать" class="btn btn-primary" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")

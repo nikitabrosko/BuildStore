@@ -1,39 +1,62 @@
 ﻿@model Domain.Entities.Supplier
 
-<h2>@Model.CompanyName</h2>
+<div class="jumbotron-fluid">
+    <h1 class="display-4">@Model.CompanyName</h1>
+    <hr class="my-4" />
+    <p class="lead">Адрес: @Model.Address</p>
+    <p class="lead">Город: @Model.City</p>
+    <p class="lead">Страна: @Model.Country</p>
+    <p class="lead">Номер телефона: @Model.PhoneNumber</p>
+    <p class="lead">Email: @Model.Email</p>
 
-<div>
-    <div>
-        <p>Address: @Model.Address</p>
-        <p>City: @Model.City</p>
-        <p>Country: @Model.Country</p>
-        <p>Phone number: @Model.PhoneNumber</p>
-        <p>Email: @Model.Email</p>
+
+    <h2 style="text-align: center;margin: 2%;">Товары поставщика</h2>
+
+    <div style="text-align: center; margin: 2%;">
+        <button class="btn btn-dark" style="width: 30%;"
+                onclick="showInPopup('@Url.Action("Create", "Product", new { id = Model.Id },
+                                      Context.Request.Scheme)', 'Создать товар')">
+            Создать товар
+        </button>
     </div>
-    <h4>Supplier products</h4>
-    
-    <a asp-action="Create" asp-controller="Product" asp-route-id="@Model.Id">Create Product</a>
 
-    <div>
-        @foreach (var product in Model.Products)
-        {
-            <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id">
-                <div>
-                    <p>Name: @product.Name</p>
-                    <p>Price: @product.Price</p>
-                    <p>Quantity per unit: @product.QuantityPerUnit</p>
-                    <p>Discount: @product.Discount</p>
-                    <p>Weight: @product.Weight</p>
-                    @{
-                        var base64 = Convert.ToBase64String(product.Picture);
-                        var imgSrc = $"data:image/gif;base64,{base64}";
-                    }
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Название</th>
+                <th scope="col">Изображение</th>
+                <th scope="col">Редактирование</th>
+                <th scope="col">Удаление</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products)
+            {
+                <tr>
+                    <th scope="row">
+                        @product.Id
+                    </th>
+                    <td>
+                        <a asp-action="Get" asp-controller="Product" asp-route-id="@product.Id">@product.Name</a>
+                    </td>
+                    <td>
+                        @{
+                            var productImages = product.Images
+                                .Select(image => $"data:image/gif;base64,{Convert.ToBase64String(image.Picture)}");
+                        }
 
-                    <img src="@imgSrc" style="max-width: 300px" alt="@product.Name" />
-                </div>
-            </a>
-            <a asp-action="Update" asp-controller="Product" asp-route-id="@product.Id">Edit</a>
-            <a asp-action="Delete" asp-controller="Product" asp-route-id="@product.Id">Delete</a>
-        }
-    </div>
+                        <img src="@productImages.First()" style="max-width: 100px" alt="@product.Name" />
+                    </td>
+                    <td>
+                        <a onclick="showInPopup('@Url.Action("Update", "Product", new {id = product.Id},
+                                             Context.Request.Scheme)', 'Редактировать товар')">Редактировать</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-controller="Product" asp-route-id="@product.Id" style="color:red">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
