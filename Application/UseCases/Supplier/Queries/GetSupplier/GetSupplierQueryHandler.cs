@@ -20,6 +20,7 @@ namespace Application.UseCases.Supplier.Queries.GetSupplier
         {
             var entity = await _context.Suppliers
                 .Include(s => s.Products)
+                .ThenInclude(p => p.Images)
                 .SingleOrDefaultAsync(s => s.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
