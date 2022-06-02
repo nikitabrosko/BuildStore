@@ -1,8 +1,14 @@
 ﻿@model Application.UseCases.Customer.Commands.UpdateCustomer.UpdateCustomerCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Update", "Customer", FormMethod.Post))
 {
-    <div>
+    <div class="form-group">
         @Html.Label("First name")
         @Html.EditorFor(m => m.FirstName, new
         {
@@ -12,13 +18,13 @@
                 maxlength = "50",
                 minlegth = "2",
                 placeholder = "First name",
-                type = "text"
-
+                type = "text",
+                @class="form-control"
             }
         })
     </div>
 
-    <div>
+    <div class="form-group">
         @Html.Label("Last name")
         @Html.EditorFor(m => m.LastName, new
         {
@@ -28,13 +34,13 @@
                 maxlength = "50",
                 minlegth = "2",
                 placeholder = "First name",
-                type = "text"
-
+                type = "text",
+                @class="form-control"
             }
         })
     </div>
 
-    <div>
+    <div class="form-group">
         @Html.Label("Address")
         @Html.EditorFor(m => m.Address, new
         {
@@ -42,15 +48,15 @@
             {
                 required = "true",
                 maxlength = "50",
-                minlegth = "2",
+                minlegth = "1",
                 placeholder = "First name",
-                type = "text"
-
+                type = "text",
+                @class="form-control"
             }
         })
     </div>
 
-    <div>
+    <div class="form-group">
         @Html.Label("City")
         @Html.EditorFor(m => m.City, new
         {
@@ -60,12 +66,13 @@
                 maxlength = "50",
                 minlegth = "1",
                 placeholder = "City",
-                type = "text"
+                type = "text",
+                @class="form-control"
             }
         })
     </div>
 
-    <div>
+    <div class="form-group">
         @Html.Label("Country")
         @Html.EditorFor(m => m.Country, new
         {
@@ -75,12 +82,13 @@
                 maxlength = "50",
                 minlegth = "1",
                 placeholder = "Country",
-                type = "text"
+                type = "text",
+                @class="form-control"
             }
         })
     </div>
 
-    <div>
+    <div class="form-group">
         @Html.Label("Phone number")
         @Html.EditorFor(m => m.Phone, new
         {
@@ -90,12 +98,20 @@
                 maxlength = "50",
                 minlegth = "1",
                 placeholder = "Phone number",
-                type = "tel"
+                type = "tel",
+                @class="form-control"
             }
         })
     </div>
 
-    <div>
-        <input type="submit" value="Save" />
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" style="width:100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#createOrderForm").validate();
+</script>
