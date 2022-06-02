@@ -27,12 +27,14 @@ namespace Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcatego
 
             var products = _context.Products
                 .Include(p => p.Category)
+                .Include(p => p.Images)
                 .Where(p => p.Category is Domain.Entities.Subcategory)
                 .Where(p => p.Category.Id.Equals(subcategory.Id));
 
             products = subcategory.Subcategories
                 .Select(subcategorySubcategory => _context.Products
                     .Include(p => p.Category)
+                    .Include(p => p.Images)
                     .Where(p => p.Category is Domain.Entities.Subcategory)
                     .Where(p => p.Category.Id.Equals(subcategorySubcategory.Id)))
                 .Aggregate(products, (current, subcategoryProducts) => current
