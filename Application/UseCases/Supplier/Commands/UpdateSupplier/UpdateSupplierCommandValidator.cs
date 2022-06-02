@@ -18,7 +18,7 @@ namespace Application.UseCases.Supplier.Commands.UpdateSupplier
 
             RuleFor(v => v.Address)
                 .MaximumLength(100).WithMessage("Address length cannot be more than 100!")
-                .MinimumLength(10).WithMessage("Address length cannot be less than 10!")
+                .MinimumLength(5).WithMessage("Address length cannot be less than 5!")
                 .NotEmpty().WithMessage("Address cannot be empty!")
                 .NotNull().WithMessage("Address cannot be null!");
 
