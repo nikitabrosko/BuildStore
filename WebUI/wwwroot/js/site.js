@@ -78,13 +78,7 @@ jQueryAjaxPost = (url, elementId) => {
     });
 }
 
-/*jQuerySearch = (url, searchInputId) => {
-    var value = $(searchInputId).val();
-
-    url = url + '/' + value;
-
-    $.ajax({
-        type: 'GET',
-        url: url
-    });
-}*/
+$(".custom-file-input").on("change", function () {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
