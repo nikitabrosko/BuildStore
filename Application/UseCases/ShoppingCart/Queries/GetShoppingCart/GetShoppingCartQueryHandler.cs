@@ -21,6 +21,7 @@ namespace Application.UseCases.ShoppingCart.Queries.GetShoppingCart
             var shoppingCartEntity = await _context.ShoppingCarts
                 .Include(s => s.ProductsDictionary)
                 .ThenInclude(p => p.Product)
+                .ThenInclude(p => p.Images)
                 .SingleOrDefaultAsync(s => s.Id.Equals(request.Id), cancellationToken);
 
             if (shoppingCartEntity is null)
