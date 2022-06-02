@@ -23,6 +23,7 @@ namespace Application.UseCases.Category.Queries.GetCategory
                 .OfType<Domain.Entities.Category>()
                 .Include(c => c.Subcategories)
                 .ThenInclude(c => c.Subcategories)
+                .ThenInclude(s => s.Products)
                 .SingleOrDefaultAsync(c => c.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
