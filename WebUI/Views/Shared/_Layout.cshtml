@@ -35,12 +35,19 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="navbar-custom-link nav-item">
-                            <a class="text-dark navbar-custom-word">О нас</a>
-                        </li>
-                        <li class="navbar-custom-link nav-item">
-                            <a class="text-dark navbar-custom-word">Обратная связь</a>
-                        </li>
+                        @if (!User.IsInRole("admin"))
+                        {
+                            <li class="navbar-custom-link nav-item">
+                                <a class="text-dark navbar-custom-word">О нас</a>
+                            </li>
+                            <li class="navbar-custom-link nav-item">
+                                <a class="text-dark navbar-custom-word"
+                                   onclick="showInPopup('@Url.Action("Feedback", "Email", null,
+                                                             Context.Request.Scheme)', 'Обратная связь')">
+                                    Обратная связь
+                                </a>
+                            </li>
+                        }
                         <li class="navbar-custom-link nav-item">
                             <form asp-action="Search" asp-controller="Product" class="input-group" method="post">
                                 <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров" />
@@ -50,21 +57,11 @@
                                 </button>
                             </form>
                         </li>
-                        
-                        @*<li class="navbar-custom-link nav-item">
-                            <div class="input-group">
-                                <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров"/>
-
-                                <button class="btn btn-primary" onclick="jQuerySearch('@Url.Action("Search", "Product")', '#searchInput')">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
-                        </li>*@
 
                         @if (User.IsInRole("admin"))
                         {
                             <li class="navbar-custom-link nav-item">
-                                <a class="text-dark navbar-custom-word" asp-action="Index" asp-controller="Supplier">Suppliers</a>
+                                <a class="text-dark navbar-custom-word" asp-action="Index" asp-controller="Supplier">Поставщики</a>
                             </li>
                         }
                     </ul>
@@ -74,13 +71,13 @@
             </div>
         </nav>
     </header>
-    
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-    
+
     <div class="modal" tabindex="-1" role="dialog" id="form-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -107,6 +104,16 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/popup.js" asp-append-version="true"></script>
+    @if (User.IsInRole("user"))
+    {
+        <script>
+            $(document).ready(function() {
+                jQueryAjaxGet(
+                    '@Url.Action("GetShoppingCartWithProductsCount", "ShoppingCart", null, Context.Request.Scheme)',
+                    '#shoppingCartAndProductsCount');
+            });
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

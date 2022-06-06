@@ -1,10 +1,11 @@
 ﻿<ul class="navbar-nav nav-link" style="padding-right: 0">
     @if (User.Identity.IsAuthenticated)
     {
-
         @if (User.IsInRole("user"))
         {
             <li class="custom-cart">
+                <div id="shoppingCartAndProductsCount">
+                </div>
                 <a asp-action="Index" asp-controller="ShoppingCart" class="navbar-nav nav-link" id="shoppingCart"><i class="fa fa-shopping-cart"></i></a>
             </li>
         }
@@ -12,26 +13,31 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-user" aria-hidden="true"></i>
+                    @*<img src="~/svg/user.svg" width="16" height="18" />*@
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg-right">
-                    @Html.ActionLink("Cabinet", "Cabinet", "Account",
-                        new { }, new { @class = "dropdown-item" })
-                    @Html.ActionLink("Logout", "Logout", "Account",
+                    @if (!User.IsInRole("admin"))
+                    {
+                        @Html.ActionLink("Кабинет", "Cabinet", "Account",
+                            new { }, new { @class = "dropdown-item" })
+                    }
+                    @Html.ActionLink("Выйти", "Logout", "Account",
                         null, new { @class = "dropdown-item" })
                     @if (User.IsInRole("admin"))
                     {
-                        @Html.ActionLink("Manage Users", "Index", "User",
+                        @Html.ActionLink("Заказы", "Index", "Order",
                             new { }, new { @class = "dropdown-item" })
-                        @Html.ActionLink("Manage Roles", "Index", "Role",
+                        @Html.ActionLink("Доставки", "Index", "Delivery",
                             new { }, new { @class = "dropdown-item" })
-                        @Html.ActionLink("Manage Users with Roles", "UsersRolesPage", "Role",
+                        @Html.ActionLink("Платежи", "Index", "Payment",
                             new { }, new { @class = "dropdown-item" })
-                        @Html.ActionLink("Manage Orders", "Index", "Order",
+                        @Html.ActionLink("Роли", "Index", "Role",
                             new { }, new { @class = "dropdown-item" })
-                        @Html.ActionLink("Manage Deliveries", "Index", "Delivery",
+                        @Html.ActionLink("Пользователи", "Index", "User",
                             new { }, new { @class = "dropdown-item" })
-                        @Html.ActionLink("Manage Payments", "Index", "Payment",
+                        @Html.ActionLink("Пользователи и их роли", "UsersRolesPage", "Role",
                             new { }, new { @class = "dropdown-item" })
+
                     }
                 </div>
             </div>
@@ -41,12 +47,12 @@
     {
         <li class="nav-item">
             <div class="btn-group">
-                <button class="btn btn-outline-primary"
+                @*<button class="btn btn-outline-primary"
                         onclick="showInPopup('@Url.Action("Login", "Account",
                                                   Context.Request.Scheme)', 'Войти')">
                     Войти
-                </button>
-                @*@if (ViewBag.AllowReturningWithUrl == null || ViewBag.AllowReturningWithUrl is true)
+                </button>*@
+                @if (ViewBag.AllowReturningWithUrl == null || ViewBag.AllowReturningWithUrl is true)
                 {
                     <button class="btn btn-outline-primary"
                             onclick="showInPopup('@Url.Action("Login", "Account",
@@ -62,7 +68,7 @@
                                                       Context.Request.Scheme)', 'Войти')">
                         Войти
                     </button>
-                }*@
+                }
             </div>
         </li>
     }

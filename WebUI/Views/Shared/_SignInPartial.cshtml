@@ -17,9 +17,6 @@
             {
                 htmlAttributes = new
                 {
-                    required = "true",
-                    minlength = "2",
-                    maxlength = "40",
                     @class = "form-control",
                     placeholder = "Логин",
                     type = "text"
@@ -33,12 +30,8 @@
             {
                 htmlAttributes = new
                 {
-                    required = "true",
-                    minlength = "4",
-                    maxlength = "30",
                     @class = "form-control",
                     type = "password",
-                    @id = " password",
                     placeholder = "Пароль"
                 }
             })
@@ -66,5 +59,31 @@
 @await Html.PartialAsync("_ValidationScriptsImportPartial")
 
 <script>
-    $("#signInForm").validate();
+    $("#signInForm").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 2,
+                maxlength: 40
+            },
+            Password: {
+                required: true,
+                minlength: 4,
+                maxlength: 64
+            }
+        },
+        messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 2 символов!",
+                maxlength: "Введите не более 40 символов!"
+            },
+            Password: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 4 символов!",
+                maxlength: "Введите не более 64 символов!"
+            }
+        },
+        errorElement: "em"
+    });
 </script>
