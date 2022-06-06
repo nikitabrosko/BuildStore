@@ -1,32 +1,65 @@
 ﻿@using Application.UseCases.Payment.Queries.GetPaymentsWithPagination
 @model Application.Common.Models.PaginatedList<Domain.Entities.Payment>
 
-<h3>Payments</h3>
+<h2 style="text-align: center;margin: 2%;">Платежи</h2>
 
-@foreach (var payment in Model.Items)
-{
-<div>
-    <p>Id: @payment.Id</p>
-    <p>Type: @payment.Type</p>
-    <p>Allowed: @payment.Allowed</p>
-    <a asp-action="Get" asp-controller="Order" asp-route-id="@payment.OrderId"><p>Order id: @payment.OrderId</p></a>
-
-    @if (Model.Items.Count is 1 && Model.TotalPages > 1)
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Тип платежа</th>
+            <th scope="col">Оплачен</th>
+            <th scope="col">Id Заказа</th>
+            <th scope="col">Редактировать</th>
+            <th scope="col">Удалить</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var payment in Model.Items)
     {
-        <a asp-action="Update" asp-controller="Payment" asp-route-id="@payment.Id"
-           asp-route-returnUrl="@Url.PageLink(null, null, new {PageNumber = Model.PageNumber - 1, Model.PageSize})">Edit</a>
-        <a asp-action="Delete" asp-controller="Payment" asp-route-id="@payment.Id"
-           asp-route-returnUrl="@Url.PageLink(null, null, new {PageNumber = Model.PageNumber - 1, Model.PageSize})">Delete</a>
+        <tr>
+            <td>@payment.Id</td>
+            <td>@payment.Type</td>
+            <td>@payment.Allowed</td>
+            <td>
+                <a onclick="showInPopup('@Url.Action("Get", "Order", new {id = payment.OrderId}, Context.Request.Scheme)', 'Заказ № @payment.OrderId')">
+                    @payment.OrderId
+                </a>
+            </td>
+            @if (Model.Items.Count is 1 && Model.TotalPages > 1)
+            {
+                <td>
+                    <a onclick="showInPopup('@Url.Action("Update", "Payment", new{id = payment.Id,
+                                                 routeUrl = Url.PageLink(null, null,
+                                                     new {PageNumber = Model.PageNumber - 1, Model.PageSize})},
+                                                 Context.Request.Scheme)', 'Редактировать платёж')">
+                        Редактировать
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-controller="Payment" asp-route-id="@payment.Id" style="color:red"
+                       asp-route-returnUrl="@Url.PageLink(null, null, new {PageNumber = Model.PageNumber - 1, Model.PageSize})">Удалить</a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    <a onclick="showInPopup('@Url.Action("Update", "Payment", new{id = payment.Id,
+                                                 routeUrl = Url.PageLink(null, null,
+                                                     new {PageNumber = Model.PageNumber, Model.PageSize})},
+                                                 Context.Request.Scheme)', 'Редактировать платёж')">
+                        Редактировать
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-controller="Payment" asp-route-id="@payment.Id" style="color:red"
+                       asp-route-returnUrl="@Url.PageLink(null, null, new {Model.PageNumber, Model.PageSize})">Удалить</a>
+                </td>
+            }
+        </tr>
     }
-    else
-    {
-        <a asp-action="Update" asp-controller="Payment" asp-route-id="@payment.Id"
-           asp-route-returnUrl="@Url.PageLink(null, null, new {Model.PageNumber, Model.PageSize})">Edit</a>
-        <a asp-action="Delete" asp-controller="Payment" asp-route-id="@payment.Id"
-           asp-route-returnUrl="@Url.PageLink(null, null, new {Model.PageNumber, Model.PageSize})">Delete</a>
-    }
-</div>
-}
+    </tbody>
+</table>
 
 <nav>
     <ul class="pagination justify-content-center">
@@ -83,16 +116,3 @@
         }
     </ul>
 </nav>
-
-<div>
-    @if (Model.HasPreviousPage)
-    {
-        @Html.ActionLink("Previous page", "Index", "Payment",
-            new GetPaymentsWithPaginationQuery { PageNumber = Model.PageNumber - 1 })
-    }
-    @if (Model.HasNextPage)
-    {
-        @Html.ActionLink("Next page", "Index", "Payment",
-            new GetPaymentsWithPaginationQuery { PageNumber = Model.PageNumber + 1 })
-    }
-</div>

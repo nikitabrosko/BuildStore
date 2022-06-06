@@ -1,13 +1,24 @@
 ﻿@model Domain.Entities.Payment
 
-<h3>Payment information</h3>
+@{
+    Layout = null;
+}
 
-<div>
-    <p>Id: @Model.Id</p>
-    <p>Type: @Model.Type</p>
-    <p>Allowed: @Model.Allowed</p>
-    <p>Credit card number: @Model.CreditCardNumber</p>
-    <p>Credit card exp month: @Model.CardExpMonth</p>
-    <p>Credit card exp year: @Model.CardExpYear</p>
-    <a asp-action="Get" asp-controller="Order" asp-route-id="@Model.OrderId"><p>Order id: @Model.OrderId</p></a>
-</div>
+@await Html.PartialAsync("_StylesImportPartial")
+
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Тип доставки</th>
+            <th scope="col">Доставка выполнена?</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Id</td>
+            <td>@Model.Type</td>
+            <td>@Model.Allowed</td>
+        </tr>
+    </tbody>
+</table>

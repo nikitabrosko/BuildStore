@@ -1,65 +1,109 @@
-﻿@model Application.UseCases.Payment.Commands.UpdatePayment.UpdatePaymentCommand
+﻿@using Domain.Entities
+@model Application.UseCases.Payment.Commands.UpdatePayment.UpdatePaymentCommand
 
-@using (Html.BeginForm("Update", "Payment", FormMethod.Post))
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
+@using (Html.BeginForm("Update", "Payment", FormMethod.Post,
+new { id = "createPaymentForm" }))
 {
-    @Html.HiddenFor(m => m.Id)
-
-    <div>
-        @Html.Label("Payment type:")
-        @Html.EditorFor(m => m.Type)
+    <div class="form-group">
+        @Html.Label("Тип платежа:")
+        <select asp-for="Type" asp-items="Html.GetEnumSelectList<PaymentType>()"
+                class="form-control">
+        </select>
     </div>
 
-    <div>
-        @Html.Label("Credit card number")
+    <div class="form-group">
+        @Html.Label("Номер кредитной карты")
         @Html.EditorFor(m => m.CreditCardNumber, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "16",
-                minlegth = "16",
-                placeholder = "Credit card number",
-                type = "number"
+                placeholder = "1111 2222 3333 4444",
+                type = "number",
+                @class = "form-control"
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Card exp month")
+    <div class="form-group">
+        @Html.Label("Месяц")
         @Html.EditorFor(m => m.CardExpMonth, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "2",
-                minlength = "2",
-                placeholder = "Card exp month",
-                type = "number"
+                placeholder = "12",
+                type = "number",
+                @class = "form-control"
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Card exp year")
+    <div class="form-group">
+        @Html.Label("Год")
         @Html.EditorFor(m => m.CardExpYear, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "4",
-                minlength = "4",
-                placeholder = "Card exp year",
-                type = "number"
+                placeholder = "2023",
+                type = "number",
+                @class = "form-control"
             }
         })
     </div>
 
     <div>
-        @Html.Label("Allowed?")
-        @Html.EditorFor(m => m.Allowed)
-    </div>
-
-    <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Создать" class="btn btn-primary" style="width:100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#createPaymentForm").validate({
+        rules: {
+            CreditCardNumber: {
+                required: true,
+                minlength: 16,
+                maxlength: 16
+            },
+            CardExpMonth: {
+                required: true,
+                minlength: 2,
+                maxlength: 2,
+                range: [1, 12]
+            },
+            CardExpYear: {
+                required: true,
+                minlength: 4,
+                maxlength: 4,
+                min: 2022
+            }
+        },
+        messages: {
+            CreditCardNumber: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 16 символов!",
+                maxlength: "Введите не более 16 символов!"
+            },
+            CardExpMonth: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 2 символов!",
+                maxlength: "Введите не более 2 символов!",
+                range: "Месяц может быть только от 1 до 12!"
+            },
+            CardExpYear: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 4 символов!",
+                maxlength: "Введите не более 4 символов!",
+                min: "Год должен быть больше 2022!"
+            }
+        },
+        errorElement: "em"
+    });
+</script>
