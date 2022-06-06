@@ -29,17 +29,20 @@ namespace Application.UseCases.Identity.User.Commands.UpdateUser
 
             if (request.Name != null)
             {
-                entity.UserName = request.Name;
+                await _userManager.SetUserNameAsync(entity, request.Name);
+                await _userManager.UpdateNormalizedUserNameAsync(entity);
             }
 
             if (request.Email != null)
             {
-                entity.Email = request.Email;
+                await _userManager.SetEmailAsync(entity, request.Email);
+                await _userManager.UpdateNormalizedEmailAsync(entity);
             }
 
             if (request.Password != null)
             {
-                await _userManager.ChangePasswordAsync(entity, entity.PasswordHash, request.Password);
+                await _userManager.RemovePasswordAsync(entity);
+                await _userManager.AddPasswordAsync(entity, request.Password);
             }
 
             await _context.SaveChangesAsync(cancellationToken);

@@ -21,11 +21,13 @@ namespace Application.UseCases.Subcategory.Queries.GetSubcategory
         {
             var entity = await _context.Categories
                 .OfType<Domain.Entities.Subcategory>()
+                .Include(c => c.Category)
+                .ThenInclude(c => (c as Domain.Entities.Subcategory).Category)
                 .Include(c => c.Products)
                 .Include(s => s.Subcategories)
                 .ThenInclude(c => c.Products)
                 .SingleOrDefaultAsync(s => s.Id.Equals(request.Id), cancellationToken);
-
+            
             if (entity is null)
             {
                 throw new NotFoundException(nameof(Subcategory), request.Id);
