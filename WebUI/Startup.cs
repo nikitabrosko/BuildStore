@@ -24,7 +24,7 @@ namespace WebUI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplication();
+            services.AddApplication(Configuration);
             services.AddInfrastructure(Configuration);
 
             services.AddIdentity<User, IdentityRole>(options =>
