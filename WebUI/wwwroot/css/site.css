@@ -74,6 +74,15 @@ body {
 /* Custom styles
 -------------------------------------------------- */
 
+.error {
+    border-color: red;
+    color: red;
+}
+
+.error input {
+    color:black;
+}
+
 .catalog__inner {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -228,10 +237,6 @@ body {
     width: 100%;
     justify-content: space-around;
     padding-right: 0;
-}
-
-.custom-cart {
-    padding-right: 25px;
 }
 
 .subcategory-main {

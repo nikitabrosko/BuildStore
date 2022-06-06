@@ -1,4 +1,13 @@
-﻿$(function () {
+﻿$.validator.addMethod(
+    "regex",
+    function (value, element, regexp) {
+        var re = new RegExp(regexp);
+        return this.optional(element) || re.test(value);
+    },
+    "Check your input!"
+);
+
+$(function () {
     $('[data-toggle="popover"]').popover();
 });
 
@@ -9,9 +18,27 @@ $(function () {
 });
 
 $('.addToCart').click(function () {
-    var butWrap = $(this).parents('.but-wrap');
+    var butWrap = $(this).parents('#but-wrap');
     butWrap.append('<div class="animtocart"></div>');
 });
+
+jQueryAjaxAddProductAndRefreshProductsCount = (addProductUrl, enableAnimation, addProductId,
+    productsCountUrl, productsCountId) => {
+    jQueryAjaxAddProduct(addProductUrl, enableAnimation, addProductId);
+    setTimeout(jQueryAjaxGet, 800, productsCountUrl, productsCountId);
+    }
+
+jQueryAjaxGet = (url, id) => {
+    $.ajax({
+        type: 'GET',
+        url: url,
+
+        success: function (res) {
+            console.log(res);
+            $(id).html(res);
+        }
+    });
+}
 
 jQueryAjaxAddProduct = (url, enableAnimation, id) => {
     $(id).attr("disabled");
@@ -25,7 +52,7 @@ jQueryAjaxAddProduct = (url, enableAnimation, id) => {
                 if (enableAnimation === true) {
                     $('.animtocart').css({
                         'position': 'absolute',
-                        'background': '#FF0000',
+                        'background': '#007bff',
                         'width': '25px',
                         'height': '25px',
                         'border-radius': '100px',
@@ -76,6 +103,37 @@ jQueryAjaxPost = (url, elementId) => {
             console.log(fail);
         }
     });
+}
+
+jQueryAjaxPostForm = (url, form) => {
+    try {
+        console.log(form);
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: new FormData(form),
+            processData: false,
+
+            success: function (res) {
+                console.log(res);
+                alert(res);
+                $("#categoryGet").html(res.html);
+            },
+
+            error: function (err) {
+                console.log(err);
+                alert(err);
+            },
+
+            failure: function (fail) {
+                console.log(fail);
+                alert(fail);
+            }
+        });
+    } catch (e) {
+        console.log(e);
+        alert(e);
+    } 
 }
 
 $(".custom-file-input").on("change", function () {

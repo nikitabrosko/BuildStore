@@ -1,11 +1,25 @@
 ﻿.but-wrap {
-    position: static;
-    display: inline-block;
-    width: 100%;
-    height: auto;
 }
 
 .addToCart {
     position: relative;
     display: table;
+}
+
+.custom-cart {
+    position: relative;
+}
+
+.productsCount {
+    top: -10px;
+    left: 20px;
+    border-radius: 20px;
+    color: white;
+    font-size: 13px;
+    background-color: #007bff;
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
