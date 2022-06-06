@@ -6,7 +6,8 @@
 
 @await Html.PartialAsync("_StylesImportPartial")
 
-@using (Html.BeginForm("Update", "Customer", FormMethod.Post))
+@using (Html.BeginForm("Update", "Customer", FormMethod.Post,
+    new {id = "updateCustomerForm"}))
 {
     <div class="form-group">
         @Html.Label("First name")
@@ -14,10 +15,7 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "50",
-                minlegth = "2",
-                placeholder = "First name",
+                placeholder = "Иван",
                 type = "text",
                 @class="form-control"
             }
@@ -30,10 +28,7 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "50",
-                minlegth = "2",
-                placeholder = "First name",
+                placeholder = "Иванович",
                 type = "text",
                 @class="form-control"
             }
@@ -46,10 +41,7 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "50",
-                minlegth = "1",
-                placeholder = "First name",
+                placeholder = "ул.Тавлая, 44",
                 type = "text",
                 @class="form-control"
             }
@@ -62,10 +54,7 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "50",
-                minlegth = "1",
-                placeholder = "City",
+                placeholder = "Гродно",
                 type = "text",
                 @class="form-control"
             }
@@ -78,10 +67,7 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "50",
-                minlegth = "1",
-                placeholder = "Country",
+                placeholder = "Беларусь",
                 type = "text",
                 @class="form-control"
             }
@@ -94,10 +80,7 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "50",
-                minlegth = "1",
-                placeholder = "Phone number",
+                placeholder = "+375331234567",
                 type = "tel",
                 @class="form-control"
             }
@@ -105,7 +88,7 @@
     </div>
 
     <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" style="width:100%" />
+        <input type="submit" value="Сохранить" class="btn btn-primary" style="width:100%" />
     </div>
 }
 
@@ -113,5 +96,73 @@
 @await Html.PartialAsync("_ValidationScriptsImportPartial")
 
 <script>
-    $("#createOrderForm").validate();
+    $("#updateCustomerForm").validate({
+        rules: {
+            FirstName: {
+                required: true,
+                minlength: 2,
+                maxlength: 50
+            },
+            LastName: {
+                required: true,
+                minlength: 2,
+                maxlength: 50
+            },
+            Address: {
+                required: true,
+                minlength: 1,
+                maxlength: 100
+            },
+            City: {
+                required: true,
+                minlength: 1,
+                maxlength: 50
+            },
+            Country: {
+                required: true,
+                minlength: 1,
+                maxlength: 50
+            },
+            Phone: {
+                required: true,
+                minlength: 1,
+                maxlength: 50,
+                regex: "^\+\d{3}\(\d{2}\)\d{3}-\d{2}-\d{2}$"
+            }
+        },
+        messages: {
+            FirstName: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 2 символов!",
+                maxlength: "Введите не более 50 символов!"
+            },
+            LastName: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 2 символов!",
+                maxlength: "Введите не более 50 символов!"
+            },
+            Address: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 1 символов!",
+                maxlength: "Введите не более 100 символов!"
+            },
+            City: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 1 символов!",
+                maxlength: "Введите не более 50 символов!"
+            },
+            Country: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 1 символов!",
+                maxlength: "Введите не более 50 символов!"
+            },
+            Phone: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 1 символов!",
+                maxlength: "Введите не более 50 символов!",
+                regex: "Введите валидный номер телефона!"
+            }
+        },
+        errorElement: "em"
+    });
 </script>
