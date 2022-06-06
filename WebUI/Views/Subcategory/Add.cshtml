@@ -6,7 +6,8 @@
 
 @await Html.PartialAsync("_StylesImportPartial")
 
-@using (Html.BeginForm("Add", "Subcategory", FormMethod.Post))
+@using (Html.BeginForm("Add", "Subcategory", FormMethod.Post,
+    new { id = "addSubcategoryForm" }))
 {
     @Html.HiddenFor(m => m.SubcategoryId)
 
@@ -16,9 +17,6 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "100",
-                minlength = "3",
                 placeholder = "Название",
                 type = "text",
                 @class = "form-control",
@@ -28,7 +26,7 @@
 
     <div class="form-group">
         @Html.Label("Описание")
-        <textarea asp-for="@Model.Description" required maxlength="500" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
+        <textarea asp-for="@Model.Description" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
     </div>
 
     <div>
@@ -38,3 +36,29 @@
 
 @await Html.PartialAsync("_ScriptsImportPartial")
 @await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#addSubcategoryForm").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 3,
+                maxlength: 100
+            },
+            Description: {
+                maxlength: 500
+            }
+        },
+        messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 3 символов!",
+                maxlength: "Введите не более 100 символов!"
+            },
+            Description: {
+                maxlength: "Введите не более 500 символов!"
+            }
+        },
+        errorElement: "em"
+    });
+</script>

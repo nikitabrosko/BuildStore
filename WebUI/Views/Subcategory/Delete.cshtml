@@ -6,20 +6,20 @@
 
 @await Html.PartialAsync("_StylesImportPartial")
 
-@using (Html.BeginForm("Delete", "Subcategory", FormMethod.Post))
-{
-    @Html.HiddenFor(m => m.Id);
+<form method="post" asp-action="Delete" asp-controller="Subcategory">
+
+    @Html.HiddenFor(m => m.Id)
 
     @if (ViewBag.IsHaveSubcategories)
     {
         <div class="form-group">
             @Html.Label("Удалить все подкатегории, относящиеся к этой подкатегории?")
-            @Html.EditorFor(m => m.SubcategoriesDeletion, null, 
+            @Html.EditorFor(m => m.SubcategoriesDeletion, null,
                 new
                 {
                     htmlAttributes = new
                     {
-                        @class="form-check"
+                        @class = "form-check"
                     }
                 })
         </div>
@@ -27,20 +27,20 @@
 
     <div class="form-group">
         @Html.Label("Удалить все товары, относящиеся к этой подкатегории?")
-        @Html.EditorFor(m => m.ProductsDeletion, null, 
+        @Html.EditorFor(m => m.ProductsDeletion, null,
             new
             {
                 htmlAttributes = new
                 {
-                    @class="form-check"
+                    @class = "form-check"
                 }
             })
     </div>
 
     <div>
-        <input type="submit" value="Удалить" class="btn btn-danger" style="width: 100%" />
+        <input type="submit" value="Удалить" class="btn btn-danger" style="width: 100%"/>
     </div>
-}
+</form>
 
 @await Html.PartialAsync("_ScriptsImportPartial")
 @await Html.PartialAsync("_ValidationScriptsImportPartial")
