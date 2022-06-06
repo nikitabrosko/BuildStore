@@ -1,36 +1,60 @@
 ﻿@using Application.UseCases.Order.Queries.GetOrdersWithPagination
 @model Application.Common.Models.PaginatedList<Domain.Entities.Order>
 
-<h3>Orders</h3>
 
-@foreach (var order in Model.Items)
-{
-    <div>
-        <p>Date: @order.Date</p>
-        <a asp-action="Get" asp-controller="Delivery" asp-route-id="@order.DeliveryId"><p>Delivery id: @order.DeliveryId</p></a>
-        <a asp-action="Get" asp-controller="Payment" asp-route-id="@order.PaymentId"><p>Payment id: @order.PaymentId</p></a>
-        <p>Products:</p>
+<h2 style="text-align: center;margin: 2%;">Заказы</h2>
 
-        @foreach (var productsDictionary in order.ProductsDictionary)
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Дата</th>
+            <th scope="col">Id Доставки</th>
+            <th scope="col">Id Платежа</th>
+            <th scope="col">Товары</th>
+            <th scope="col">Удалить</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Items)
         {
-            <a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">
-                <p>Id: @productsDictionary.Product.Id</p>
-                <p>Count: @productsDictionary.Count</p>
-            </a>
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.Date</td>
+                <td>
+                    <a onclick="showInPopup('@Url.Action("Get", "Delivery", new {id = order.DeliveryId}, Context.Request.Scheme)', 'Доставка № @order.DeliveryId')">
+                        @order.DeliveryId
+                    </a>
+                </td>
+                <td>
+                    <a onclick="showInPopup('@Url.Action("Get", "Payment", new {id = order.PaymentId}, Context.Request.Scheme)', 'Платёж № @order.PaymentId')">
+                        @order.PaymentId
+                    </a>
+                </td>
+                <td>
+                    <a onclick="showInPopup('@Url.Action("GetOrderProducts", "Order", new {orderId = order.Id},
+                                                 Context.Request.Scheme)', 'Товары заказа № @order.Id')">
+                        Просмотреть
+                    </a>
+                </td>
+                @if (Model.Items.Count is 1 && Model.TotalPages > 1)
+                {
+                    <td>
+                        <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" style="color:red"
+                           asp-route-returnUrl="@Url.PageLink(null, null, new {PageNumber = Model.PageNumber - 1, Model.PageSize})">Удалить</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" style="color:red"
+                           asp-route-returnUrl="@Url.PageLink(null, null, new {Model.PageNumber, Model.PageSize})">Удалить</a>
+                    </td>
+                }
+            </tr>
         }
-        
-        @if (Model.Items.Count is 1 && Model.TotalPages > 1)
-        {
-            <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" 
-               asp-route-returnUrl="@Url.PageLink(null, null, new {PageNumber = Model.PageNumber - 1, Model.PageSize})">Delete</a>
-        }
-        else
-        {
-            <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" 
-               asp-route-returnUrl="@Url.PageLink(null, null, new {Model.PageNumber, Model.PageSize})">Delete</a>
-        }
-    </div>
-}
+    </tbody>
+</table>
 
 <nav>
     <ul class="pagination justify-content-center">

@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Domain.Entities.ProductsDictionary>
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial") 
+
+<table class="table">
+    <thead class="thead-light">
+    <tr>
+        @if (User.IsInRole("admin"))
+        {
+            <th scope="col">Id</th>
+        }
+
+        <th scope="col">Название</th>
+        <th scope="col">Количество</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var productsDictionary in Model)
+    {
+        <tr>
+            @if (User.IsInRole("admin"))
+            {
+                <td>
+                    <a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">@productsDictionary.Product.Id</a>
+                </td>
+            }
+            
+            <td><a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">@productsDictionary.Product.Name</a></td>
+            <td>@productsDictionary.Count</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,18 +1,33 @@
 ﻿@model Domain.Entities.Order
 
-<h3>Order information</h3>
+@{
+    Layout = null;
+}
 
-<div>
-    <p>Date: @Model.Date</p>
-    <a asp-action="Get" asp-controller="Delivery" asp-route-id="@Model.DeliveryId"><p>Delivery id: @Model.DeliveryId</p></a>
-    <a asp-action="Get" asp-controller="Payment" asp-route-id="@Model.PaymentId"><p>Payment id: @Model.PaymentId</p></a>
-    <p>Products:</p>
+@await Html.PartialAsync("_StylesImportPartial")
 
-    @foreach (var productsDictionary in Model.ProductsDictionary)
-    {
-        <a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">
-            <p>Id: @productsDictionary.Product.Id</p>
-            <p>Count: @productsDictionary.Count</p>
-        </a>
-    }
-</div>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Дата</th>
+            <th scope="col">Товары</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>@Model.Id</td>
+        <td>@Model.Date</td>
+        <td>
+            @foreach (var productsDictionary in Model.ProductsDictionary)
+            {
+                <a onclick="showInPopup('@Url.Action("GetOrderProducts", "Order", new {orderId = Model.Id},
+                                             Context.Request.Scheme)', 'Товары заказа № @Model.Id')">
+                    Просмотреть
+                </a>
+            }
+        </td>
+    </tr>
+    
+    </tbody>
+</table>
