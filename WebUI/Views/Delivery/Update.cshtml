@@ -1,20 +1,39 @@
-﻿@model Application.UseCases.Delivery.Commands.UpdateDelivery.UpdateDeliveryCommand
+﻿@using Domain.Entities
+@model Application.UseCases.Delivery.Commands.UpdateDelivery.UpdateDeliveryCommand
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
 
 @using (Html.BeginForm("Update", "Delivery", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id)
 
-    <div>
-        @Html.Label("Delivery type:")
-        @Html.EditorFor(m => m.Type)
+    <div class="form-group">
+        @Html.Label("Тип доставки")
+        <select asp-for="Type" asp-items="Html.GetEnumSelectList<DeliveryType>()"
+                class="form-control">
+        </select>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Доставка выполнена?")
+        @Html.EditorFor(m => m.Fulfilled, 
+            new
+            {
+                htmlAttributes = new
+                {
+                    @class="form-check"
+                }
+            })
     </div>
 
     <div>
-        @Html.Label("Fulfilled?")
-        @Html.EditorFor(m => m.Fulfilled)
-    </div>
-
-    <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Сохранить" class="btn btn-primary" style="width:100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")

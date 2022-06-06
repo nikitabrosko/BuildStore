@@ -1,10 +1,25 @@
 ﻿@model Domain.Entities.Delivery
 
-<h3>Delivery information</h3>
+@{
+    Layout = null;
+}
 
-<div>
-    <p>Id: @Model.Id</p>
-    <p>Type: @Model.Type</p>
-    <p>Fulfilled: @Model.Fulfilled</p>
-    <a asp-action="Get" asp-controller="Order" asp-route-id="@Model.OrderId"><p>Order id: @Model.OrderId</p></a>
-</div>
+@await Html.PartialAsync("_StylesImportPartial")
+
+<table class="table">
+    <thead class="thead-light">
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Тип доставки</th>
+        <th scope="col">Доставка выполнена?</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>@Model.Id</td>
+        <td>@Model.Type</td>
+        <td>@Model.Fulfilled</td>
+    </tr>
+    
+    </tbody>
+</table>
