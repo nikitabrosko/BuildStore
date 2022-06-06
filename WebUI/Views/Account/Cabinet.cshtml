@@ -3,11 +3,32 @@
 <h2>User cabinet</h2>
 
 <div>
-    <p>UserName: @Model.UserName</p>
-    <p>Email: @Model.Email</p>
+    <p>@Model.UserName</p>
+    <button onclick="showInPopup('@Url.Action("ChangeUserName", "Account", null,
+                                      Context.Request.Scheme)', 'Изменить логин')">
+        Изменить
+    </button>
+</div>
+
+<div>
+    <p>@Model.Email</p>
+    <button onclick="showInPopup('@Url.Action("ChangeEmail", "Account", null,
+                                      Context.Request.Scheme)', 'Изменить Email')">
+        Изменить
+    </button>
+</div>
+
+<div>
+    <button onclick="showInPopup('@Url.Action("ChangePassword", "Account", null,
+                                      Context.Request.Scheme)', 'Изменить пароль')">
+        Изменить пароль
+    </button>
+</div>
+
+<div>
     @if (Model.Customer is null)
     {
-        <button onclick="showInPopup('@Url.Action("Create", "Customer",
+        <button onclick="showInPopup('@Url.Action("Create", "Customer", null,
                                           Context.Request.Scheme)', 'Заполнение информации')">
             Заполнить информацию о себе
         </button>
@@ -22,7 +43,7 @@
         <p>Country: @Model.Customer.Country</p>
         <p>Phone number: @Model.Customer.Phone</p>
 
-        <button onclick="showInPopup('@Url.Action("Update", "Customer",
+        <button onclick="showInPopup('@Url.Action("Update", "Customer", null,
                                           Context.Request.Scheme)', 'Обновление информации')">
             Обновить информацию о себе
         </button>
