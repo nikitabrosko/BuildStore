@@ -1,75 +1,115 @@
 ﻿@model Application.UseCases.Identity.User.Commands.CreateUser.CreateUserCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Create", "User", FormMethod.Post,
-   new { @id = "createUserForm" }))
+new { @id = "createUserForm" }))
 {
-    <div>
-        @Html.Label("Name")
+    <div class="form-group">
+        @Html.Label("Логин")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                minlength = "2",
-                maxlength = "40",
-                placeholder = "Name",
-                type = "text"
+                placeholder = "Логин",
+                type = "text",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
+    <div class="form-group">
         @Html.Label("Email")
         @Html.EditorFor(m => m.Email, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                minlength = "5",
-                maxlength = "50",
-                placeholder = "Email",
-                type = "email"
+                placeholder = "name@example.com",
+                type = "email",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Password")
+    <div class="form-group">
+        @Html.Label("Пароль")
         @Html.EditorFor(m => m.Password, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                minlength = "4",
-                maxlength = "30",
-                type = "password"
+                type = "password",
+                @class = "form-control",
             }
         })
     </div>
 
-    <div>
-        @Html.Label("Confirm Password")
-        <input type="password" minlength="4" maxlength="30" name="Password_confirmation"
-               id="Password_confirmation" required />
+    <div class="form-group">
+        @Html.Label("Подтверждение пароля")
+        <input type="password" name="Password_confirmation"
+               id="Password_confirmation" class="form-control" />
     </div>
 
     <div>
-        <input type="submit" value="Create" />
+        <input type="submit" value="Создать" class="btn btn-primary" style="width: 100%" />
     </div>
 }
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
 
 <script>
     $("#createUserForm").validate({
         rules: {
-            Password: "required",
+            Name: {
+                required: true,
+                minlength: 2,
+                maxlength: 40
+            },
+            Email: {
+                required: true,
+                minlength: 5,
+                maxlength: 50,
+                email: true,
+                regex: "^([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+@@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$"
+            },
+            Password: {
+                required: true,
+                minlength: 4,
+                maxlength: 64,
+                regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{4,64}$"
+            },
             Password_confirmation: {
                 equalTo: "#Password"
             }
         },
         messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 2 символов!",
+                maxlength: "Введите не более 40 символов!"
+            },
+            Email: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 5 символов!",
+                maxlength: "Введите не более 50 символов!",
+                email: "Введите валидный email!",
+                regex: "Введите валидный email!"
+            },
+            Password: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 4 символов!",
+                maxlength: "Введите не более 64 символов!",
+                regex: "Введите валидный пароль!"
+            },
             Password_confirmation: {
-                equalTo: "Invalid confirmation password!"
+                required: "Это поле является обязательным!",
+                equalTo: "Неверный подтверждающий пароль!"
             }
-        }
+        },
+        errorElement: "em"
     });
 </script>

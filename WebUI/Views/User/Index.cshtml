@@ -1,41 +1,34 @@
 ﻿@using Application.UseCases.Identity.User.Queries.GetUsersWithPagination
 @model Application.Common.Models.PaginatedList<Domain.IdentityEntities.User>
 
-<h2>Users</h2>
+<h2 style="text-align: center;margin: 2%;">Пользователи</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>
-                <a asp-action="Create" asp-controller="User">Create user</a>
-            </th>
-        </tr>
-    </thead>
-</table>
+<div style="text-align: center; margin: 2%;">
+    <button class="btn btn-dark" style="width: 30%;"
+            onclick="showInPopup('@Url.Action("Create", "User", null,
+                                      Context.Request.Scheme)', 'Создать пользователя')">
+        Создать пользователя
+    </button>
+</div>
 
-<table>
-    <thead>
+<table class="table">
+    <thead class="thead-dark">
     <tr>
-        <th hidden>id</th>
-        <th>User name</th>
-        <th>Email</th>
+        <th scope="col">Id</th>
+        <th scope="col">Логин</th>
+        <th scope="col">Email</th>
+        <th scope="col">Удаление</th>
     </tr>
     </thead>
     <tbody>
     @foreach (var user in Model.Items)
     {
         <tr>
-            <td hidden>@user.Id</td>
+            <td>@user.Id</td>
             <td>@user.UserName</td>
             <td>@user.Email</td>
             <td>
-                <a asp-action="Update" asp-controller="User" asp-route-id="@user.Id">Edit</a>
-            </td>
-            <td>
-                <a asp-action="ChangePassword" asp-controller="User" asp-route-id="@user.UserName">Change password</a>
-            </td>
-            <td>
-                <a asp-action="Delete" asp-controller="User" asp-route-id="@user.Id">Delete</a>
+                <a asp-action="Delete" asp-controller="User" asp-route-id="@user.Id" style="color:red">Удалить</a>
             </td>
         </tr>
     }
