@@ -157,7 +157,7 @@ namespace WebUI.Controllers
             {
                 var categoryId = await Mediator.Send(command);
 
-                return RedirectToAction("Get", "Category", new {id = categoryId});
+                return RedirectToAction("Get", "Category", new { id = categoryId });
             }
             catch (NotFoundException exception)
             {

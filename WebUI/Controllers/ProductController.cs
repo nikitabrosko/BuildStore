@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
+using Application.UseCases.Category.Queries.GetCategory;
+using Application.UseCases.Identity.User.Queries.GetUser;
 using Application.UseCases.Product.Commands.CreateProduct;
 using Application.UseCases.Product.Commands.DeleteProduct;
 using Application.UseCases.Product.Commands.UpdateProduct;
 using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 using Application.UseCases.Product.Queries.GetProduct;
 using Application.UseCases.Product.Queries.SearchProductWithPagination;
+using Application.UseCases.ShoppingCart.Queries.GetShoppingCart;
 using Application.UseCases.Subcategory.Queries.GetSubcategories;
 using Application.UseCases.Subcategory.Queries.GetSubcategory;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebUI.Models;
 
 namespace WebUI.Controllers
 {
@@ -22,14 +26,36 @@ namespace WebUI.Controllers
         [HttpGet("{subcategoryId:int}")]
         public async Task<IActionResult> GetProducts([FromQuery] GetPaginatedProductsWithSubcategoryQuery query, [FromRoute] int subcategoryId)
         {
+            if (User.IsInRole("user"))
+            {
+                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+                var shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
+                var productsCount = shoppingCart.ProductsDictionary.Sum(productsDictionary => productsDictionary.Count);
+
+                ViewBag.ProductsCount = productsCount;
+            }
+
             ViewBag.SubcategoryId = subcategoryId;
             query.SubcategoryId = subcategoryId;
 
-            var subcategory = await Mediator.Send(new GetSubcategoryQuery {Id = subcategoryId});
+            var subcategoryEntity = await Mediator.Send(new GetSubcategoryQuery {Id = subcategoryId});
 
-            ViewBag.NameForProductsPage = subcategory.Name;
+            ViewBag.NameForProductsPage = subcategoryEntity.Name;
 
-            return View("_GetProductsPartial", await Mediator.Send(query));
+            var mainCategoryId = subcategoryEntity.Category switch
+            {
+                Category category => category.Id,
+                Subcategory subcategory => subcategory.Category.Id,
+                _ => 0
+            };
+
+            var productsPartialModel = new ProductsPartialModel
+            {
+                Products = await Mediator.Send(query),
+                Category = await Mediator.Send(new GetCategoryQuery {Id = mainCategoryId })
+            };
+
+            return View("_GetProductsPartial", productsPartialModel);
         }
 
         [HttpGet("{id:int}")]

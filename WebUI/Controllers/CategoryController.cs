@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
@@ -8,7 +8,8 @@ using Application.UseCases.Category.Commands.DeleteCategory;
 using Application.UseCases.Category.Commands.UpdateCategory;
 using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Category.Queries.GetCategory;
-using Domain.Entities;
+using Application.UseCases.Identity.User.Queries.GetUser;
+using Application.UseCases.ShoppingCart.Queries.GetShoppingCart;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Controllers
@@ -18,6 +19,15 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] GetCategoriesQuery query)
         {
+            if (User.IsInRole("user"))
+            {
+                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+                var shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
+                var productsCount = shoppingCart.ProductsDictionary.Sum(productsDictionary => productsDictionary.Count);
+
+                ViewBag.ProductsCount = productsCount;
+            }
+            
             ViewBag.Title = "Categories";
 
             return View(await Mediator.Send(query));

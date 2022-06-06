@@ -138,11 +138,5 @@ namespace WebUI.Controllers
                 return View("Error", exception.Message);
             }
         }
-
-        [HttpGet]
-        public IActionResult CancelCreation(int orderId)
-        {
-            return RedirectToAction("CancelCreation", "Delivery", new {orderId});
-        }
     }
 }

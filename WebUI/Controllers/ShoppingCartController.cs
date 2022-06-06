@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Identity.User.Queries.GetUser;
@@ -103,6 +104,18 @@ namespace WebUI.Controllers
             var shoppingCart = await Mediator.Send(new GetShoppingCartQuery {Id = user.ShoppingCart.Id});
 
             return View("_ProductsPartial", shoppingCart);
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpGet]
+        public async Task<IActionResult> GetShoppingCartWithProductsCount()
+        {
+            var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+            var shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
+            var productsCount = shoppingCart.ProductsDictionary.Sum(productsDictionary => productsDictionary.Count);
+
+            ViewBag.ProductsCount = productsCount;
+            return View("_ShoppingCartPartial", productsCount);
         }
     }
 }

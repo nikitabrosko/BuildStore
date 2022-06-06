@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Identity.User.Commands.CreateUser;
+using Application.UseCases.Identity.User.Commands.UpdateUser;
 using Application.UseCases.Identity.User.Queries.GetUser;
 using Application.UseCases.Identity.User.Queries.LoginUser;
 using Domain.IdentityEntities;
@@ -99,6 +100,55 @@ namespace WebUI.Controllers.IdentityControllers
             {
                 return View("Error", exception.Message);
             }
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromForm] UpdateUserCommand command)
+        {
+            var user = await Mediator.Send(new GetUserQuery {UserName = User.Identity.Name});
+            command.Id = user.Id;
+
+            await Mediator.Send(command);
+
+            return RedirectToAction("Cabinet", "Account");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangeUserName()
+        {
+            var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+
+            return View(new UpdateUserCommand {Id = user.Id, Name = user.UserName});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeUserName([FromForm] UpdateUserCommand command)
+        {
+            await Mediator.Send(command);
+
+            return RedirectToAction("Cabinet", "Account");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ChangeEmail()
+        {
+            var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+
+            return View(new UpdateUserCommand { Id = user.Id, Email = user.Email });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeEmail([FromForm] UpdateUserCommand command)
+        {
+            await Mediator.Send(command);
+
+            return RedirectToAction("Cabinet", "Account");
         }
     }
 }

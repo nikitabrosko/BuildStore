@@ -135,21 +135,5 @@ namespace WebUI.Controllers
                 return View("Error", exception.Message);
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> CancelCreation(int orderId)
-        {
-            try
-            {
-                var order = await Mediator.Send(new GetOrderQuery { Id = orderId });
-                await Mediator.Send(new DeleteDeliveryCommand { Id = order.DeliveryId });
-
-                return RedirectToAction("CancelCreation", "Order", new { orderId });
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
     }
 }

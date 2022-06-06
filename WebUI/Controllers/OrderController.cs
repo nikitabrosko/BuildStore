@@ -112,13 +112,13 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CancelCreation(int orderId)
+        public async Task<IActionResult> GetOrderProducts(int orderId)
         {
             try
             {
-                await Mediator.Send(new DeleteOrderCommand { Id = orderId });
+                var order = await Mediator.Send(new GetOrderQuery { Id = orderId });
 
-                return RedirectToAction("Index", "ShoppingCart");
+                return View("OrderProducts", order.ProductsDictionary);
             }
             catch (NotFoundException exception)
             {

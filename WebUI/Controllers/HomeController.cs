@@ -12,10 +12,8 @@ namespace WebUI.Controllers
 
                 return View();
             }
-            else
-            {
-                return RedirectToAction("Index", "Category");
-            }
+
+            return RedirectToAction("Index", "Category");
         }
     }
 }

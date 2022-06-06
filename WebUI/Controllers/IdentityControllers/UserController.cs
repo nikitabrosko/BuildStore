@@ -42,30 +42,6 @@ namespace WebUI.Controllers.IdentityControllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet("{id}")]
-        public IActionResult Update([FromRoute] string id)
-        {
-            ViewBag.Title = "Update user page";
-
-            return View(new UpdateUserCommand { Id = id });
-        }
-
-        [HttpPost("{command}")]
-        [Route("Update/{command}")]
-        public async Task<IActionResult> Update([FromForm] UpdateUserCommand command)
-        {
-            try
-            {
-                await Mediator.Send(command);
-
-                return RedirectToAction("Index");
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
         [HttpDelete("{id}")]
         [Route("Delete/{id}")]
         public async Task<IActionResult> Delete([FromRoute] string id)
@@ -80,15 +56,6 @@ namespace WebUI.Controllers.IdentityControllers
             {
                 return View("Error", exception.Message);
             }
-        }
-
-        [HttpGet]
-        public IActionResult ChangePassword(string name)
-        {
-            ViewBag.Title = "Change password page";
-            ViewBag.UserName = name;
-
-            return View();
         }
     }
 }
