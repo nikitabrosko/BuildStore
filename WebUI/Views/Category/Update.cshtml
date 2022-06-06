@@ -6,7 +6,8 @@
 
 @await Html.PartialAsync("_StylesImportPartial")
 
-@using (Html.BeginForm("Update", "Category", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Update", "Category", FormMethod.Post, 
+    new { enctype = "multipart/form-data", id = "updateCategoryForm" }))
 {
     @Html.HiddenFor(m => m.Id)
 
@@ -60,3 +61,29 @@
 
 @await Html.PartialAsync("_ScriptsImportPartial")
 @await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#updateCategoryForm").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 3,
+                maxlength: 100
+            },
+            Description: {
+                maxlength: 500
+            }
+        },
+        messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 3 символов!",
+                maxlength: "Введите не более 100 символов!"
+            },
+            Description: {
+                maxlength: "Введите не более 500 символов!"
+            }
+        },
+        errorElement: "em"
+    });
+</script>

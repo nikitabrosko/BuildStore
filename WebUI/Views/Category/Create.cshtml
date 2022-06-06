@@ -13,9 +13,6 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "100",
-                minlegth = "3",
                 placeholder = "Наименование",
                 type = "text",
                 @class = "form-control",
@@ -26,7 +23,7 @@
 
     <div class="form-group">
         @Html.Label("Описание")
-        <textarea asp-for="@Model.Description" required maxlength="500" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
+        <textarea asp-for="@Model.Description" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
     </div>
     
     <div class="form-group">
@@ -53,3 +50,35 @@
 
 @await Html.PartialAsync("_ScriptsImportPartial")
 @await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#createCategoryForm").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 3,
+                maxlength: 100
+            },
+            Description: {
+                maxlength: 500
+            },
+            Picture: {
+                required: true
+            }
+        },
+        messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 3 символов!",
+                maxlength: "Введите не более 100 символов!"
+            },
+            Description: {
+                maxlength: "Введите не более 500 символов!"
+            },
+            Picture: {
+                required: "Это поле является обязательным!"
+            }
+        },
+        errorElement: "em"
+    });
+</script>
