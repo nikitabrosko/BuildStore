@@ -1,11 +1,20 @@
 ﻿@model Application.Common.Models.PaginatedList<Microsoft.AspNetCore.Identity.IdentityRole>
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 <ul>
     @foreach (var role in Model.Items)
     {
         <li>
-            @role.Name @Html.ActionLink("Add", "AddRoleToUser", "Role", 
-                           new { userId = ViewBag.UserId, roleId = role.Id })
+            @role.Name @Html.ActionLink("Добавить", "AddRoleToUser", "Role",
+                new { userId = ViewBag.UserId, roleId = role.Id })
         </li>
     }
 </ul>
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")

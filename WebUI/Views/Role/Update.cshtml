@@ -1,30 +1,53 @@
 ﻿@model Application.UseCases.Identity.Role.Commands.UpdateRole.UpdateRoleCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Update", "Role", FormMethod.Post,
-   new { @id = "updateRoleForm" }))
+ new { @id = "updateRoleForm" }))
 {
     @Html.HiddenFor(m => m.Id)
 
-    <div>
-        @Html.Label("New Name")
+    <div class="form-group">
+        @Html.Label("Изменить название")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                minlength = "2",
-                maxlength = "40",
-                placeholder = "Name",
-                type = "text"
+                placeholder = "User",
+                type = "text",
+                @class = "form-control"
             }
         })
     </div>
 
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" value="Сохранить" class="btn btn-primary" style="width: 100%" />
     </div>
 }
 
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
+
 <script>
-    $("#updateRoleForm").validate();
+    $("#updateRoleForm").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 2,
+                maxlength: 40
+            }
+        },
+        messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 2 символов!",
+                maxlength: "Введите не более 40 символов!"
+            }
+        },
+        errorElement: "em"
+    });
 </script>

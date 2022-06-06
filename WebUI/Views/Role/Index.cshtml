@@ -1,36 +1,39 @@
 ﻿@using Application.UseCases.Identity.Role.Queries.GetRolesWithPagination
 @model Application.Common.Models.PaginatedList<Microsoft.AspNetCore.Identity.IdentityRole>
 
-<h2>Roles</h2>
+<h2 style="text-align: center;margin: 2%;">Роли</h2>
 
-<table>
-    <thead>
+<div style="text-align: center; margin: 2%;">
+    <button class="btn btn-dark" style="width: 30%;"
+            onclick="showInPopup('@Url.Action("Create", "Role", null,
+                                      Context.Request.Scheme)', 'Создать роль')">
+        Создать роль
+    </button>
+</div>
+
+<table class="table">
+    <thead class="thead-dark">
         <tr>
-            <th>
-                <a asp-action="Create" asp-controller="Role">Create role</a>
-            </th>
+            <th scope="col">Id</th>
+            <th scope="col">Название</th>
+            <th scope="col">Редактирование</th>
+            <th scope="col">Удаление</th>
         </tr>
-    </thead>
-</table>
-
-<table>
-    <thead>
-    <tr>
-        <th hidden>id</th>
-        <th>Role name</th>
-    </tr>
     </thead>
     <tbody>
     @foreach (var role in Model.Items)
     {
         <tr>
-            <td hidden>@role.Id</td>
+            <td>@role.Id</td>
             <td>@role.Name</td>
             <td>
-                <a asp-action="Update" asp-controller="Role" asp-route-id="@role.Id">Edit</a>
+                <a onclick="showInPopup('@Url.Action("Update", "Role", new { id = role.Id },
+                                                  Context.Request.Scheme)', 'Редактировать роль')">
+                    Редактировать
+                </a>
             </td>
             <td>
-                <a asp-action="Delete" asp-controller="Role" asp-route-id="@role.Id">Delete</a>
+                <a asp-action="Delete" asp-controller="Role" asp-route-id="@role.Id" style="color:red">Удалить</a>
             </td>
         </tr>
     }

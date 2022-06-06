@@ -1,28 +1,51 @@
 ﻿@model Application.UseCases.Identity.Role.Commands.CreateRole.CreateRoleCommand
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 @using (Html.BeginForm("Create", "Role", FormMethod.Post,
-   new { @id = "createRoleForm" }))
+ new { @id = "createRoleForm" }))
 {
-    <div>
-        @Html.Label("Name")
+    <div class="form-group">
+        @Html.Label("Название")
         @Html.EditorFor(m => m.Name, new
         {
             htmlAttributes = new
             {
-                required = "true",
-                minlength = "2",
-                maxlength = "40",
-                placeholder = "Name",
-                type = "text"
+                placeholder = "User",
+                type = "text",
+                @class = "form-control"
             }
         })
     </div>
 
     <div>
-        <input type="submit" value="Create" />
+        <input type="submit" value="Создать" class="btn btn-primary" style="width: 100%" />
     </div>
 }
 
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
+
 <script>
-    $("#createRoleForm").validate();
+    $("#createRoleForm").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 2,
+                maxlength: 40
+            }
+        },
+        messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 2 символов!",
+                maxlength: "Введите не более 40 символов!"
+            }
+        },
+        errorElement: "em"
+    });
 </script>

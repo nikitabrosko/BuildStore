@@ -1,11 +1,20 @@
 ﻿@model IList<string>
 
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("_StylesImportPartial")
+
 <ul>
     @foreach (var role in Model)
     {
         <li>
-            @role @Html.ActionLink("Remove", "RemoveRoleFromUser", "Role",
-                      new { userId = ViewBag.UserId, roleName = role })
+            @role @Html.ActionLink("Удалить", "RemoveRoleFromUser", "Role",
+                new { userId = ViewBag.UserId, roleName = role })
         </li>
     }
 </ul>
+
+@await Html.PartialAsync("_ScriptsImportPartial")
+@await Html.PartialAsync("_ValidationScriptsImportPartial")
