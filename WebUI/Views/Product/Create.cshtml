@@ -13,7 +13,8 @@
 
 @await Html.PartialAsync("_StylesImportPartial")
 
-@using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Create", "Product", FormMethod.Post, 
+    new { enctype = "multipart/form-data", id = "createProductForm" }))
 {
     @Html.HiddenFor(m => m.SupplierId)
 
@@ -23,9 +24,6 @@
         {
             htmlAttributes = new
             {
-                required = "true",
-                maxlength = "100",
-                minlegth = "3",
                 placeholder = "Название",
                 type = "text",
                 @class = "form-control",
@@ -35,7 +33,7 @@
 
     <div class="form-group">
         @Html.Label("Описание")
-        <textarea asp-for="@Model.Description" required maxlength="500" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
+        <textarea asp-for="@Model.Description" placeholder="Описание" type="text" class="form-control" rows="3"></textarea>
     </div>
 
     <div  class="form-group">
@@ -44,7 +42,6 @@
         {
             htmlAttributes = new
             {
-                required = "true",
                 type = "number",
                 @class = "form-control",
             }
@@ -57,9 +54,7 @@
         {
             htmlAttributes = new
             {
-                required = "true",
                 type = "number",
-                min = "1",
                 @class = "form-control",
             }
         })
@@ -71,7 +66,6 @@
         {
             htmlAttributes = new
             {
-                required = "true",
                 type = "number",
                 @class = "form-control",
             }
@@ -90,14 +84,12 @@
     {
         <div class="form-group">
             <div class="custom-file">
-                @Html.EditorFor(m => m.Pictures, new
-                {
-                    htmlAttributes = new
-                    {
-                        accept = "image/*",
-                        @class = "custom-file-input",
-                    }
-                })
+                @{
+                    var pictureName = $"Picture{i + 1}";
+                }
+
+                <input name="@pictureName" asp-for="Pictures" accept="image/*" class="custom-file-input"/>
+
                 @Html.Label("Выбрать изображение", "Выбрать изображение", new
                 {
                     @class = "custom-file-label"
@@ -113,3 +105,77 @@
 
 @await Html.PartialAsync("_ScriptsImportPartial")
 @await Html.PartialAsync("_ValidationScriptsImportPartial")
+
+<script>
+    $("#createProductForm").validate({
+        rules: {
+            Name: {
+                required: true,
+                minlength: 3,
+                maxlength: 100
+            },
+            Description: {
+                maxlength: 500
+            },
+            Price: {
+                required: true,
+                number: true,
+                min: 0.1
+            },
+            QuantityPerUnit: {
+                required: true,
+                digits: true,
+                min: 1
+            },
+            Weight: {
+                required: true,
+                number: true,
+                min: 0.1
+            },
+            Picture1: {
+                required: true
+            },
+            Picture2: {
+                required: true
+            },
+            Picture3: {
+                required: true
+            }
+        },
+        messages: {
+            Name: {
+                required: "Это поле является обязательным!",
+                minlength: "Введите не менее 3 символов!",
+                maxlength: "Введите не более 100 символов!"
+            },
+            Description: {
+                maxlength: "Введите не более 500 символов!"
+            },
+            Price: {
+                required: "Это поле является обязательным!",
+                number: "Введите верное число!",
+                min: "Введите число больше 0.1"
+            },
+            QuantityPerUnit: {
+                required: "Это поле является обязательным!",
+                digits: "Введите верное число!",
+                min: "Введите число больше 1"
+            },
+            Weight: {
+                required: "Это поле является обязательным!",
+                number: "Введите верное число!",
+                min: "Введите число больше 0.1"
+            },
+            Picture1: {
+                required: "Это поле является обязательным!"
+            },
+            Picture2: {
+                required: "Это поле является обязательным!"
+            },
+            Picture3: {
+                required: "Это поле является обязательным!"
+            }
+        },
+        errorElement: "em"
+    });
+</script>
