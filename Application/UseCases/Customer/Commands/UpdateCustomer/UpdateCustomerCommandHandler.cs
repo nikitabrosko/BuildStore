@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Customer.Commands.UpdateCustomer
 {
-    public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerCommand>
+    public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerCommand, int>
     {
         private readonly IApplicationDbContext _context;
         private readonly IApplicationIdentityDbContext _identityContext;
@@ -18,7 +18,7 @@ namespace Application.UseCases.Customer.Commands.UpdateCustomer
             _identityContext = identityContext;
         }
 
-        public async Task<Unit> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
         {
             var entity = (await _identityContext.Users
                 .Include(u => u.Customer)
@@ -35,7 +35,7 @@ namespace Application.UseCases.Customer.Commands.UpdateCustomer
             await _context.SaveChangesAsync(cancellationToken);
             await _identityContext.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return entity.Id;
         }
     }
 }

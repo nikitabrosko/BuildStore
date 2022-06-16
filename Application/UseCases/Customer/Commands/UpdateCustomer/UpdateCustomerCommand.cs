@@ -2,7 +2,7 @@
 
 namespace Application.UseCases.Customer.Commands.UpdateCustomer
 {
-    public class UpdateCustomerCommand : IRequest
+    public class UpdateCustomerCommand : IRequest<int>
     {
         public string UserName { get; set; }
 
