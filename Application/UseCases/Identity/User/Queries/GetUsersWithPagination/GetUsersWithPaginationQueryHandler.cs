@@ -15,11 +15,11 @@ namespace Application.UseCases.Identity.User.Queries.GetUsersWithPagination
             _userManager = userManager;
         }
 
-        public Task<PaginatedList<Domain.IdentityEntities.User>> Handle(GetUsersWithPaginationQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<Domain.IdentityEntities.User>> Handle(GetUsersWithPaginationQuery request, CancellationToken cancellationToken)
         {
             var query = _userManager.Users;
 
-            return PaginatedList<Domain.IdentityEntities.User>.CreateAsync(query, request.PageNumber, request.PageSize);
+            return await PaginatedList<Domain.IdentityEntities.User>.CreateAsync(query, request.PageNumber, request.PageSize);
         }
     }
 }
