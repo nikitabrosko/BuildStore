@@ -10,8 +10,7 @@ namespace Infrastructure.Persistence.Configurations
         {
             builder.HasKey(c => c.Id);
 
-            builder.HasIndex(c => new { c.FirstName, c.LastName })
-                .IsUnique();
+            builder.HasIndex(c => new { c.FirstName, c.LastName });
             
             builder.Property(c => c.FirstName)
                 .HasMaxLength(50)

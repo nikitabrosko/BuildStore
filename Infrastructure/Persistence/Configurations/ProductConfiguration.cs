@@ -14,7 +14,7 @@ namespace Infrastructure.Persistence.Configurations
                 .IsUnique();
 
             builder.Property(p => p.Name)
-                .HasMaxLength(50)
+                .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(p => p.Description)

@@ -26,16 +26,13 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.Property(c => c.CreditCardNumber)
-                .HasMaxLength(16)
-                .IsRequired();
+                .HasMaxLength(16);
 
             builder.Property(c => c.CardExpMonth)
-                .HasMaxLength(2)
-                .IsRequired();
+                .HasMaxLength(2);
 
             builder.Property(c => c.CardExpYear)
-                .HasMaxLength(4)
-                .IsRequired();
+                .HasMaxLength(4);
         }
     }
 }
