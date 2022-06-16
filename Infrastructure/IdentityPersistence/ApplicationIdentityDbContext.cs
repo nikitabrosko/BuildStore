@@ -13,7 +13,7 @@ namespace Infrastructure.IdentityPersistence
     {
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)
-        { 
+        {
             //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
