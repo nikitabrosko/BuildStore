@@ -1,0 +1,43 @@
+﻿@model WebUI.Models.User.ModelForUserPartial
+
+@{
+    var id = $"updateUserRolesModal{Model.ElementId}";
+}
+
+<td class="product-name">@Model.User.User.UserName</td>
+
+@if (Model.User.User.Customer is not null)
+{
+    <td class="product-remove">
+        <a href="#" data-toggle="modal" data-target="#showAdditionalInfoUserModal"
+           data-email="@Model.User.User.Email" data-fullname="@Model.User.User.Customer.FullName"
+           data-address="@Model.User.User.Customer.Address" data-city="@Model.User.User.Customer.City"
+           data-country="@Model.User.User.Customer.Country" data-phone="@Model.User.User.Customer.Phone"
+           data-id="@Model.User.User.Id" data-elementid="@Model.ElementId">
+            <i class="fa fa-info"></i>
+        </a>
+    </td>
+}
+else
+{
+    <td class="product-remove"></td>
+}
+
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#@id"
+       data-id="@Model.User.User.Id" data-elementid="@Model.ElementId">
+        <i class="fa fa-pencil"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#updateUserModal"
+       data-name="@Model.User.User.UserName" data-email="@Model.User.User.Email"
+       data-id="@Model.User.User.Id" data-elementid="@Model.ElementId">
+        <i class="fa fa-pencil"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a style="cursor:pointer" onclick="jQueryAjaxDelete('@Url.Action("Delete", "User", new { id = Model.User.User.Id }, Context.Request.Scheme)', '@Model.ElementId')">
+        <i class="fa fa-times"></i>
+    </a>
+</td>

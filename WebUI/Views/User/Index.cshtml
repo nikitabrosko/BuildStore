@@ -1,92 +1,758 @@
-﻿@using Application.UseCases.Identity.User.Queries.GetUsersWithPagination
-@model Application.Common.Models.PaginatedList<Domain.IdentityEntities.User>
+﻿@using Application.UseCases.Identity.User.Queries.GetUsersWithRolesWithPagination
+@using Application.UseCases.Identity.User.Queries.SearchUsersWithRolesWithPagination
+@model WebUI.Models.User.ModelForUsers
 
-<h2 style="text-align: center;margin: 2%;">Пользователи</h2>
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Пользователи</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div style="text-align: center; margin: 2%;">
-    <button class="btn btn-dark" style="width: 30%;"
-            onclick="showInPopup('@Url.Action("Create", "User", null,
-                                      Context.Request.Scheme)', 'Создать пользователя')">
-        Создать пользователя
-    </button>
-</div>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <!-- Place favicon.ico in the root directory -->
+    <!-- all css here -->
+    <!-- bootstrap v3.3.6 css -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <!-- animate css -->
+    <link rel="stylesheet" href="~/css/animate.css">
+    <!-- jquery-ui.min css -->
+    <link rel="stylesheet" href="~/css/jquery-ui.min.css">
+    <!-- meanmenu css -->
+    <link rel="stylesheet" href="~/css/meanmenu.min.css">
+    <!-- owl.carousel css -->
+    <link rel="stylesheet" href="~/css/owl.carousel.css">
+    <!-- slick css -->
+    <link rel="stylesheet" href="~/css/slick.css">
+    <!-- font-awesome css -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="~/css/style.css">
+    <!-- responsive css -->
+    <link rel="stylesheet" href="~/css/responsive.css">
+    <!-- modernizr js -->
+    <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <!-- Add your site or application content here -->
+    <!-- header start -->
+    <header class="header-pos">
+        <!-- header-bottom-area start -->
+        <div class="header-bottom-area">
+            <div class="container">
+                <div class="inner-container">
+                    <div class="row">
+                        <div class="col-md-2 col-sm-4 col-xs-5">
+                            <div class="logo">
+                                <a href="index.html"><img src="img/logo-white-text.png" alt="" /></a>
+                            </div>
+                        </div>
+                        <div class="col-md-8 hidden-xs hidden-sm">
+                            <div class="main-menu">
+                                <nav>
+                                    <ul>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                        </li>
+                                        <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                        <li class="static">
+                                            <a href="shop.html">каталог</a>
+                                            <div class="mega-menu">
+                                                <div class="mega-left">
+                                                    @foreach (var category in Model.CategoriesForHeader)
+                                                    {
+                                                        <span>
+                                                            <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
 
-<table class="table">
-    <thead class="thead-dark">
-    <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Логин</th>
-        <th scope="col">Email</th>
-        <th scope="col">Удаление</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var user in Model.Items)
-    {
-        <tr>
-            <td>@user.Id</td>
-            <td>@user.UserName</td>
-            <td>@user.Email</td>
-            <td>
-                <a asp-action="Delete" asp-controller="User" asp-route-id="@user.Id" style="color:red">Удалить</a>
-            </td>
-        </tr>
+                                                            @foreach (var subcategory in category.Subcategories)
+                                                            {
+                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>}
+                                                        </span>}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-8 col-xs-7 header-right">
+                            <div class="user-meta">
+                                <a href="#"><i class="fa fa-cog"></i></a>
+                                <ul>
+                                    <li><a asp-action="Index" asp-controller="Category">Категории</a></li>
+                                    <li><a asp-action="Index" asp-controller="Subcategory">Подкатегории</a></li>
+                                    <li><a asp-action="Index" asp-controller="Supplier">Поставщики</a></li>
+                                    <li><a asp-action="Index" asp-controller="Product">Товары</a></li>
+                                    <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
+                                    <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
+                                    <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                </ul>
+                            </div>
+                            <div class="header-search">
+                                <i class="fa fa-search"></i>
+                                <div class="header-form">
+                                    <form asp-action="Search" asp-controller="Product" method="post">
+                                        <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров" />
+
+                                        <button type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- header-bottom-area end -->
+        <!-- mobile-menu-area start -->
+        <div class="mobile-menu-area visible-xs visible-sm">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mobile-menu">
+                            <nav id="dropdown">
+                                <ul>
+                                    <li>
+                                        <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                    </li>
+                                    <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                    <li>
+                                        <a href="shop.html">каталог</a>
+                                        <ul>
+                                            @foreach (var category in Model.CategoriesForHeader)
+                                            {
+                                                <li>
+                                                    <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
+                                                    <ul>
+                                                        @foreach (var subcategory in category.Subcategories)
+                                                        {
+                                                            <li>
+                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                    <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- mobile-menu-area end -->
+    </header>
+    <!-- header end -->
+    <!-- breadcrumb-area start -->
+    <div class="breadcrumb-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-list">
+                        @if (Model.SearchPattern is null)
+                        {
+                            <h1>Пользователи</h1>
+                            <ul>
+                                <li><a asp-action="Index" asp-controller="Home">Главная страница</a> <span class="divider">|</span></li>
+                                <li>Роли</li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <h1>Поиск Пользователей</h1>
+                            <ul>
+                                <li><a asp-action="Index" asp-controller="Home">Главная страница</a> <span class="divider">|</span></li>
+                                <li><a asp-action="Index" asp-controller="User">Пользователи</a> <span class="divider">|</span></li>
+                                <li>Поиск пользователей</li>
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- breadcrumb-area end -->
+    <!-- cart-main-area start -->
+    <div class="cart-main-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 upper-admin-panel">
+                    @if (Model.SearchPattern is null)
+                    {
+                        <a class="btn btn-account-change" href="#" data-toggle="modal" data-target="#createUserModal">Создать пользователя</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-account-change" asp-action="Index" asp-controller="User"><i class="fa fa-angle-double-left"></i> К пользователям</a>
+                    }
+                    <div class="search-form">
+                        <form asp-action="Search" asp-controller="User" method="get">
+                            <input type="text" placeholder="Поиск по названию" name="pattern" />
+                            <button type="submit"><i class="fa fa-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="table-content table-responsive">
+                        <table style="margin-bottom: 20px; margin-top: 20px;">
+                            <thead>
+                                <tr>
+                                    <th class="product-name">Пользователь</th>
+                                    <th class="product-remove">Доп. информация</th>
+                                    <th class="product-remove">Роли</th>
+                                    <th class="product-remove">Редактировать</th>
+                                    <th class="product-remove">Удалить</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ var counter = 0; }
+                                @foreach (var user in Model.Users.Items)
+                                {
+                                    counter++;
+                                    var id = $"user-{counter}";
+                                    <tr id="@id">
+                                        @await Html.PartialAsync("_UserPartial", new WebUI.Models.User.ModelForUserPartial { User = user, ElementId = id })
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="shop-breadcrumb" style="text-align:center; width:100%">
+                    @if (Model.SearchPattern is null)
+                    {
+                        <ul>
+                            @if (Model.Users.HasPreviousPage)
+                            {
+                                <li>
+                                    @Html.ActionLink("<", "Index", "User",
+                                        new GetUsersWithRolesWithPaginationQuery { PageSize = Model.Users.PageSize, PageNumber = Model.Users.PageNumber - 1 })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink("<", "Index", "User",
+                                        new GetUsersWithRolesWithPaginationQuery { PageSize = Model.Users.PageSize, PageNumber = Model.Users.PageNumber - 1 })
+                                </li>
+                            }
+                            @for (int i = 1; i <= Model.Users.TotalPages; i++)
+                            {
+                                if (Model.Users.PageNumber.Equals(i))
+                                {
+                                    <li class="active">
+                                        @Html.ActionLink($"{i}", "Index", "User",
+                                            new GetUsersWithRolesWithPaginationQuery { PageSize = Model.Users.PageSize, PageNumber = i })
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        @Html.ActionLink($"{i}", "Index", "User",
+                                            new GetUsersWithRolesWithPaginationQuery { PageSize = Model.Users.PageSize, PageNumber = i })
+                                    </li>
+                                }
+                            }
+                            @if (Model.Users.HasNextPage)
+                            {
+                                <li>
+                                    @Html.ActionLink(">", "Index", "User",
+                                        new GetUsersWithRolesWithPaginationQuery { PageSize = Model.Users.PageSize, PageNumber = Model.Users.PageNumber + 1 })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink(">", "Index", "User",
+                                        new GetUsersWithRolesWithPaginationQuery { PageSize = Model.Users.PageSize, PageNumber = Model.Users.PageNumber + 1 })
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul>
+                            @if (Model.Users.HasPreviousPage)
+                            {
+                                <li>
+                                    @Html.ActionLink("<", "Search", "User",
+                                        new SearchUsersWithRolesWithPaginationQuery
+                                        {
+                                            PageSize = Model.Users.PageSize,
+                                            PageNumber = Model.Users.PageNumber - 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink("<", "Search", "User",
+                                        new SearchUsersWithRolesWithPaginationQuery
+                                        {
+                                            PageSize = Model.Users.PageSize,
+                                            PageNumber = Model.Users.PageNumber - 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                            @for (int i = 1; i <= Model.Users.TotalPages; i++)
+                            {
+                                if (Model.Users.PageNumber.Equals(i))
+                                {
+                                    <li class="active">
+                                        @Html.ActionLink($"{i}", "Search", "User",
+                                            new SearchUsersWithRolesWithPaginationQuery
+                                            {
+                                                PageSize = Model.Users.PageSize,
+                                                PageNumber = i,
+                                                Pattern = Model.SearchPattern
+                                            })
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        @Html.ActionLink($"{i}", "Search", "User",
+                                            new SearchUsersWithRolesWithPaginationQuery
+                                            {
+                                                PageSize = Model.Users.PageSize,
+                                                PageNumber = i,
+                                                Pattern = Model.SearchPattern
+                                            })
+                                    </li>
+                                }
+                            }
+                            @if (Model.Users.HasNextPage)
+                            {
+                                <li>
+                                    @Html.ActionLink(">", "Search", "User",
+                                        new SearchUsersWithRolesWithPaginationQuery
+                                        {
+                                            PageSize = Model.Users.PageSize,
+                                            PageNumber = Model.Users.PageNumber + 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink(">", "Search", "User",
+                                        new SearchUsersWithRolesWithPaginationQuery
+                                        {
+                                            PageSize = Model.Users.PageSize,
+                                            PageNumber = Model.Users.PageNumber + 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- cart-main-area end -->
+    <!-- footer start -->
+    <footer>
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="footer-logo">
+                            <img src="img/logo-white-text.png" alt="" />
+                            <p>BuildStore - это интернет-магазин, специализирующийся на продаже строительных материалов и им подобным.<br />Сервис предлагает доставку до дома, низкие цены и удобный интерфейс.</p>
+                            <div class="widget-icon">
+                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
+                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                <a href="https://www.instagram.com/nikitos.26_/"><i class="fa fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- footer-top-area start -->
+        <div class="footer-top-area">
+            <div class="container">
+                <div class="row">
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>КОНТАКТЫ</h3>
+                            <ul class="footer-contact">
+                                <li>
+                                    <i class="fa fa-map-marker"> </i>
+                                    Адрес: Республика Беларусь, г.Гродно, ул.Тавлая, д.44
+                                </li>
+                                <li>
+                                    <i class="fa fa-envelope"> </i>
+                                    Email: Nikita.brosko@mail.ru
+                                </li>
+                                <li>
+                                    <i class="fa fa-phone"> </i>
+                                    Номер телефона: +375(33)669-45-81
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 hidden-sm">
+                        <div class="footer-widget">
+                            <h3>My account</h3>
+                            <ul class="footer-menu">
+                                <li><a href="#">Order Status</a></li>
+                                <li><a href="#">Register</a></li>
+                                <li><a href="#">Sign-up</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>about us</h3>
+                            <ul class="footer-menu">
+                                <li><a href="#">Delivery</a></li>
+                                <li><a href="#">Payment</a></li>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>РАЗРАБОТЧИК</h3>
+                            <ul class="footer-contact">
+                                <li>
+                                    ФИО: Броско Никита Сергеевич
+                                </li>
+                                <li>
+                                    Категория: Дипломный проект
+                                </li>
+                                <li>
+                                    Тема: "Разработка интернет-магазина по продаже строительных материалов"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                </div>
+            </div>
+        </div>
+        <!-- footer-top-area end -->
+        <!-- footer-bottom-area start -->
+        <div class="footer-bottom-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="copyright">
+                            <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. All Rights Reserved</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="payment-img">
+                            <img src="img/payment.png" alt="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- footer-bottom-area end -->
+    </footer>
+    <!-- footer end -->
+
+    @{
+        var newCounter = 0;
     }
-    </tbody>
-</table>
+    @foreach (var user in Model.Users.Items)
+    {
+        newCounter++;
+        var elementId = $"updateUserRolesModaluser-{newCounter}";
+        <div class="modal fade" id="@elementId" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 style="margin: 0;float: left;" id="supplier-header-id">Роли пользователя</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-filed">
+                            <form enctype="multipart/form-data" asp-action="UpdateRoles" asp-controller="User" method="post">
+                                <input hidden value="@user.User.Id" name="userId" />
+                                <input hidden id="element-id-input" value="user-@newCounter" name="elementId" />
+                                <div class="check-div">
+                                    @foreach (var role in Model.Roles)
+                                    {
+                                        <div style="display: flex;">
+                                            <label class="check-label">@role.Name</label>
+                                            @if (user.Roles.Contains(role.Name))
+                                            {
+                                                <input class="check-input" type="checkbox" name="roles" style="width: 25px; height: 25px; margin: -3px 5px 5px 5px;" checked />
+                                            }
+                                            else
+                                            {
+                                                <input class="check-input" type="checkbox" name="roles" style="width: 25px; height: 25px; margin: -3px 5px 5px 5px;" />
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                <button class="btn btn-account-change" type="button" id="submit-button" onclick="jQueryAjaxPostFormForUserRoles(this.form, '@elementId')">Сохранить</button>
+                            </form>
+                        </div><!-- .modal-product -->
+                    </div><!-- .modal-body -->
+                </div><!-- .modal-content -->
+            </div><!-- .modal-dialog -->
+        </div>
+    }
 
-<nav>
-    <ul class="pagination justify-content-center">
-        @if (Model.HasPreviousPage)
-        {
-            <li class="page-item">
-                @Html.ActionLink("Previous", "Index", "User",
-                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
-                new { @class = "page-link" })
-            </li>
+    <div class="modal fade" id="updateUserModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;">Редактирование пользователя</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <form enctype="multipart/form-data" asp-action="Update" asp-controller="User" method="post">
+                            <input hidden id="id-input" name="id" />
+                            <input hidden id="element-id-input" name="elementId" />
+                            <div>
+                                <label>Введите новое имя</label>
+                                <input type="text" id="name-update-input" name="name" />
+                            </div>
+                            <div>
+                                <label>Введите новый Email</label>
+                                <input type="email" id="email-update-input" name="email" />
+                            </div>
+                            <div>
+                                <label>Введите новый пароль</label>
+                                <input type="password" name="password" />
+                            </div>
+                            <div>
+                                <label>Подтверждение пароля</label>
+                                <input type="password" />
+                            </div>
+                            <button class="btn btn-account-change" type="button" id="submit-button" onclick="jQueryAjaxPostFormForUser(this.form)">Сохранить</button>
+                        </form>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="createUserModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;">Создание пользователя</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <form enctype="multipart/form-data" asp-action="Create" asp-controller="User" method="post">
+                            <input hidden name="pageSize" value="@Model.Users.PageSize" />
+                            <input hidden name="pageNumber" value="@Model.Users.PageNumber" />
+                            <div>
+                                <label>Введите имя</label>
+                                <input type="text" id="name-create-input" name="name" />
+                            </div>
+                            <div>
+                                <label>Введите Email</label>
+                                <input type="email" id="email-create-input" name="email" />
+                            </div>
+                            <div>
+                                <label>Пароль</label>
+                                <input type="password" name="password" />
+                            </div>
+                            <div>
+                                <label>Подтверждение пароля</label>
+                                <input type="password" />
+                            </div>
+                            <button class="btn btn-account-change" type="submit">Создать</button>
+                        </form>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="showAdditionalInfoUserModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;" id="supplier-header-id">Дополнительная информация</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <div class="order-notes">
+                            <label>Email</label>
+                            <input disabled type="text" id="email-show-input" />
+                        </div>
+                        <div>
+                            <label>Фамилия и имя</label>
+                            <input disabled type="text" id="full-name-show-input" />
+                        </div>
+                        <div>
+                            <label>Адрес</label>
+                            <input disabled type="text" id="address-show-input" />
+                        </div>
+                        <div>
+                            <label>Город</label>
+                            <input disabled type="text" id="city-show-input" />
+                        </div>
+                        <div>
+                            <label>Страна</label>
+                            <input disabled type="text" id="country-show-input" />
+                        </div>
+                        <div>
+                            <label>Моб. телефон</label>
+                            <input disabled type="text" id="phone-show-input" />
+                        </div>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <!-- all js here -->
+    <!-- jquery latest version -->
+    <script src="~/js/vendor/jquery-1.12.0.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="~/js/bootstrap.min.js"></script>
+    <!-- owl.carousel js -->
+    <script src="~/js/owl.carousel.min.js"></script>
+    <!-- meanmenu js -->
+    <script src="~/js/jquery.meanmenu.js"></script>
+    <!-- jquery-ui js -->
+    <script src="~/js/jquery-ui.min.js"></script>
+    <!-- wow js -->
+    <script src="~/js/wow.min.js"></script>
+    <!-- plugins js -->
+    <script src="~/js/plugins.js"></script>
+    <!-- main js -->
+    <script src="~/js/main.js"></script>
+    <!-- site js -->
+    <script src="~/js/site.js"></script>
+
+    <script>
+        $('#updateUserModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var name = button.data('name')
+            var email = button.data('email')
+            var id = button.data('id')
+            var elementId = button.data('elementid')
+
+            var modal = $(this)
+            modal.find('#name-update-input').val(name)
+            modal.find('#email-update-input').val(email)
+            modal.find('#id-input').val(id)
+            modal.find('#element-id-input').val(elementId)
+        })
+
+        $('#showAdditionalInfoUserModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var email = button.data('email')
+            var fullName = button.data('fullname')
+            var address = button.data('address')
+            var city = button.data('city')
+            var country = button.data('country')
+            var phone = button.data('phone')
+            var id = button.data('id')
+            var elementId = button.data('elementid')
+
+            var modal = $(this)
+            modal.find('#email-show-input').val(email)
+            modal.find('#full-name-show-input').val(fullName)
+            modal.find('#address-show-input').val(address)
+            modal.find('#city-show-input').val(city)
+            modal.find('#country-show-input').val(country)
+            modal.find('#phone-show-input').val(phone)
+            modal.find('#id-input').val(id)
+            modal.find('#element-id-input').val(elementId)
+        })
+
+        jQueryAjaxPostFormForUserRoles = (form, modalId) => {
+            var modal = $('#' + modalId);
+            var elementId = modal.find('#element-id-input').val();
+
+            var divs = $('.check-div');
+
+            divs.each(function () {
+                $(this).children().each(function () {
+                    $(this).children().last().val($(this).children().first().text());
+                })
+            })
+
+            $.ajax({
+                type: 'POST',
+                url: form.action,
+                data: new FormData(form),
+                processData: false,
+                contentType: false,
+
+                success: function (res) {
+                    modal.modal('hide');
+                    $('#' + elementId).html(res);
+                },
+
+                error: function (err) {
+                    console.log(err);
+                },
+
+                failure: function (fail) {
+                    console.log(fail);
+                }
+            })
         }
-        else
-        {
-            <li class="page-item disabled">
-                @Html.ActionLink("Previous", "Index", "User",
-                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber - 1 }, 
-                    new { @class = "page-link" })
-            </li>
+
+        jQueryAjaxPostFormForUser = (form) => {
+            var modal = $('#updateUserModal')
+            var elementId = modal.find('#element-id-input').val()
+
+            $.ajax({
+                type: 'POST',
+                url: form.action,
+                data: new FormData(form),
+                processData: false,
+                contentType: false,
+
+                success: function (res) {
+                    modal.modal('hide');
+                    $('#' + elementId).html(res);
+                },
+
+                error: function (err) {
+                    console.log(err);
+                },
+
+                failure: function (fail) {
+                    console.log(fail);
+                }
+            })
         }
-        @for (int i = 1; i <= Model.TotalPages; i++)
-        {
-            if (Model.PageNumber.Equals(i))
-            {
-                <li class="page-item active">
-                    @Html.ActionLink($"{i}", "Index", "User",
-                    new GetUsersWithPaginationQuery { PageNumber = i }, 
-                        new { @class = "page-link" })
-            </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    @Html.ActionLink($"{i}", "Index", "User",
-                    new GetUsersWithPaginationQuery { PageNumber = i }, 
-                        new { @class = "page-link" })
-                </li>
-            }
-        }
-        @if (Model.HasNextPage)
-        {
-            <li class="page-item">
-                @Html.ActionLink("Next", "Index", "User",
-                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber + 1 }, 
-                    new { @class = "page-link" })
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                @Html.ActionLink("Next", "Index", "User",
-                new GetUsersWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
-                    new { @class = "page-link" })
-            </li>
-        }
-    </ul>
-</nav>
+    </script>
+</body>
+</html>
