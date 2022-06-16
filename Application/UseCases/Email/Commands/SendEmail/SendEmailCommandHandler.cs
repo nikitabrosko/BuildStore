@@ -19,7 +19,7 @@ namespace Application.UseCases.Email.Commands.SendEmail
         {
             if (string.IsNullOrWhiteSpace(request.Subject))
             {
-                request.Subject = "Hello!";
+                request.Subject = "Здравствуйте!";
             }
 
             if (string.IsNullOrWhiteSpace(request.Content))
@@ -27,7 +27,7 @@ namespace Application.UseCases.Email.Commands.SendEmail
                 request.Content = $"<div>" +
                                   $"<h1>{request.Subject}</h1>" +
                                   $"<hr />" +
-                                  $"<p>\"Dear user! Thank you for your feedback!\"</p>" +
+                                  $"<p>Дорогой пользователь, спасибо за то, что оставили нам свои данные!</p>" +
                                   $"</div>";
             }
 
