@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.Product.Commands.UpdateProduct
 {
-    public class UpdateProductCommand : IRequest<int>
+    public class UpdateProductCommand : IRequest
     {
         public int Id { get; set; }
 
@@ -19,7 +19,9 @@ namespace Application.UseCases.Product.Commands.UpdateProduct
 
         public float Weight { get; set; }
 
-        public string CategoryName { get; set; }
+        public int? CategoryId { get; set; }
+
+        public int? SupplierId { get; set; }
 
         public IFormFile[] Pictures { get; set; }
     }
