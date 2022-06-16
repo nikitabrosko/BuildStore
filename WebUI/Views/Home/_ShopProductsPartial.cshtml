@@ -1,0 +1,274 @@
+﻿@using Application.UseCases.Product.Queries.GetProductsWithPagination
+@using Application.UseCases.Product.Queries.SearchProductsWithPagination
+@model WebUI.Models.Home.ModelForShopProductsPartial
+
+@{ string ConvertPicture(byte[] picture)
+    {
+        var base64 = Convert.ToBase64String(picture);
+        return $"data:image/jpg;base64,{base64}";
+    } }
+
+<!-- Nav tabs -->
+<div style="display: flex; justify-content: space-between;">
+    <ul class="shop-tab" role="tablist">
+        <li><span class="sorting-name"> Показать как:  </span></li>
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-th" aria-hidden="true"></i></a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-th-list" aria-hidden="true"></i></a></li>
+    </ul>
+
+    @if (Model.SearchPattern is not null)
+    {
+        <div>
+            <h3>Поиск по: @Model.SearchPattern</h3>
+        </div>
+    }
+
+    <div class="search-form" style="float: right; margin-top: 0;">
+        <form asp-action="SearchProductsForm" asp-controller="Home" method="post" style="width: 264px;">
+            <input hidden name="pageSize" value="@Model.Products.PageSize" />
+            <input type="text" placeholder="Поиск по названию" name="pattern" style="height: 40px;" />
+            <button style="height: 40px;" type="button" onclick="jQueryAjaxPostForm(this.form, '#products-partial')"><i class="fa fa-search"></i></button>
+        </form>
+    </div>
+</div>
+
+<div class="clear"></div>
+<!-- Tab panes -->
+<div class="tab-content" id="products">
+    <div role="tabpanel" class="tab-pane active" id="home">
+        <div class="row">
+            @foreach (var product in Model.Products.Items)
+            {
+                <!-- single-product start -->
+                <div class="col-md-4 col-sm-4">
+                    <div class="single-product">
+                        <div class="product-img">
+                            <a href="product-details.html">
+                                <img src="~/img/product/1.jpg" alt="@product.Name" />
+                                <img class="secondary-img" src="~/img/product/2.jpg" alt="@product.Name" />
+                            </a>
+                            <div class="product-action">
+                                <div class="button-top">
+                                    <a href="#" data-toggle="modal" data-target="#productModal"
+                                       data-name="@product.Name" data-price="@product.Price" data-description="@product.Description"
+                                       data-image="@ConvertPicture(product.Images.First().Picture)" data-id="@product.Id">
+                                        <i class="fa fa-search"></i>
+                                    </a>
+                                </div>
+                                <div class="button-cart">
+                                    <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = product.Id }, Context.Request.Scheme)', '#shopping-cart')">
+                                        <i class="fa fa-shopping-cart"></i> Добавить в корзину
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3><a href="product-details.html">@product.Name</a></h3>
+                            <div class="price">
+                                <span>BYN @product.Price</span>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- single-product end -->
+            }
+        </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="profile">
+        <div class="row shop-list">
+            @foreach (var product in Model.Products.Items)
+            {
+                <!-- single-product start -->
+                <div class="col-md-12">
+                    <div class="single-product">
+                        <div class="product-img">
+                            <a href="product-details.html">
+                                <img src="~/img/product/1.jpg" alt="@product.Name" />
+                                <img class="secondary-img" src="~/img/product/2.jpg" alt="@product.Name" />
+                            </a>
+                        </div>
+                        <div class="product-content">
+                            <h3><a href="product-details.html">@product.Name</a></h3>
+                            <div class="price">
+                                <span>BYN @product.Price</span>
+                            </div>
+                            <p style="height: 180px; overflow: auto;">@product.Description</p>
+                            <div class="product-action">
+                                <div class="button-top">
+                                    <a href="#" data-toggle="modal" data-target="#productModal"
+                                       data-name="@product.Name" data-price="@product.Price" data-description="@product.Description"
+                                       data-image="@ConvertPicture(product.Images.First().Picture)" data-id="@product.Id">
+                                        <i class="fa fa-search"></i>
+                                    </a>
+                                </div>
+                                <div class="button-cart">
+                                    <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = product.Id }, Context.Request.Scheme)', '#shopping-cart')">
+                                        <i class="fa fa-shopping-cart"></i> Добавить в корзину
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- single-product end -->
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="shop-breadcrumb" style="text-align:center; width:100%">
+        @if (Model.SearchPattern is null)
+        {
+            <ul>
+                @if (Model.Products.HasPreviousPage)
+                {
+                    <li>
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Home",
+                                                                 new GetProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber - 1
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-left"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="disabled">
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Home",
+                                                                 new GetProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber - 1
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-left"></i></a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.Products.TotalPages; i++)
+                {
+                    if (Model.Products.PageNumber.Equals(i))
+                    {
+                        <li class="active">
+                            <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Home",
+                                                                 new GetProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = i
+                                                                 }, Context.Request.Scheme)', '#products-partial')">@i</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Home",
+                                                                 new GetProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = i
+                                                                 }, Context.Request.Scheme)', '#products-partial')">@i</a>
+                        </li>
+                    }
+                }
+                @if (Model.Products.HasNextPage)
+                {
+                    <li>
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Home",
+                                                                 new GetProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber + 1
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-right"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="disabled">
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Home",
+                                                                 new GetProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber + 1
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-right"></i></a>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <ul>
+                @if (Model.Products.HasPreviousPage)
+                {
+                    <li>
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Home",
+                                                                 new SearchProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber - 1,
+                                                                     Pattern = Model.SearchPattern
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-left"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="disabled">
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Home",
+                                                                 new SearchProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber - 1,
+                                                                     Pattern = Model.SearchPattern
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-left"></i></a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.Products.TotalPages; i++)
+                {
+                    if (Model.Products.PageNumber.Equals(i))
+                    {
+                        <li class="active">
+                            <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Home",
+                                                                 new SearchProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = i,
+                                                                     Pattern = Model.SearchPattern
+                                                                 }, Context.Request.Scheme)', '#products-partial')">@i</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Home",
+                                                                 new SearchProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = i,
+                                                                     Pattern = Model.SearchPattern
+                                                                 }, Context.Request.Scheme)', '#products-partial')">@i</a>
+                        </li>
+                    }
+                }
+                @if (Model.Products.HasNextPage)
+                {
+                    <li>
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Home",
+                                                                 new SearchProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber + 1,
+                                                                     Pattern = Model.SearchPattern
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-right"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="disabled">
+                        <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Home",
+                                                                 new SearchProductsWithPaginationQuery
+                                                                 {
+                                                                     PageSize = Model.Products.PageSize,
+                                                                     PageNumber = Model.Products.PageNumber + 1,
+                                                                     Pattern = Model.SearchPattern
+                                                                 }, Context.Request.Scheme)', '#products-partial')"><i class="fa fa-arrow-right"></i></a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
