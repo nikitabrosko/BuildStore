@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
@@ -20,6 +21,7 @@ namespace Application.UseCases.ShoppingCart.Commands.ClearProducts
         {
             var entity = await _context.ShoppingCarts
                 .Include(s => s.ProductsDictionary)
+                .ThenInclude(p => p.Order)
                 .SingleOrDefaultAsync(s => s.Id.Equals(request.Id), cancellationToken);
 
             if (entity is null)
@@ -27,9 +29,11 @@ namespace Application.UseCases.ShoppingCart.Commands.ClearProducts
                 throw new NotFoundException(nameof(Domain.Entities.ShoppingCart), request.Id);
             }
 
-            entity.ProductsDictionary.Clear();
+            foreach (var productsDictionary in entity.ProductsDictionary)
+            {
+                productsDictionary.ShoppingCart = null;
+            }
 
-            _context.ShoppingCarts.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
