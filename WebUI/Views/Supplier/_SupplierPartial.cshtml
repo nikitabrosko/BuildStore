@@ -1,0 +1,25 @@
+﻿@model WebUI.Models.Supplier.ModelForSupplierPartial
+
+<td class="product-price">@Model.Supplier.Id</td>
+<td class="product-name">@Model.Supplier.CompanyName</td>
+
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#showAdditionalInfoSupplierModal" 
+       data-address="@Model.Supplier.Address" data-city="@Model.Supplier.City" 
+       data-country="@Model.Supplier.Country" data-phone="@Model.Supplier.PhoneNumber" data-email="@Model.Supplier.Email">
+        <i class="fa fa-info"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#updateSupplierModal" 
+       data-companyname="@Model.Supplier.CompanyName" data-address="@Model.Supplier.Address" data-city="@Model.Supplier.City" 
+       data-country="@Model.Supplier.Country" data-phone="@Model.Supplier.PhoneNumber" data-email="@Model.Supplier.Email" 
+       data-id="@Model.Supplier.Id" data-elementId="@Model.ElementId">
+        <i class="fa fa-pencil"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a style="cursor:pointer" onclick="jQueryAjaxDelete('@Url.Action("Delete", "Supplier", new { id = Model.Supplier.Id }, Context.Request.Scheme)', '@Model.ElementId')">
+        <i class="fa fa-times"></i>
+    </a>
+</td>

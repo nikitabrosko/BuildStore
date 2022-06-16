@@ -1,41 +1,697 @@
-﻿@model IEnumerable<Domain.Entities.Supplier>
+﻿@using Application.UseCases.Supplier.Queries.GetSuppliersWithPagination
+@using Application.UseCases.Supplier.Queries.SearchSuppliersWithPagination
+@model WebUI.Models.Supplier.ModelForSuppliers
 
-<div style="text-align: center; margin: 2%;">
-    <button class="btn btn-dark" style="width: 30%;"
-            onclick="showInPopup('@Url.Action("Create", "Supplier", null,
-                                      Context.Request.Scheme)', 'Создать поставщика')">
-        Создать поставщика
-    </button>
-</div>
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Поставщики</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<table class="table">
-    <thead class="thead-dark">
-    <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Название</th>
-        <th scope="col">Редактирование</th>
-        <th scope="col">Удаление</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var supplier in Model)
-    {
-        <tr>
-            <th scope="row">
-                @supplier.Id
-            </th>
-            <td>
-                <a asp-action="Get" asp-controller="Supplier" asp-route-id="@supplier.Id">@supplier.CompanyName</a>
-            </td>
-            <td>
-                <a onclick="showInPopup('@Url.Action("Update", "Supplier", new {id = supplier.Id},
-                                             Context.Request.Scheme)', 'Редактировать поставщика')">Редактировать</a>
-            </td>
-            <td>
-                <a onclick="showInPopup('@Url.Action("Delete", "Supplier", new {id = supplier.Id},
-                                             Context.Request.Scheme)', 'Удалить поставщика')">Удалить</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <!-- Place favicon.ico in the root directory -->
+    <!-- all css here -->
+    <!-- bootstrap v3.3.6 css -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <!-- animate css -->
+    <link rel="stylesheet" href="~/css/animate.css">
+    <!-- jquery-ui.min css -->
+    <link rel="stylesheet" href="~/css/jquery-ui.min.css">
+    <!-- meanmenu css -->
+    <link rel="stylesheet" href="~/css/meanmenu.min.css">
+    <!-- owl.carousel css -->
+    <link rel="stylesheet" href="~/css/owl.carousel.css">
+    <!-- slick css -->
+    <link rel="stylesheet" href="~/css/slick.css">
+    <!-- font-awesome css -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="~/css/style.css">
+    <!-- responsive css -->
+    <link rel="stylesheet" href="~/css/responsive.css">
+    <!-- modernizr js -->
+    <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <!-- Add your site or application content here -->
+    <!-- header start -->
+    <header class="header-pos">
+        <!-- header-bottom-area start -->
+        <div class="header-bottom-area">
+            <div class="container">
+                <div class="inner-container">
+                    <div class="row">
+                        <div class="col-md-2 col-sm-4 col-xs-5">
+                            <div class="logo">
+                                <a href="index.html"><img src="img/logo-white-text.png" alt="" /></a>
+                            </div>
+                        </div>
+                        <div class="col-md-8 hidden-xs hidden-sm">
+                            <div class="main-menu">
+                                <nav>
+                                    <ul>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                        </li>
+                                        <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                        <li class="static">
+                                            <a href="shop.html">каталог</a>
+                                            <div class="mega-menu">
+                                                <div class="mega-left">
+                                                    @foreach (var category in Model.CategoriesForHeader)
+                                                    {
+                                                        <span>
+                                                            <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
+
+                                                            @foreach (var subcategory in category.Subcategories)
+                                                            {
+                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>}
+                                                        </span>}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-8 col-xs-7 header-right">
+                            <div class="user-meta">
+                                <a href="#"><i class="fa fa-cog"></i></a>
+                                <ul>
+                                    <li><a asp-action="Index" asp-controller="Category">Категории</a></li>
+                                    <li><a asp-action="Index" asp-controller="Subcategory">Подкатегории</a></li>
+                                    <li><a asp-action="Index" asp-controller="Supplier">Поставщики</a></li>
+                                    <li><a asp-action="Index" asp-controller="Product">Товары</a></li>
+                                    <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
+                                    <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
+                                    <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                </ul>
+                            </div>
+                            <div class="header-search">
+                                <i class="fa fa-search"></i>
+                                <div class="header-form">
+                                    <form asp-action="Search" asp-controller="Product" method="post">
+                                        <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров" />
+
+                                        <button type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- header-bottom-area end -->
+        <!-- mobile-menu-area start -->
+        <div class="mobile-menu-area visible-xs visible-sm">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mobile-menu">
+                            <nav id="dropdown">
+                                <ul>
+                                    <li>
+                                        <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                    </li>
+                                    <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                    <li>
+                                        <a href="shop.html">каталог</a>
+                                        <ul>
+                                            @foreach (var category in Model.CategoriesForHeader)
+                                            {
+                                                <li>
+                                                    <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
+                                                    <ul>
+                                                        @foreach (var subcategory in category.Subcategories)
+                                                        {
+                                                            <li>
+                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                    <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- mobile-menu-area end -->
+    </header>
+    <!-- header end -->
+    <!-- breadcrumb-area start -->
+    <div class="breadcrumb-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-list">
+                        @if (Model.SearchPattern is null)
+                        {
+                            <h1>Поставщики</h1>
+                            <ul>
+                                <li><a asp-action="Index" asp-controller="Home">Главная страница</a> <span class="divider">|</span></li>
+                                <li>Поставщики</li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <h1>Поиск Поставщиков</h1>
+                            <ul>
+                                <li><a asp-action="Index" asp-controller="Home">Главная страница</a> <span class="divider">|</span></li>
+                                <li><a asp-action="Index" asp-controller="Supplier">Поставщики</a> <span class="divider">|</span></li>
+                                <li>Поиск поставщиков</li>
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- breadcrumb-area end -->
+    <!-- cart-main-area start -->
+    <div class="cart-main-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 upper-admin-panel">
+                    @if (Model.SearchPattern is null)
+                    {
+                        <a class="btn btn-account-change" href="#" data-toggle="modal" data-target="#createSupplierModal">Создать поставщика</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-account-change" asp-action="Index" asp-controller="Supplier"><i class="fa fa-angle-double-left"></i> К поставщикам</a>
+                    }
+                    <div class="search-form">
+                        <form asp-action="Search" asp-controller="Supplier" method="get">
+                            <input type="text" placeholder="Поиск по названию" name="pattern" />
+                            <button type="submit"><i class="fa fa-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="table-content table-responsive">
+                        <table style="margin-bottom: 20px; margin-top: 20px;">
+                            <thead>
+                                <tr>
+                                    <th class="product-price">Id</th>
+                                    <th class="product-name">Компания</th>
+                                    <th class="product-remove">Дополнительная информация</th>
+                                    <th class="product-remove">Редактировать</th>
+                                    <th class="product-remove">Удалить</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ var counter = 0; }
+                                @foreach (var supplier in Model.Suppliers.Items)
+                                {
+                                    counter++;
+                                    var id = $"supplier-{counter}";
+                                    <tr id="@id">
+                                        @await Html.PartialAsync("_SupplierPartial", new WebUI.Models.Supplier.ModelForSupplierPartial { Supplier = supplier, ElementId = id })
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="shop-breadcrumb" style="text-align:center; width:100%">
+                    @if (Model.SearchPattern is null)
+                    {
+                        <ul>
+                            @if (Model.Suppliers.HasPreviousPage)
+                            {
+                                <li>
+                                    @Html.ActionLink("<", "Index", "Supplier",
+                                        new GetSuppliersWithPaginationQuery { PageSize = Model.Suppliers.PageSize, PageNumber = Model.Suppliers.PageNumber - 1 })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink("<", "Index", "Supplier",
+                                        new GetSuppliersWithPaginationQuery { PageSize = Model.Suppliers.PageSize, PageNumber = Model.Suppliers.PageNumber - 1 })
+                                </li>
+                            }
+                            @for (int i = 1; i <= Model.Suppliers.TotalPages; i++)
+                            {
+                                if (Model.Suppliers.PageNumber.Equals(i))
+                                {
+                                    <li class="active">
+                                        @Html.ActionLink($"{i}", "Index", "Supplier",
+                                            new GetSuppliersWithPaginationQuery { PageSize = Model.Suppliers.PageSize, PageNumber = i })
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        @Html.ActionLink($"{i}", "Index", "Supplier",
+                                            new GetSuppliersWithPaginationQuery { PageSize = Model.Suppliers.PageSize, PageNumber = i })
+                                    </li>
+                                }
+                            }
+                            @if (Model.Suppliers.HasNextPage)
+                            {
+                                <li>
+                                    @Html.ActionLink(">", "Index", "Supplier",
+                                        new GetSuppliersWithPaginationQuery { PageSize = Model.Suppliers.PageSize, PageNumber = Model.Suppliers.PageNumber + 1 })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink(">", "Index", "Supplier",
+                                        new GetSuppliersWithPaginationQuery { PageSize = Model.Suppliers.PageSize, PageNumber = Model.Suppliers.PageNumber + 1 })
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul>
+                            @if (Model.Suppliers.HasPreviousPage)
+                            {
+                                <li>
+                                    @Html.ActionLink("<", "Search", "Supplier",
+                                        new SearchSuppliersWithPaginationQuery
+                                        {
+                                            PageSize = Model.Suppliers.PageSize,
+                                            PageNumber = Model.Suppliers.PageNumber - 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink("<", "Search", "Supplier",
+                                        new SearchSuppliersWithPaginationQuery
+                                        {
+                                            PageSize = Model.Suppliers.PageSize,
+                                            PageNumber = Model.Suppliers.PageNumber - 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                            @for (int i = 1; i <= Model.Suppliers.TotalPages; i++)
+                            {
+                                if (Model.Suppliers.PageNumber.Equals(i))
+                                {
+                                    <li class="active">
+                                        @Html.ActionLink($"{i}", "Search", "Supplier",
+                                            new SearchSuppliersWithPaginationQuery
+                                            {
+                                                PageSize = Model.Suppliers.PageSize,
+                                                PageNumber = i,
+                                                Pattern = Model.SearchPattern
+                                            })
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        @Html.ActionLink($"{i}", "Search", "Supplier",
+                                            new SearchSuppliersWithPaginationQuery
+                                            {
+                                                PageSize = Model.Suppliers.PageSize,
+                                                PageNumber = i,
+                                                Pattern = Model.SearchPattern
+                                            })
+                                    </li>
+                                }
+                            }
+                            @if (Model.Suppliers.HasNextPage)
+                            {
+                                <li>
+                                    @Html.ActionLink(">", "Search", "Supplier",
+                                        new SearchSuppliersWithPaginationQuery
+                                        {
+                                            PageSize = Model.Suppliers.PageSize,
+                                            PageNumber = Model.Suppliers.PageNumber + 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="disabled">
+                                    @Html.ActionLink(">", "Search", "Supplier",
+                                        new SearchSuppliersWithPaginationQuery
+                                        {
+                                            PageSize = Model.Suppliers.PageSize,
+                                            PageNumber = Model.Suppliers.PageNumber + 1,
+                                            Pattern = Model.SearchPattern
+                                        })
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- cart-main-area end -->
+    <!-- footer start -->
+    <footer>
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="footer-logo">
+                            <img src="img/logo-white-text.png" alt="" />
+                            <p>BuildStore - это интернет-магазин, специализирующийся на продаже строительных материалов и им подобным.<br />Сервис предлагает доставку до дома, низкие цены и удобный интерфейс.</p>
+                            <div class="widget-icon">
+                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
+                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                <a href="https://www.instagram.com/nikitos.26_/"><i class="fa fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- footer-top-area start -->
+        <div class="footer-top-area">
+            <div class="container">
+                <div class="row">
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>КОНТАКТЫ</h3>
+                            <ul class="footer-contact">
+                                <li>
+                                    <i class="fa fa-map-marker"> </i>
+                                    Адрес: Республика Беларусь, г.Гродно, ул.Тавлая, д.44
+                                </li>
+                                <li>
+                                    <i class="fa fa-envelope"> </i>
+                                    Email: Nikita.brosko@mail.ru
+                                </li>
+                                <li>
+                                    <i class="fa fa-phone"> </i>
+                                    Номер телефона: +375(33)669-45-81
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 hidden-sm">
+                        <div class="footer-widget">
+                            <h3>My account</h3>
+                            <ul class="footer-menu">
+                                <li><a href="#">Order Status</a></li>
+                                <li><a href="#">Register</a></li>
+                                <li><a href="#">Sign-up</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>about us</h3>
+                            <ul class="footer-menu">
+                                <li><a href="#">Delivery</a></li>
+                                <li><a href="#">Payment</a></li>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>РАЗРАБОТЧИК</h3>
+                            <ul class="footer-contact">
+                                <li>
+                                    ФИО: Броско Никита Сергеевич
+                                </li>
+                                <li>
+                                    Категория: Дипломный проект
+                                </li>
+                                <li>
+                                    Тема: "Разработка интернет-магазина по продаже строительных материалов"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                </div>
+            </div>
+        </div>
+        <!-- footer-top-area end -->
+        <!-- footer-bottom-area start -->
+        <div class="footer-bottom-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="copyright">
+                            <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. All Rights Reserved</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="payment-img">
+                            <img src="img/payment.png" alt="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- footer-bottom-area end -->
+    </footer>
+    <!-- footer end -->
+
+    <div class="modal fade" id="updateSupplierModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;">Редактирование поставщика</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <form enctype="multipart/form-data" asp-action="Update" asp-controller="Supplier" method="post">
+                            <input hidden id="id-input" name="id" />
+                            <input hidden id="element-id-input" name="elementId" />
+                            <div>
+                                <label>Введите новое название компании</label>
+                                <input type="text" id="companyname-input" name="companyName" />
+                            </div>
+                            <div>
+                                <label>Введите новый адрес компании</label>
+                                <input type="text" id="address-input" name="address" />
+                            </div>
+                            <div>
+                                <label>Введите новый город компании</label>
+                                <input type="text" id="city-input" name="city" />
+                            </div>
+                            <div>
+                                <label>Введите новый страну компании</label>
+                                <input type="text" id="country-input" name="country" />
+                            </div>
+                            <div>
+                                <label>Введите новый телефон компании</label>
+                                <input type="text" id="phone-input" name="phoneNumber" />
+                            </div>
+                            <div>
+                                <label>Введите новый Email компании</label>
+                                <input type="email" id="email-input" name="email" />
+                            </div>
+                            <button class="btn btn-account-change" type="button" id="submit-button" onclick="jQueryAjaxPostFormForSupplier(this.form)">Сохранить</button>
+                        </form>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="createSupplierModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;">Создание поставщика</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <form enctype="multipart/form-data" asp-action="Create" asp-controller="Supplier" method="post">
+                            <input hidden name="pageSize" value="@Model.Suppliers.PageSize" />
+                            <input hidden name="pageNumber" value="@Model.Suppliers.PageNumber" />
+                            <div>
+                                <label>Введите название компании</label>
+                                <input type="text" id="companyname-create-input" name="companyName" />
+                            </div>
+                            <div>
+                                <label>Введите адрес компании</label>
+                                <input type="text" id="address-create-input" name="address" />
+                            </div>
+                            <div>
+                                <label>Введите город компании</label>
+                                <input type="text" id="city-create-input" name="city" />
+                            </div>
+                            <div>
+                                <label>Введите страну компании</label>
+                                <input type="text" id="country-create-input" name="country" />
+                            </div>
+                            <div>
+                                <label>Введите телефон компании</label>
+                                <input type="text" id="phone-create-input" name="phoneNumber" />
+                            </div>
+                            <div>
+                                <label>Введите Email компании</label>
+                                <input type="email" id="email-create-input" name="email" />
+                            </div>
+                            <button class="btn btn-account-change" type="submit">Создать</button>
+                        </form>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="showAdditionalInfoSupplierModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;" id="supplier-header-id">Дополнительная информация</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <div>
+                            <label>Адрес компании</label>
+                            <input type="text" id="address-view" disabled />
+                        </div>
+                        <div>
+                            <label>Город компании</label>
+                            <input type="text" id="city-view" disabled />
+                        </div>
+                        <div>
+                            <label>Страна компании</label>
+                            <input type="text" id="country-view" disabled />
+                        </div>
+                        <div>
+                            <label>Телефон компании</label>
+                            <input type="text" id="phone-view" disabled />
+                        </div>
+                        <div>
+                            <label>Email компании</label>
+                            <input type="email" id="email-view" disabled />
+                        </div>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <!-- all js here -->
+    <!-- jquery latest version -->
+    <script src="~/js/vendor/jquery-1.12.0.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="~/js/bootstrap.min.js"></script>
+    <!-- owl.carousel js -->
+    <script src="~/js/owl.carousel.min.js"></script>
+    <!-- meanmenu js -->
+    <script src="~/js/jquery.meanmenu.js"></script>
+    <!-- jquery-ui js -->
+    <script src="~/js/jquery-ui.min.js"></script>
+    <!-- wow js -->
+    <script src="~/js/wow.min.js"></script>
+    <!-- plugins js -->
+    <script src="~/js/plugins.js"></script>
+    <!-- main js -->
+    <script src="~/js/main.js"></script>
+    <!-- site js -->
+    <script src="~/js/site.js"></script>
+
+    <script>
+        $('#updateSupplierModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var companyname = button.data('companyname')
+            var address = button.data('address')
+            var city = button.data('city')
+            var country = button.data('country')
+            var phone = button.data('phone')
+            var email = button.data('email')
+            var id = button.data('id')
+            var elementId = button.data('elementid')
+
+            var modal = $(this)
+            modal.find('#companyname-input').val(companyname)
+            modal.find('#address-input').val(address)
+            modal.find('#city-input').val(city)
+            modal.find('#country-input').val(country)
+            modal.find('#phone-input').val(phone)
+            modal.find('#email-input').val(email)
+            modal.find('#id-input').val(id)
+            modal.find('#element-id-input').val(elementId)
+        })
+
+        $('#showAdditionalInfoSupplierModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var address = button.data('address')
+            var city = button.data('city')
+            var country = button.data('country')
+            var phone = button.data('phone')
+            var email = button.data('email')
+
+            var supplierId = button.data('id')
+            $('#supplier-header-id').text(supplierId)
+
+            var modal = $(this)
+            modal.find('#address-view').val(address)
+            modal.find('#city-view').val(city)
+            modal.find('#country-view').val(country)
+            modal.find('#phone-view').val(phone)
+            modal.find('#email-view').val(email)
+        })
+
+        jQueryAjaxPostFormForSupplier = (form) => {
+            var modal = $('#updateSupplierModal')
+            var elementId = modal.find('#element-id-input').val()
+
+            $.ajax({
+                type: 'POST',
+                url: form.action,
+                data: new FormData(form),
+                processData: false,
+                contentType: false,
+
+                success: function (res) {
+                    modal.modal('hide');
+                    $('#' + elementId).html(res);
+                },
+
+                error: function (err) {
+                    console.log(err);
+                },
+
+                failure: function (fail) {
+                    console.log(fail);
+                }
+            })
+        }
+    </script>
+</body>
+</html>
