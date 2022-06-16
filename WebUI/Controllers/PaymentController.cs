@@ -44,29 +44,6 @@ namespace WebUI.Controllers
             return View(new CreatePaymentCommand {OrderId = orderId});
         }
 
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Create([FromForm] CreatePaymentCommand command)
-        {
-            try
-            {
-                var paymentId = await Mediator.Send(command);
-
-                var payment = await Mediator.Send(new GetPaymentQuery { Id = paymentId });
-
-                await Mediator.Send(new UpdateOrderCommand
-                {
-                    Id = command.OrderId,
-                    Payment = payment
-                });
-
-                return RedirectToAction("Clear", "ShoppingCart");
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
         [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, string returnUrl = null)

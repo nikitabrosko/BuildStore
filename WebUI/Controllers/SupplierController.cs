@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
-using Application.Common.Exceptions;
+using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Supplier.Commands.CreateSupplier;
 using Application.UseCases.Supplier.Commands.DeleteSupplier;
 using Application.UseCases.Supplier.Commands.UpdateSupplier;
 using Application.UseCases.Supplier.Queries.GetSupplier;
-using Application.UseCases.Supplier.Queries.GetSuppliers;
+using Application.UseCases.Supplier.Queries.GetSuppliersWithPagination;
+using Application.UseCases.Supplier.Queries.SearchSuppliersWithPagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebUI.Models.Supplier;
 
 namespace WebUI.Controllers
 {
@@ -14,125 +16,112 @@ namespace WebUI.Controllers
     public class SupplierController : ApiControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] GetSuppliersQuery query)
+        public async Task<IActionResult> Index([FromQuery] GetSuppliersWithPaginationQuery query)
         {
-            ViewBag.Title = "Suppliers";
+            var suppliers = await Mediator.Send(query);
+            var categoriesForHeader = await Mediator.Send(new GetCategoriesQuery());
 
-            return View(await Mediator.Send(query));
-        }
-
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get([FromRoute] int id)
-        {
-            try
+            if (suppliers.Items.Count is 0 && suppliers.PageNumber > 1)
             {
-                var supplier = await Mediator.Send(new GetSupplierQuery { Id = id });
+                query.PageNumber -= 1;
 
-                ViewBag.Title = supplier.CompanyName;
-
-                return View(supplier);
+                return View("Index", new ModelForSuppliers
+                {
+                    Suppliers = await Mediator.Send(query),
+                    CategoriesForHeader = categoriesForHeader
+                });
             }
-            catch (NotFoundException exception)
+
+            return View("Index", new ModelForSuppliers
             {
-                return View("Error", exception.Message);
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
-            ViewBag.Title = "Create Supplier";
-
-            return View();
+                Suppliers = suppliers,
+                CategoriesForHeader = categoriesForHeader
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CreateSupplierCommand command)
+        public async Task<IActionResult> Create([FromForm] ModelForCreateSupplier model)
         {
-            try
+            await Mediator.Send(new CreateSupplierCommand
             {
-                await Mediator.Send(command);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
+                CompanyName = model.CompanyName,
+                Address = model.Address,
+                City = model.City,
+                Country = model.Country,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
+            });
 
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id)
-        {
-            ViewBag.Title = "Update Supplier";
-
-            try
-            {
-                var entity = await Mediator.Send(new GetSupplierQuery { Id = id });
-                
-                var command = new UpdateSupplierCommand
+            return RedirectToAction("Index", "Supplier",
+                new GetSuppliersWithPaginationQuery
                 {
-                    Id = id,
-                    CompanyName = entity.CompanyName,
-                    Address = entity.Address,
-                    City = entity.City,
-                    Country = entity.Country,
-                    Email = entity.Email,
-                    PhoneNumber = entity.PhoneNumber
-                };
-
-                return View(command);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
+                    PageNumber = model.PageNumber,
+                    PageSize = model.PageSize
+                });
         }
 
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Update([FromForm] UpdateSupplierCommand command)
+        [HttpPost]
+        public async Task<IActionResult> Update([FromForm] ModelForUpdateSupplier model)
         {
-            try
+            await Mediator.Send(new UpdateSupplierCommand
             {
-                await Mediator.Send(command);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
+                Id = model.Id,
+                CompanyName = model.CompanyName,
+                Address = model.Address,
+                City = model.City,
+                Country = model.Country,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
+            });
 
-            return RedirectToAction("Index");
+            return View("_SupplierPartial", new ModelForSupplierPartial
+            {
+                Supplier = await Mediator.Send(new GetSupplierQuery { Id = model.Id }),
+                ElementId = model.ElementId
+            });
         }
 
-        [HttpGet("{id:int}")]
-        public IActionResult Delete([FromRoute] int id)
+        [HttpPost("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            ViewBag.Title = "Delete Supplier";
+            await Mediator.Send(new DeleteSupplierCommand
+            {
+                Id = id,
+                ProductsDeletion = false
+            });
 
-            return View(new DeleteSupplierCommand { Id = id });
+            return NoContent();
         }
 
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Delete([FromForm] DeleteSupplierCommand command)
+        [HttpGet]
+        public async Task<IActionResult> Search([FromQuery] SearchSuppliersWithPaginationQuery query)
         {
-            try
+            if (query.Pattern is null)
             {
-                await Mediator.Send(command);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
+                return RedirectToAction("Index", "Supplier");
             }
 
-            return RedirectToAction("Index");
+            var suppliers = await Mediator.Send(query);
+            var categoriesForHeader = await Mediator.Send(new GetCategoriesQuery());
+
+            if (suppliers.Items.Count is 0 && suppliers.PageNumber > 1)
+            {
+                query.PageNumber -= 1;
+
+                return View("Index", new ModelForSuppliers
+                {
+                    Suppliers = await Mediator.Send(query),
+                    SearchPattern = query.Pattern,
+                    CategoriesForHeader = categoriesForHeader
+                });
+            }
+
+            return View("Index", new ModelForSuppliers
+            {
+                Suppliers = suppliers,
+                SearchPattern = query.Pattern,
+                CategoriesForHeader = categoriesForHeader
+            });
         }
     }
 }

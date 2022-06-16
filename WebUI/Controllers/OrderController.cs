@@ -1,129 +1,72 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Common.Exceptions;
-using Application.UseCases.Customer.Queries.GetCustomer;
-using Application.UseCases.Identity.User.Queries.GetUser;
-using Application.UseCases.Order.Commands.CreateOrder;
+using Application.Common.Models;
+using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Order.Commands.DeleteOrder;
+using Application.UseCases.Order.Commands.UpdateOrder;
 using Application.UseCases.Order.Queries.GetOrder;
-using Application.UseCases.Order.Queries.GetOrdersForSpecifiedCustomer;
 using Application.UseCases.Order.Queries.GetOrdersWithPagination;
-using Application.UseCases.ShoppingCart.Queries.GetShoppingCart;
+using Application.UseCases.Order.Queries.SearchOrdersWithPagination;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebUI.Models.Order;
 
 namespace WebUI.Controllers
 {
     [Authorize]
     public class OrderController : ApiControllerBase
     {
-        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> Index([FromQuery] GetOrdersWithPaginationQuery query)
         {
-            return View(await Mediator.Send(query));
-        }
+            var suppliers = await Mediator.Send(query);
+            var categoriesForHeader = await Mediator.Send(new GetCategoriesQuery());
 
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            try
+            if (suppliers.Items.Count is 0 && suppliers.PageNumber > 1)
             {
-                return View(await Mediator.Send(new GetOrderQuery { Id = id }));
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
+                query.PageNumber -= 1;
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            try
-            {
-                return View("Create");
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CreateOrderCommand command)
-        {
-            try
-            {
-
-                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
-                var shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
-                var customer = await Mediator.Send(new GetCustomerQuery { Id = user.Customer.Id });
-
-                command.Customer = customer;
-                command.ProductsDictionary = shoppingCart.ProductsDictionary;
-
-                await Mediator.Send(command);
-
-                return RedirectToAction("Clear", "ShoppingCart");
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id, string returnUrl = null)
-        {
-            try
-            {
-                await Mediator.Send(new DeleteOrderCommand { Id = id });
-
-                if (returnUrl != null)
+                return View("Index", new ModelForOrders
                 {
-                    return Redirect(returnUrl);
-                }
+                    Orders = await Mediator.Send(query),
+                    CategoriesForHeader = categoriesForHeader
+                });
+            }
 
-                return RedirectToAction("Index", "Order");
-            }
-            catch (NotFoundException exception)
+            return View("Index", new ModelForOrders
             {
-                return View("Error", exception.Message);
-            }
+                Orders = suppliers,
+                CategoriesForHeader = categoriesForHeader
+            });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetOrders()
+        
+        [HttpPost]
+        public async Task<IActionResult> Update([FromForm] ModelForUpdateOrder model)
         {
-            try
+            await Mediator.Send(new UpdateOrderCommand
             {
-                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
-                var customer = await Mediator.Send(new GetCustomerQuery { Id = user.Customer.Id });
+                Id = model.Id,
+                DeliveryFulfilled = model.IsDeliveryComplete,
+                PaymentAllowed = model.IsPaymentAllowed
+            });
 
-                return View(await Mediator.Send(new GetOrdersForSpecifiedCustomerQuery { CustomerId = customer.Id }));
-            }
-            catch (NotFoundException exception)
+            return View("_OrderPartial", new ModelForOrderPartial
             {
-                return View("Error", exception.Message);
-            }
+                Order = await Mediator.Send(new GetOrderQuery { Id = model.Id }),
+                ElementId = model.ElementId
+            });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetOrderProducts(int orderId)
+        [HttpPost("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            try
+            await Mediator.Send(new DeleteOrderCommand
             {
-                var order = await Mediator.Send(new GetOrderQuery { Id = orderId });
+                Id = id
+            });
 
-                return View("OrderProducts", order.ProductsDictionary);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
+            return NoContent();
         }
     }
 }

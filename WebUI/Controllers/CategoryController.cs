@@ -1,161 +1,292 @@
-﻿using System;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Application.Common.Exceptions;
 using Application.UseCases.Category.Commands.CreateCategory;
 using Application.UseCases.Category.Commands.DeleteCategory;
 using Application.UseCases.Category.Commands.UpdateCategory;
-using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Category.Queries.GetCategory;
-using Application.UseCases.Identity.User.Queries.GetUser;
+using WebUI.Models.Category;
+using Application.UseCases.Category.Queries.GetCategoriesWithPagination;
+using Application.UseCases.Category.Queries.SearchCategoriesWithPagination;
+using Application.UseCases.Category.Queries.GetCategories;
+using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
+using Application.UseCases.Product.Queries.SearchPaginatedProductsWithSubcategory;
+using Application.UseCases.Product.Queries.GetProducts;
 using Application.UseCases.ShoppingCart.Queries.GetShoppingCart;
-using Microsoft.AspNetCore.Authorization;
+using Application.UseCases.Identity.User.Queries.GetUser;
+using Application.Common.Exceptions;
+using Application.UseCases.Subcategory.Queries.GetSubcategory;
+using Domain.Entities;
 
 namespace WebUI.Controllers
 {
     public class CategoryController : ApiControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> Index([FromQuery] GetCategoriesQuery query)
+        public async Task<IActionResult> Index([FromQuery] GetCategoriesWithPaginationQuery query)
         {
+            var categories = await Mediator.Send(query);
+            var categoriesForHeader = await Mediator.Send(new GetCategoriesQuery());
+
+            if (categories.Items.Count is 0 && categories.PageNumber > 1)
+            {
+                query.PageNumber -= 1;
+
+                return View("Index", new ModelForCategories 
+                { 
+                    Categories = await Mediator.Send(query), 
+                    CategoriesForHeader = categoriesForHeader 
+                });
+            }
+
+            return View("Index", new ModelForCategories 
+            { 
+                Categories = categories, 
+                CategoriesForHeader = categoriesForHeader 
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] ModelForCreateCategory model)
+        {
+            await Mediator.Send(new CreateCategoryCommand
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Picture = model.PictureRaw
+            });
+
+            return RedirectToAction("Index", "Category", 
+                new GetCategoriesWithPaginationQuery 
+                { 
+                    PageNumber = model.PageNumber, 
+                    PageSize = model.PageSize 
+                });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update([FromForm] ModelForUpdateCategory model)
+        {
+            await Mediator.Send(new UpdateCategoryCommand 
+            { 
+                Id = model.Id, 
+                Name = model.Name, 
+                Description = model.Description, 
+                Picture = model.PictureRaw 
+            });
+
+            return View("_CategoryPartial", new ModelForCategoryPartial 
+            { 
+                Category = await Mediator.Send(new GetCategoryQuery { Id = model.Id }), 
+                ElementId = model.ElementId 
+            });
+        }
+
+        [HttpPost("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            await Mediator.Send(new DeleteCategoryCommand 
+            { 
+                Id = id, 
+                ProductsDeletion = false, 
+                SubcategoriesDeletion = false 
+            });
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Search([FromQuery] SearchCategoriesWithPaginationQuery query)
+        {
+            if (query.Pattern is null)
+            {
+                return RedirectToAction("Index", "Category");
+            }
+
+            var categories = await Mediator.Send(query);
+            var categoriesForHeader = await Mediator.Send(new GetCategoriesQuery());
+
+            if (categories.Items.Count is 0 && categories.PageNumber > 1)
+            {
+                query.PageNumber -= 1;
+
+                return View("Index", new ModelForCategories 
+                { 
+                    Categories = await Mediator.Send(query), 
+                    SearchPattern = query.Pattern, 
+                    CategoriesForHeader = categoriesForHeader 
+                });
+            }
+
+            return View("Index", new ModelForCategories 
+            { 
+                Categories = categories, 
+                SearchPattern = query.Pattern, 
+                CategoriesForHeader = categoriesForHeader 
+            });
+        }
+
+        /*[HttpGet]
+        public async Task<IActionResult> GetProducts([FromQuery] GetPaginatedProductsWithSubcategoryQuery query)
+        {
+            var products = await Mediator.Send(query);
+
+            return View("_ShopProductsCategoryPartial", new ModelForShopProductsCategoryPartial 
+            { 
+                Products = products, 
+                CategoryId = query.SubcategoryId
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchProducts([FromQuery] SearchPaginatedProductsWithSubcategoryQuery query)
+        {
+            var products = await Mediator.Send(query);
+
+            return View("_ShopProductsCategoryPartial", new ModelForShopProductsCategoryPartial 
+            { 
+                Products = products, 
+                CategoryId = query.SubcategoryId, 
+                SearchPattern = query.Pattern
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchProductsForm([FromForm] SearchPaginatedProductsWithSubcategoryQuery query)
+        {
+            if (query.Pattern is null)
+            {
+                return RedirectToAction("Get", "Category", new GetPaginatedProductsWithSubcategoryQuery 
+                { 
+                    PageSize = query.PageSize, 
+                    SubcategoryId = query.SubcategoryId 
+                });
+            }
+
+            var products = await Mediator.Send(query);
+
+            return View("_ShopProductsCategoryPartial", new ModelForShopProductsCategoryPartial 
+            { 
+                Products = products, 
+                CategoryId = query.SubcategoryId, 
+                SearchPattern = query.Pattern
+            });
+        }*/
+
+        [HttpGet]
+        public async Task<IActionResult> Shop([FromQuery] GetPaginatedProductsWithSubcategoryQuery query)
+        {
+            query.PageSize = 15;
+
+            CategoryBase category;
+
+            try
+            {
+                category = await Mediator.Send(new GetCategoryQuery { Id = query.SubcategoryId });
+            }
+            catch (NotFoundException)
+            {
+                category = await Mediator.Send(new GetSubcategoryQuery { Id = query.SubcategoryId });
+            }
+
+            if (User.IsInRole("admin"))
+            {
+                var modelForCategoryShop = new ModelForCategoryShop
+                {
+                    Categories = await Mediator.Send(new GetCategoriesQuery()),
+                    ProductsPaginated = await Mediator.Send(query),
+                    Products = await Mediator.Send(new GetProductsQuery()),
+                    Category = category
+                };
+
+                return View("Shop", modelForCategoryShop);
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+
+                var modelForCategoryShop = new ModelForCategoryShop
+                {
+                    Categories = await Mediator.Send(new GetCategoriesQuery()),
+                    ShoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id }),
+                    ProductsPaginated = await Mediator.Send(query),
+                    Products = await Mediator.Send(new GetProductsQuery()),
+                    Category = category
+                };
+
+                return View("Shop", modelForCategoryShop);
+            }
+            else
+            {
+                var modelForCategoryShop = new ModelForCategoryShop
+                {
+                    Categories = await Mediator.Send(new GetCategoriesQuery()),
+                    ProductsPaginated = await Mediator.Send(query),
+                    Products = await Mediator.Send(new GetProductsQuery()),
+                    Category = category
+                };
+
+                return View("Shop", modelForCategoryShop);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ShopSearch([FromQuery] SearchPaginatedProductsWithSubcategoryQuery query)
+        {
+            if (query.Pattern is null)
+            {
+                return RedirectToAction("Shop", "Category");
+            }
+
+            CategoryBase category;
+
+            try
+            {
+                category = await Mediator.Send(new GetCategoryQuery { Id = query.SubcategoryId });
+            }
+            catch (NotFoundException)
+            {
+                category = await Mediator.Send(new GetSubcategoryQuery { Id = query.SubcategoryId });
+            }
+
+            var products = await Mediator.Send(query);
+            Domain.Entities.ShoppingCart shoppingCart = null;
+
             if (User.IsInRole("user"))
             {
                 var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
-                var shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
-                var productsCount = shoppingCart.ProductsDictionary.Sum(productsDictionary => productsDictionary.Count);
-
-                ViewBag.ProductsCount = productsCount;
-            }
-            
-            ViewBag.Title = "Categories";
-
-            return View(await Mediator.Send(query));
-        }
-
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get([FromRoute] int id)
-        {
-            try
-            {
-                var category = await Mediator.Send(new GetCategoryQuery { Id = id });
-
-                ViewBag.Title = category.Name;
-
-                return View(category);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet]
-        public IActionResult Create()
-        {
-            ViewBag.Title = "Create Category";
-
-            return View();
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CreateCategoryCommand command)
-        {
-            try
-            {
-                await Mediator.Send(command);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
+                shoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id });
             }
 
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id)
-        {
-            ViewBag.Title = "Update Category";
-
-            try
+            if (products.Items.Count is 0 && products.PageNumber > 1)
             {
-                var entity = await Mediator.Send(new GetCategoryQuery {Id = id});
-                var imgSrc = $"data:image/gif;base64,{Convert.ToBase64String(entity.Picture)}";
+                query.PageNumber -= 1;
 
-                ViewBag.Picture = imgSrc;
-
-                var command = new UpdateCategoryCommand
+                return View("Shop", new ModelForCategoryShop
                 {
-                    Id = id,
-                    Name = entity.Name,
-                    Description = entity.Description
-                };
-
-                return View(command);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Update([FromForm] UpdateCategoryCommand command)
-        {
-            try
-            {
-                await Mediator.Send(command);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
+                    Categories = await Mediator.Send(new GetCategoriesQuery()),
+                    SearchPattern = query.Pattern,
+                    ProductsPaginated = await Mediator.Send(query),
+                    Category = category,
+                    Products = await Mediator.Send(new GetProductsQuery()),
+                    ShoppingCart = shoppingCart
+                });
             }
 
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
-        public IActionResult Delete([FromRoute] int id)
-        {
-            ViewBag.Title = "Delete Category";
-
-            return View(new DeleteCategoryCommand {Id = id});
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Delete([FromForm] DeleteCategoryCommand command)
-        {
-            try
+            return View("Shop", new ModelForCategoryShop
             {
-                await Mediator.Send(command);
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-
-            return RedirectToAction("Index");
+                Categories = await Mediator.Send(new GetCategoriesQuery()),
+                SearchPattern = query.Pattern,
+                ProductsPaginated = products,
+                Category = category,
+                Products = await Mediator.Send(new GetProductsQuery()),
+                ShoppingCart = shoppingCart
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetCategories()
+        public IActionResult ShopSearchPost([FromForm] SearchPaginatedProductsWithSubcategoryQuery query)
         {
-            return View("_DropdownCategoriesPartial", await Mediator.Send(new GetCategoriesQuery()));
+            return RedirectToAction("ShopSearch", "Category", query);
         }
     }
 }

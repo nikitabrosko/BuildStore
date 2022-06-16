@@ -1,168 +1,173 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Application.Common.Exceptions;
-using Application.UseCases.Subcategory.Commands.AddSubcategory;
 using Application.UseCases.Subcategory.Commands.CreateSubcategory;
 using Application.UseCases.Subcategory.Commands.DeleteSubcategory;
 using Application.UseCases.Subcategory.Commands.UpdateSubcategory;
 using Application.UseCases.Subcategory.Queries.GetSubcategory;
-using Microsoft.AspNetCore.Authorization;
+using WebUI.Models.Subcategory;
+using Application.UseCases.Subcategory.Queries.GetSubcategoriesWithPagination;
+using Application.UseCases.Subcategory.Queries.SearchSubcategoriesWithPagination;
+using Application.UseCases.Category.Queries.GetCategories;
+using Application.UseCases.Subcategory.Commands.AddSubcategory;
 
 namespace WebUI.Controllers
 {
     public class SubcategoryController : ApiControllerBase
     {
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get([FromRoute] int id)
+        [HttpGet]
+        public async Task<IActionResult> Index([FromQuery] GetSubcategoriesWithPaginationQuery query)
         {
-            try
+            var subcategories = await Mediator.Send(query);
+            var categoriesForHeader = await Mediator.Send(new GetCategoriesQuery());
+
+            if (subcategories.Items.Count is 0 && subcategories.PageNumber > 1)
             {
-                var subcategory = await Mediator.Send(new GetSubcategoryQuery { Id = id });
+                query.PageNumber -= 1;
 
-                ViewBag.Title = subcategory.Name;
-
-                return RedirectToAction("GetProducts", "Product",
-                    new {subcategoryId = subcategory.Id});
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
-        public IActionResult Create([FromRoute] int id)
-        {
-            ViewBag.Title = "Create Subcategory";
-
-            return View(new CreateSubcategoryCommand {CategoryId = id});
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Create([FromForm] CreateSubcategoryCommand command)
-        {
-            try
-            {
-                await Mediator.Send(command);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
-
-            return RedirectToAction("Get", "Category", new {id = command.CategoryId});
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
-        public IActionResult Add([FromRoute] int id)
-        {
-            ViewBag.Title = "Add Subcategory";
-
-            return View(new AddSubcategoryCommand { SubcategoryId = id });
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Add([FromForm] AddSubcategoryCommand command)
-        {
-            try
-            {
-                var categoryId = await Mediator.Send(command);
-
-                return RedirectToAction("Get", "Category", new {id = categoryId});
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id)
-        {
-            ViewBag.Title = "Update Subcategory";
-
-            try
-            {
-                var entity = await Mediator.Send(new GetSubcategoryQuery {Id = id});
-
-                var command = new UpdateSubcategoryCommand
+                return View("Index", new ModelForSubcategories
                 {
-                    Id = id,
-                    Name = entity.Name,
-                    Description = entity.Description
-                };
+                    Subcategories = await Mediator.Send(query),
+                    CategoriesForHeader = categoriesForHeader
+                });
+            }
 
-                return View(command);
-            }
-            catch (NotFoundException exception)
+            return View("Index", new ModelForSubcategories
             {
-                return View("Error", exception.Message);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
+                Subcategories = subcategories,
+                CategoriesForHeader = categoriesForHeader
+            });
         }
 
-        [Authorize(Roles = "admin")]
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Update([FromForm] UpdateSubcategoryCommand command)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] ModelForCreateSubcategory model)
         {
-            try
+            await Mediator.Send(new CreateSubcategoryCommand
             {
-                var categoryId = await Mediator.Send(command);
+                Name = model.Name,
+                Description = model.Description,
+                CategoryId = int.Parse(model.CategoryId)
+            });
 
-                return RedirectToAction("Get", "Category", new { id = categoryId });
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-            catch (ItemExistsException exception)
-            {
-                return View("Error", exception.Message);
-            }
+            return RedirectToAction("Index", "Subcategory",
+                new GetSubcategoriesWithPaginationQuery
+                {
+                    PageNumber = model.PageNumber,
+                    PageSize = model.PageSize
+                });
         }
 
-        [Authorize(Roles = "admin")]
-        [HttpGet("{id:int}")]
+        [HttpPost]
+        public async Task<IActionResult> AddSubcategory([FromForm] ModelForCreateSubcategory model)
+        {
+            await Mediator.Send(new AddSubcategoryCommand
+            {
+                Name = model.Name,
+                Description = model.Description,
+                SubcategoryId = int.Parse(model.CategoryId)
+            });
+
+            return RedirectToAction("Index", "Subcategory",
+                new GetSubcategoriesWithPaginationQuery
+                {
+                    PageNumber = model.PageNumber,
+                    PageSize = model.PageSize
+                });
+        }
+
+        [HttpPost("{searchPattern}")]
+        public async Task<IActionResult> AddSubcategory([FromForm] ModelForCreateSubcategory model, [FromRoute] string searchPattern = null)
+        {
+            await Mediator.Send(new AddSubcategoryCommand
+            {
+                Name = model.Name,
+                Description = model.Description,
+                SubcategoryId = int.Parse(model.CategoryId)
+            });
+
+            if (searchPattern is not null)
+            {
+                return RedirectToAction("Search", "Subcategory", new SearchSubcategoriesWithPaginationQuery
+                {
+                    PageNumber = model.PageNumber,
+                    PageSize = model.PageSize,
+                    Pattern = searchPattern
+                });
+            }
+
+            return RedirectToAction("Index", "Subcategory",
+                new GetSubcategoriesWithPaginationQuery
+                {
+                    PageNumber = model.PageNumber,
+                    PageSize = model.PageSize
+                });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update([FromForm] ModelForUpdateSubcategory model)
+        {
+            var command = new UpdateSubcategoryCommand
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Description = model.Description
+            };
+
+            if (model.CategoryId is not null)
+            {
+                command.NewCategoryId = int.Parse(model.CategoryId);
+            }
+
+            await Mediator.Send(command);
+
+            return View("_SubcategoryPartial", new ModelForSubcategoryPartial
+            {
+                Subcategory = await Mediator.Send(new GetSubcategoryQuery { Id = model.Id }),
+                ElementId = model.ElementId
+            });
+        }
+
+        [HttpPost("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            try
+            await Mediator.Send(new DeleteSubcategoryCommand
             {
-                ViewBag.Title = "Delete Category";
+                Id = id,
+                ProductsDeletion = false,
+                SubcategoriesDeletion = false
+            });
 
-                var entity = await Mediator.Send(new GetSubcategoryQuery { Id = id });
-
-                ViewBag.IsHaveSubcategories = entity.Subcategories.Count > 0;
-
-                return View(new DeleteSubcategoryCommand { Id = id });
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
+            return NoContent();
         }
 
-        [Authorize(Roles = "admin")]
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Delete([FromForm] DeleteSubcategoryCommand command)
+        [HttpGet]
+        public async Task<IActionResult> Search([FromQuery] SearchSubcategoriesWithPaginationQuery query)
         {
-            try
+            if (query.Pattern is null)
             {
-                var categoryId = await Mediator.Send(command);
+                return RedirectToAction("Index", "Subcategory");
+            }
 
-                return RedirectToAction("Get", "Category", new { id = categoryId });
-            }
-            catch (NotFoundException exception)
+            var subcategories = await Mediator.Send(query);
+            var categoriesForHeader = await Mediator.Send(new GetCategoriesQuery());
+
+            if (subcategories.Items.Count is 0 && subcategories.PageNumber > 1)
             {
-                return View("Error", exception.Message);
+                query.PageNumber -= 1;
+
+                return View("Index", new ModelForSubcategories
+                {
+                    Subcategories = await Mediator.Send(query),
+                    SearchPattern = query.Pattern,
+                    CategoriesForHeader = categoriesForHeader
+                });
             }
+
+            return View("Index", new ModelForSubcategories
+            {
+                Subcategories = subcategories,
+                SearchPattern = query.Pattern,
+                CategoriesForHeader = categoriesForHeader
+            });
         }
     }
 }

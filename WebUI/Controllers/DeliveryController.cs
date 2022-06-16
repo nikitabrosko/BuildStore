@@ -44,29 +44,6 @@ namespace WebUI.Controllers
             return View(new CreateDeliveryCommand { OrderId = orderId });
         }
 
-        [HttpPost("{command}")]
-        public async Task<IActionResult> Create([FromForm] CreateDeliveryCommand command)
-        {
-            try
-            {
-                var deliveryId = await Mediator.Send(command);
-
-                var delivery = await Mediator.Send(new GetDeliveryQuery { Id = deliveryId });
-
-                await Mediator.Send(new UpdateOrderCommand
-                {
-                    Id = command.OrderId,
-                    Delivery = delivery
-                });
-
-                return RedirectToAction("Create", "Payment", new { orderId = command.OrderId });
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
-
         [Authorize(Roles = "admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, string returnUrl = null)
