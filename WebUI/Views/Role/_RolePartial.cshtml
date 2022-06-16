@@ -1,0 +1,15 @@
+﻿@model WebUI.Models.Role.ModelForRolePartial
+
+<td class="product-name">@Model.Role.Name</td>
+
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#updateRoleModal"
+       data-name="@Model.Role.Name" data-id="@Model.Role.Id" data-elementid="@Model.ElementId">
+        <i class="fa fa-pencil"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a style="cursor:pointer" onclick="jQueryAjaxDelete('@Url.Action("Delete", "Role", new { id = Model.Role.Id }, Context.Request.Scheme)', '@Model.ElementId')">
+        <i class="fa fa-times"></i>
+    </a>
+</td>
