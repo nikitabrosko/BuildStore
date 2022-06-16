@@ -1,0 +1,74 @@
+﻿@model WebUI.Models.Product.ModelForProductPartial
+
+@{  
+    string ConvertPicture(byte[] picture)
+    {
+        var base64 = Convert.ToBase64String(picture);
+        return $"data:image/jpg;base64,{base64}";
+    }
+
+    var images = Model.Product.Images.ToList();
+}
+
+<td class="product-price">@Model.Product.Id</td>
+<td class="product-thumbnail"><img src="@ConvertPicture(images.First().Picture)" /></td>
+<td class="product-name">@Model.Product.Name</td>
+<td class="product-price">@Model.Product.Price</td>
+
+<td class="product-remove">
+    @if (Model.Product.Supplier is not null && Model.Product.Category is not null)
+    {
+        <a href="#" data-toggle="modal" data-target="#showAdditionalInfoProductModal"
+           data-description="@Model.Product.Description" data-quantityperunit="@Model.Product.QuantityPerUnit"
+           data-weight="@Model.Product.Weight" data-supplier="@Model.Product.Supplier.CompanyName"
+           data-category="@Model.Product.Category.Name" data-picture1="@ConvertPicture(images[0].Picture)"
+           data-picture2="@ConvertPicture(images[1].Picture)" data-picture3="@ConvertPicture(images[2].Picture)">
+            <i class="fa fa-info"></i>
+        </a>
+    }
+    else if (Model.Product.Supplier is null && Model.Product.Category is not null)
+    {
+        <a href="#" data-toggle="modal" data-target="#showAdditionalInfoProductModal"
+           data-description="@Model.Product.Description" data-quantityperunit="@Model.Product.QuantityPerUnit"
+           data-weight="@Model.Product.Weight" data-supplier="Поставщик отсутствует"
+           data-category="@Model.Product.Category.Name" data-picture1="@ConvertPicture(images[0].Picture)"
+           data-picture2="@ConvertPicture(images[1].Picture)" data-picture3="@ConvertPicture(images[2].Picture)">
+            <i class="fa fa-info"></i>
+        </a>
+    }
+    else if (Model.Product.Supplier is not null && Model.Product.Category is null)
+    {
+        <a href="#" data-toggle="modal" data-target="#showAdditionalInfoProductModal"
+           data-description="@Model.Product.Description" data-quantityperunit="@Model.Product.QuantityPerUnit"
+           data-weight="@Model.Product.Weight" data-supplier="@Model.Product.Supplier.CompanyName"
+           data-category="Категория отсутствует" data-picture1="@ConvertPicture(images[0].Picture)"
+           data-picture2="@ConvertPicture(images[1].Picture)" data-picture3="@ConvertPicture(images[2].Picture)">
+            <i class="fa fa-info"></i>
+        </a>
+    }
+    else
+    {
+        <a href="#" data-toggle="modal" data-target="#showAdditionalInfoProductModal"
+           data-description="@Model.Product.Description" data-quantityperunit="@Model.Product.QuantityPerUnit"
+           data-weight="@Model.Product.Weight" data-supplier="Поставщик отсутствует"
+           data-category="Категория отсутствует" data-picture1="@ConvertPicture(images[0].Picture)"
+           data-picture2="@ConvertPicture(images[1].Picture)" data-picture3="@ConvertPicture(images[2].Picture)">
+            <i class="fa fa-info"></i>
+        </a>
+    }
+</td>
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#updateProductModal"
+       data-name="@Model.Product.Name" data-description="@Model.Product.Description"
+       data-price="@Model.Product.Price" data-quantityperunit="@Model.Product.QuantityPerUnit" 
+       data-weight="@Model.Product.Weight" data-picture1="@ConvertPicture(images[0].Picture)" 
+       data-picture2="@ConvertPicture(images[1].Picture)" data-picture3="@ConvertPicture(images[2].Picture)"
+       data-id="@Model.Product.Id" data-elementid="@Model.ElementId">
+        <i class="fa fa-pencil"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a style="cursor:pointer" onclick="jQueryAjaxDelete('@Url.Action("Delete", "Product", new { id = Model.Product.Id }, Context.Request.Scheme)', '@Model.ElementId')">
+        <i class="fa fa-times"></i>
+    </a>
+</td>
