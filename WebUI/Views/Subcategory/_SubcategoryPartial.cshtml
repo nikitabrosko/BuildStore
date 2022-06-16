@@ -1,0 +1,41 @@
+﻿@model WebUI.Models.Subcategory.ModelForSubcategoryPartial
+
+<td class="product-price">@Model.Subcategory.Id</td>
+<td class="product-name">@Model.Subcategory.Name</td>
+@if (Model.Subcategory.Category is null)
+{
+    <td class="product-name">Отсутствует</td>
+}
+else
+{
+    <td class="product-name">@Model.Subcategory.Category.Name</td>
+}
+<td class="product-remove">
+    @if (Model.Subcategory.Category is Domain.Entities.Category)
+    {
+        <a href="#" data-toggle="modal" data-target="#createSubsubcategoryModal" data-subcategoryid="@Model.Subcategory.Id">
+            <i class="fa fa-plus-circle"></i>
+        </a>
+    }
+</td>
+<td class="product-remove">
+    @if (Model.Subcategory.Category is null)
+    {
+        <a href="#" data-toggle="modal" data-target="#updateSubcategoryModal" data-name="@Model.Subcategory.Name" data-elementid="@Model.ElementId"
+           data-description="@Model.Subcategory.Description" data-id="@Model.Subcategory.Id" data-category="Категория отсутствует">
+            <i class="fa fa-pencil"></i>
+        </a>
+    }
+    else
+    {
+        <a href="#" data-toggle="modal" data-target="#updateSubcategoryModal" data-name="@Model.Subcategory.Name" data-elementid="@Model.ElementId"
+           data-description="@Model.Subcategory.Description" data-id="@Model.Subcategory.Id" data-category="@Model.Subcategory.Category.Name">
+            <i class="fa fa-pencil"></i>
+        </a>
+    }
+</td>
+<td class="product-remove">
+    <a style="cursor:pointer" onclick="jQueryAjaxDelete('@Url.Action("Delete", "Subcategory", new { id = Model.Subcategory.Id }, Context.Request.Scheme)', '@Model.ElementId')">
+        <i class="fa fa-times"></i>
+    </a>
+</td>
