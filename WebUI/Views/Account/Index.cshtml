@@ -1,0 +1,557 @@
+﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
+@model WebUI.Models.Account.ModelForLogin
+@inject Microsoft.AspNetCore.Identity.SignInManager<Domain.IdentityEntities.User> SignInManager
+
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Вход</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="shortcut icon" type="image/x-icon" href="~/img/favicon.ico">
+        <!-- Place favicon.ico in the root directory -->
+
+		<!-- all css here -->
+		<!-- bootstrap v3.3.6 css -->
+        <link rel="stylesheet" href="~/css/bootstrap.min.css">
+		<!-- animate css -->
+        <link rel="stylesheet" href="~/css/animate.css">
+		<!-- jquery-ui.min css -->
+        <link rel="stylesheet" href="~/css/jquery-ui.min.css">
+		<!-- meanmenu css -->
+        <link rel="stylesheet" href="~/css/meanmenu.min.css">
+		<!-- owl.carousel css -->
+        <link rel="stylesheet" href="~/css/owl.carousel.css">
+		<!-- slick css -->
+        <link rel="stylesheet" href="~/css/slick.css">
+		<!-- font-awesome css -->
+        <link rel="stylesheet" href="~/css/font-awesome.min.css">
+		<!-- style css -->
+		<link rel="stylesheet" href="~/css/style.css">
+		<!-- responsive css -->
+        <link rel="stylesheet" href="~/css/responsive.css">
+		<!-- modernizr js -->
+        <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- Add your site or application content here -->
+		
+		<!-- header start -->
+        <header class="header-pos">
+		<!-- header-bottom-area start -->
+		<div class="header-bottom-area">
+			<div class="container">
+				<div class="inner-container">
+					<div class="row">
+						<div class="col-md-2 col-sm-4 col-xs-5">
+							<div class="logo">
+								<a asp-action="Index" asp-controller="Home"><img src="~/img/logo6.png" alt="" /></a>
+							</div>
+						</div>
+						<div class="col-md-8 hidden-xs hidden-sm">
+							<div class="main-menu">
+								<nav>
+									<ul>
+										<li>
+											<a asp-action="Index" asp-controller="Home">главная страница</a>
+										</li>
+										<li><a asp-action="About" asp-controller="Home">о нас</a></li>
+										<li class="static">
+											<a asp-action="Shop" asp-controller="Home">каталог</a>
+											<div class="mega-menu">
+												<div class="mega-left">
+													@foreach (var category in Model.Categories)
+                                                    {
+                                                        <span>
+                                                        @Html.ActionLink($"{category.Name}", "Shop", "Category",
+                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
+
+                                                        @foreach (var subcategory in category.Subcategories)
+                                                        {
+                                                            @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
+                                                        }
+                                                        </span>
+                                                    }
+												</div>
+											</div>
+										</li>
+										<li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+									</ul>
+								</nav>
+							</div>
+						</div>
+                        <div class="col-md-2 col-sm-8 col-xs-7 header-right">
+                            @if (User.IsInRole("admin"))
+                            {
+                                <div class="user-meta">
+                                    <a href="#"><i class="fa fa-cog"></i></a>
+                                    <ul>
+                                        <li><a asp-action="Index" asp-controller="Category">Категории</a></li>
+                                        <li><a asp-action="Index" asp-controller="Subcategory">Подкатегории</a></li>
+                                        <li><a asp-action="Index" asp-controller="Supplier">Поставщики</a></li>
+                                        <li><a asp-action="Index" asp-controller="Product">Товары</a></li>
+                                        <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
+                                        <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
+                                        <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    </ul>
+                                </div>
+                             }
+                            else if (User.Identity.IsAuthenticated)
+                            {
+                                <div id="shopping-cart">
+                                            @await Html.PartialAsync("_ShoppingCartPartial", Model.ShoppingCart)
+                                </div>
+                                <div class="user-meta">
+                                    <a style="cursor:pointer"><i class="fa fa-cog"></i></a>
+                                    <ul>
+                                        <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="my-cart">
+                                    <div class="total-cart">
+                                        <a asp-action="Index" asp-controller="Account">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="user-meta">
+                                    <a href="#"><i class="fa fa-cog"></i></a>
+                                    <ul>
+                                        <li><a asp-action="Index" asp-controller="Account">Войти</a></li>
+                                    </ul>
+                                </div>
+                            }
+                            <div class="header-search">
+                                <i class="fa fa-search"></i>
+                                <div class="header-form">
+                                    <form asp-action="ShopSearchPost" asp-controller="Home" method="post">
+                                        <input type="text" id="searchInput" class="form-control" name="pattern" placeholder="Поиск товаров" />
+
+                                        <button type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- header-bottom-area end -->
+		<!-- mobile-menu-area start -->
+		<div class="mobile-menu-area visible-xs visible-sm">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="mobile-menu">
+							<nav id="dropdown">
+								<ul>
+									<li>
+										<a asp-action="Index" asp-controller="Home">главная страница</a>
+									</li>
+									<li><a asp-action="About" asp-controller="Home">о нас</a></li>
+									<li>
+										<a asp-action="Shop" asp-controller="Home">каталог</a>
+										<ul>
+											@foreach (var category in Model.Categories)
+											{
+											<li>
+												@Html.ActionLink($"{category.Name}", "Shop", "Category",
+                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
+												<ul>
+													@foreach (var subcategory in category.Subcategories)
+													{
+													<li>
+														@Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
+													</li>
+													}
+												</ul>
+											</li>
+											}
+										</ul>
+									</li>
+									<li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- mobile-menu-area end -->
+	    </header>
+		<!-- header end -->
+		<!-- breadcrumb-area start -->
+		<div class="breadcrumb-area">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="breadcrumb-list">
+							<h1>Вход</h1>
+							<ul>
+								<li><a asp-action="Index" asp-controller="Home">Главная страница</a> <span class="divider">|</span></li>
+								<li>Вход</li>
+							</ul>							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- breadcrumb-area end -->
+		<!-- login-area start -->
+		<div class="login-area">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+                        @await Html.PartialAsync("_LoginFormPartial", new Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery()) 
+					</div>
+					<div class="col-md-6">
+						@await Html.PartialAsync("_RegisterFormPartial", new Application.UseCases.Identity.User.Commands.CreateUser.CreateUserCommand()) 
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- login-area end -->	
+		<!-- footer start -->
+        <footer>
+            <div class="footer-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="footer-logo">
+                                <img src="~/img/logo6.png" alt="" />
+                                <p>BuildStore - это интернет-магазин, специализирующийся на продаже строительных материалов и им подобным.<br />Сервис предлагает доставку до дома, низкие цены и удобный интерфейс.</p>
+                                <div class="widget-icon">
+                                    <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
+                                    <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                    <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                    <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                    <a href="https://www.instagram.com/nikitos.26_/"><i class="fa fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- footer-top-area start -->
+            <div class="footer-top-area">
+                <div class="container">
+                    <div class="row">
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="footer-widget">
+                                <h3>КОНТАКТЫ</h3>
+                                <ul class="footer-contact">
+                                    <li>
+                                        <i class="fa fa-map-marker"> </i>
+                                        Адрес: Республика Беларусь, г.Гродно, ул.Тавлая, д.44
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-envelope"> </i>
+                                        Email: Nikita.brosko@mail.ru
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-phone"> </i>
+                                        Номер телефона: +375(33)669-45-81
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- footer-widget end -->
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 hidden-sm">
+                            <div class="footer-widget">
+                                <h3>Мой аккаунт</h3>
+                                <ul class="footer-menu">
+                                    <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
+                                    <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
+                                    @if (User.Identity.IsAuthenticated) 
+                                    { 
+                                        <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- footer-widget end -->
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="footer-widget">
+                                <h3>О нас</h3>
+                                <ul class="footer-menu">
+                                    <li><a asp-action="About" asp-controller="Home">О нас</a></li>
+                                    <li><a asp-action="Contacts" asp-controller="Home">Контакты</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- footer-widget end -->
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="footer-widget">
+                                <h3>РАЗРАБОТЧИК</h3>
+                                <ul class="footer-contact">
+                                    <li>
+                                        ФИО: Броско Никита Сергеевич
+                                    </li>
+                                    <li>
+                                        Категория: Дипломный проект
+                                    </li>
+                                    <li>
+                                        Тема: "Разработка интернет-магазина по продаже строительных материалов"
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- footer-widget end -->
+                    </div>
+                </div>
+            </div>
+            <!-- footer-top-area end -->
+            <!-- footer-bottom-area start -->
+            <div class="footer-bottom-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="copyright">
+                                <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. Все права защищены</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="payment-img">
+                                <img src="~/img/payment.png" alt="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- footer-bottom-area end -->
+        </footer>
+        <!-- footer end -->
+
+		<!-- all js here -->
+		<!-- jquery latest version -->
+        <script src="~/js/vendor/jquery-1.12.0.min.js"></script>
+		<!-- bootstrap js -->
+        <script src="~/js/bootstrap.min.js"></script>
+		<!-- owl.carousel js -->
+        <script src="~/js/owl.carousel.min.js"></script>
+		<!-- meanmenu js -->
+        <script src="~/js/jquery.meanmenu.js"></script>
+		<!-- jquery-ui js -->
+        <script src="~/js/jquery-ui.min.js"></script>		
+		<!-- wow js -->
+        <script src="~/js/wow.min.js"></script>
+		<!-- plugins js -->
+        <script src="~/js/plugins.js"></script>
+		<!-- main js -->
+        <script src="~/js/main.js"></script>
+        <!-- site js -->
+        <script src="~/js/site.js"></script>
+
+        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+        <script>
+            $("#register-account-form").validate({
+                rules: {
+                    Name: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 40
+                    },
+                    Email: {
+                        required: true,
+                        minlength: 5,
+                        maxlength: 50,
+                        email: true,
+                        regex: "^([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+@@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$"
+                    },
+                    Password: {
+                        required: true,
+                        minlength: 4,
+                        maxlength: 64,
+                        regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{4,64}$"
+                    },
+                    PasswordConfirmation: {
+                        equalTo: "#Password"
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "Это поле является обязательным!",
+                        minlength: "Введите не менее 2 символов!",
+                        maxlength: "Введите не более 40 символов!"
+                    },
+                    Email: {
+                        required: "Это поле является обязательным!",
+                        minlength: "Введите не менее 5 символов!",
+                        maxlength: "Введите не более 50 символов!",
+                        email: "Введите валидный email!",
+                        regex: "Введите валидный email!"
+                    },
+                    Password: {
+                        required: "Это поле является обязательным!",
+                        minlength: "Введите не менее 4 символов!",
+                        maxlength: "Введите не более 64 символов!",
+                        regex: "Введите валидный пароль!"
+                    },
+                    PasswordConfirmation: {
+                        required: "Это поле является обязательным!",
+                        equalTo: "Неверный подтверждающий пароль!"
+                    }
+                },
+                errorElement: "p"
+            });
+
+            $("#login-account-form").validate({
+                rules: {
+                    Name: {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 40
+                    },
+                    Password: {
+                        required: true,
+                        minlength: 4,
+                        maxlength: 64
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "Это поле является обязательным!",
+                        minlength: "Введите не менее 2 символов!",
+                        maxlength: "Введите не более 40 символов!"
+                    },
+                    Password: {
+                        required: "Это поле является обязательным!",
+                        minlength: "Введите не менее 4 символов!",
+                        maxlength: "Введите не более 64 символов!"
+                    }
+                },
+                errorElement: "p"
+            });
+
+            checkUserNameLoginAjax = (form, checkUserNameActionUrl, checkPasswordActionUrl, loginErrorId) => {
+                var username = $('#Name-login').val();
+                checkUserNameActionUrl = checkUserNameActionUrl.slice(0, -1) + username;
+
+                $.ajax({
+                    type: 'GET',
+                    url: checkUserNameActionUrl,
+
+                    success: function (res) {
+                        if (res === true) {
+                            if ($('#login-error-name').length > 0) {
+                                $('#login-error-name').remove();
+                            }
+
+                            checkPasswordLoginAjax(form, checkPasswordActionUrl, loginErrorId);
+                        } else {
+                            if ($('#login-error-password').length > 0) {
+                                $('#login-error-password').remove();
+                            }
+
+                            if ($('#login-error-name').length == 0) {
+                                $(loginErrorId).append('<p class="error" id="login-error-name">Данного пользователя не существует!</p>');
+                            }
+                        }
+                    },
+
+                    error: function (err) {
+                        console.log(err);
+                    },
+
+                    failure: function (fail) {
+                        console.log(fail);
+                    }
+                })
+            }
+
+            checkPasswordLoginAjax = (form, checkPasswordActionUrl, loginErrorId) => {
+                var username = $('#Name-login').val();
+                var password = $('#Password-login').val();
+                checkPasswordActionUrl = checkPasswordActionUrl + '?username=' + username + '&password=' + password;
+
+                $.ajax({
+                    type: 'GET',
+                    url: checkPasswordActionUrl,
+
+                    success: function (res) {
+                        if (res === true) {
+                            if ($('#login-error-password').length > 0) {
+                                $('#login-error-password').remove();
+                            }
+
+                            form.submit();
+                        } else {
+                            if ($('#login-error-password').length == 0) {
+                                $(loginErrorId).append('<p class="error" id="login-error-password">Неверный пароль!</p>');
+                            }
+                        }
+                    },
+
+                    error: function (err) {
+                        console.log(err);
+                    },
+
+                    failure: function (fail) {
+                        console.log(fail);
+                    }
+                })
+            }
+
+            checkUserNameRegisterAjax = (form, checkUserNameActionUrl, registerErrorId) => {
+                var username = $('#Name-register').val();
+                checkUserNameActionUrl = checkUserNameActionUrl.slice(0, -1) + username;
+
+                $.ajax({
+                    type: 'GET',
+                    url: checkUserNameActionUrl,
+
+                    success: function (res) {
+                        if (res === false) {
+                            if ($('#register-error-name').length > 0) {
+                                $('#register-error-name').remove();
+                            }
+
+                            if ($('#register-account-form').valid()) {
+                                form.submit();
+                            }
+                        } else {
+                            if ($('#register-error-name').length == 0) {
+                                $(registerErrorId).append('<p class="error" id="register-error-name">Данный пользователь уже существует!</p>');
+                            }
+
+                            if (!$('#register-account-form').valid()) {
+                                $('#register-account-form').trigger('submit');
+                            }
+                        }
+                    },
+
+                    error: function (err) {
+                        console.log(err);
+                    },
+
+                    failure: function (fail) {
+                        console.log(fail);
+                    }
+                })
+            }
+        </script>
+    </body>
+</html>

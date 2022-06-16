@@ -1,0 +1,26 @@
+﻿@model Application.UseCases.Identity.User.Commands.CreateUser.CreateUserCommand
+
+<div class="login-content login-margin">
+    <h2 class="login-title">создание нового аккаунта</h2>
+    <p>Создайте новый аккаунт</p>
+    <div id="register-error"></div>
+    <form asp-action="Register" asp-controller="Account" id="register-account-form">
+        <div class="login-content-div">
+            <label>Имя пользователя</label>
+            <input type="text" asp-for="Name" id="Name-register" />
+        </div>
+        <div class="login-content-div">
+            <label>Email Address</label>
+            <input type="text" asp-for="Email" />
+        </div>
+        <div class="login-content-div">
+            <label>Пароль</label>
+            <input type="password" asp-for="Password" />
+        </div>
+        <div class="login-content-div">
+            <label>Подтверждение пароля</label>
+            <input type="password" name="PasswordConfirmation" />
+        </div>
+        <input id="register-submit-button" class="login-sub" type="button" onclick="checkUserNameRegisterAjax(this.form, '@Url.Action("CheckUserName", "Account", new { username="a" })', '#register-error')" value="зарегистрироваться" />
+    </form>
+</div>

@@ -1,0 +1,24 @@
+﻿@model Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery
+
+    <div class="login-content">
+        <h2 class="login-title">Вход</h2>
+        <p>Добро пожаловать в ваш аккаунт</p>
+        <div id="login-error"></div>
+        <form asp-action="Login" asp-controller="Account" id="login-account-form">
+            <div class="login-content-div" id="login-user-name">
+                <label>Имя пользователя</label>
+                <input type="text" asp-for="Name" id="Name-login" />
+            </div>
+            <div class="login-content-div" id="login-password">
+                <label>Пароль</label>
+                <input type="password" asp-for="Password" id="Password-login" />
+            </div>
+            <div class="login-lost">
+                <span class="log-rem">
+                    <input type="checkbox" asp-for="RememberMe" />
+                    <label>Запомнить меня!</label>
+                </span>
+            </div>
+            <input class="login-sub" type="button" onclick="checkUserNameLoginAjax(this.form, '@Url.Action("CheckUserName", "Account", new { username="a" })', '@Url.Action("CheckPassword", "Account")', '#login-error')" value="Войти" />
+        </form>
+    </div>
