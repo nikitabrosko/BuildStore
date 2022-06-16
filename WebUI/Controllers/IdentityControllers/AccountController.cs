@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Application.Common.Exceptions;
 using Application.UseCases.Identity.User.Commands.CreateUser;
@@ -8,6 +7,11 @@ using Application.UseCases.Identity.User.Queries.GetUser;
 using Application.UseCases.Identity.User.Queries.LoginUser;
 using Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
+using WebUI.Models.Account;
+using Application.UseCases.Category.Queries.GetCategories;
+using Application.UseCases.ShoppingCart.Queries.GetShoppingCart;
+using Application.UseCases.Identity.User.Queries.CheckUserNameForExists;
+using Application.UseCases.Identity.User.Queries.CheckPassword;
 
 namespace WebUI.Controllers.IdentityControllers
 {
@@ -20,14 +24,6 @@ namespace WebUI.Controllers.IdentityControllers
             _signInManager = signInManager;
         }
 
-        [HttpGet]
-        public IActionResult Register(string returnUrl = null)
-        {
-            ViewBag.Title = "Register page";
-
-            return View(new CreateUserCommand {ReturnUrl = returnUrl});
-        }
-
         [HttpPost]
         public async Task<IActionResult> Register([FromForm] CreateUserCommand command)
         {
@@ -37,48 +33,63 @@ namespace WebUI.Controllers.IdentityControllers
             {
                 await _signInManager.SignInAsync(result.User, false);
 
-                if (command.ReturnUrl != null)
-                {
-                    return Redirect(command.ReturnUrl);
-                }
-
                 return RedirectToAction("Index", "Home");
             }
 
-            return View("IdentityError", result.Result.Errors);
+            return View("Index", "Account");
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        public async Task<IActionResult> Index()
         {
-            ViewBag.Title = "Login page";
+            if (User.IsInRole("admin"))
+            {
+                var modelForLogin = new ModelForLogin
+                {
+                    Categories = await Mediator.Send(new GetCategoriesQuery())
+                };
 
-            return View("_SignInPartial", new LoginUserQuery { ReturnUrl = returnUrl });
+                return View("Index", modelForLogin);
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
+
+                var modelForLogin = new ModelForLogin
+                {
+                    Categories = await Mediator.Send(new GetCategoriesQuery()),
+                    ShoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id })
+                };
+
+                return View("Index", modelForLogin);
+            }
+            else
+            {
+                var modelForLogin = new ModelForLogin
+                {
+                    Categories = await Mediator.Send(new GetCategoriesQuery())
+                };
+
+                return View("Index", modelForLogin);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Login([FromForm] LoginUserQuery query)
         {
-            try
+            var result = await Mediator.Send(query);
+
+            if (result.Succeeded)
             {
-                var result = await Mediator.Send(query);
-
-                if (result.Succeeded)
+                if (query.ReturnUrl is not null)
                 {
-                    if (query.ReturnUrl != null)
-                    {
-                        return Redirect(query.ReturnUrl);
-                    }
-
-                    return RedirectToAction("Index", "Home");
+                    return Redirect(query.ReturnUrl);
                 }
 
-                return View("Error", "Something went wrong. Check password!");
+                return RedirectToAction("Index", "Home");
             }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
+
+            return RedirectToAction("Index", "Account");
         }
 
         [HttpGet]
@@ -90,65 +101,60 @@ namespace WebUI.Controllers.IdentityControllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Cabinet()
+        public async Task<IActionResult> MyAccount()
         {
-            try
-            {
-                return View(await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name }));
-            }
-            catch (NotFoundException exception)
-            {
-                return View("Error", exception.Message);
-            }
-        }
+            var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
 
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View();
+            var modelForMyAccount = new ModelForMyAccount
+            {
+                Categories = await Mediator.Send(new GetCategoriesQuery()),
+                ShoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = user.ShoppingCart.Id }),
+                User = user
+            };
+
+            return View("MyAccount", modelForMyAccount);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword([FromForm] UpdateUserCommand command)
+        public async Task<IActionResult> ChangePassword([FromForm] string password)
         {
             var user = await Mediator.Send(new GetUserQuery {UserName = User.Identity.Name});
-            command.Id = user.Id;
 
-            await Mediator.Send(command);
+            await Mediator.Send(new UpdateUserCommand { Id = user.Id, Password = password });
 
-            return RedirectToAction("Cabinet", "Account");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ChangeUserName()
-        {
-            var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
-
-            return View(new UpdateUserCommand {Id = user.Id, Name = user.UserName});
+            return RedirectToAction("Logout");
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangeUserName([FromForm] UpdateUserCommand command)
-        {
-            await Mediator.Send(command);
-
-            return RedirectToAction("Cabinet", "Account");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> ChangeEmail()
+        public async Task<IActionResult> ChangeUserName([FromForm] string userName)
         {
             var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
 
-            return View(new UpdateUserCommand { Id = user.Id, Email = user.Email });
+            await Mediator.Send(new UpdateUserCommand { Id = user.Id, Name = userName });
+
+            return RedirectToAction("Logout");
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangeEmail([FromForm] UpdateUserCommand command)
+        public async Task<IActionResult> ChangeEmail([FromForm] string email)
         {
-            await Mediator.Send(command);
+            var user = await Mediator.Send(new GetUserQuery { UserName = User.Identity.Name });
 
-            return RedirectToAction("Cabinet", "Account");
+            await Mediator.Send(new UpdateUserCommand { Id = user.Id, Email = email });
+
+            return RedirectToAction("MyAccount");
+        }
+
+        [HttpGet("{username}")]
+        public async Task<bool> CheckUserName([FromRoute] string username)
+        {
+            return await Mediator.Send(new CheckUserNameForExistsQuery { UserName = username });
+        }
+
+        [HttpGet]
+        public async Task<bool> CheckPassword([FromQuery] string username, [FromQuery] string password)
+        {
+            return await Mediator.Send(new CheckPasswordQuery { User = await Mediator.Send(new GetUserQuery { UserName = username }), Password = password });
         }
     }
 }
