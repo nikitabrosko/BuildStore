@@ -10,6 +10,8 @@ using Infrastructure;
 using Infrastructure.IdentityPersistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 
 namespace WebUI
 {
@@ -33,16 +35,31 @@ namespace WebUI
                     options.Password.RequireNonAlphanumeric = false;
                     options.Lockout.MaxFailedAccessAttempts = 100;
                     options.Lockout.DefaultLockoutTimeSpan = options.Lockout.DefaultLockoutTimeSpan.Add(TimeSpan.FromMinutes(55));
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.SignIn.RequireConfirmedEmail = false;
+                    options.SignIn.RequireConfirmedPhoneNumber = false;
                 })
-                .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+                .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication();
+            services.AddAuthorization();
+
+            services.AddMemoryCache();
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-                options.LoginPath = "/IdentityControllers/Account/Login";
+                options.Cookie.Name = ".AspNetCore.Identity.Application";
+                options.ExpireTimeSpan = TimeSpan.FromDays(1);
+                options.LoginPath = "/IdentityControllers/Account/Index";
                 options.AccessDeniedPath = "/Category/Index";
                 options.SlidingExpiration = true;
             });
+
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + "\\Cookies\\keys\\"))
+                .SetApplicationName("WebUI")
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
 
             services.AddHttpContextAccessor();
 
@@ -50,7 +67,7 @@ namespace WebUI
                 .AddFluentValidation(x => 
                     x.AutomaticValidationEnabled = false);
 
-            services.AddRazorPages();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -59,11 +76,18 @@ namespace WebUI
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                //app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+                app.UseDeveloperExceptionPage();
+            }
 
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
 
