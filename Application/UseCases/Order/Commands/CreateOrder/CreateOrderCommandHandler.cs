@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Order.Commands.CreateOrder
 {
@@ -18,10 +21,20 @@ namespace Application.UseCases.Order.Commands.CreateOrder
 
         public async Task<int> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
+            IList<Domain.Entities.ProductsDictionary> productsDictionaries = new List<Domain.Entities.ProductsDictionary>();
+
+            foreach (var productsDictionary in request.ProductsDictionary)
+            {
+                productsDictionaries.Add(await _context.ProductsDictionaries
+                    .Include(p => p.Order)
+                    .Include(p => p.Product)
+                    .SingleAsync(p => p.Id.Equals(productsDictionary.Id), cancellationToken));
+            }
+
             var orderEntity = new Domain.Entities.Order
             {
                 Date = DateTime.Now,
-                ProductsDictionary = request.ProductsDictionary,
+                ProductsDictionary = productsDictionaries,
                 Customer = request.Customer
             };
 
@@ -55,11 +68,15 @@ namespace Application.UseCases.Order.Commands.CreateOrder
                 Order = order,
                 OrderId = order.Id,
                 Type = type,
-                CreditCardNumber = creditCardNumber,
-                CardExpMonth = cardExpMonth,
-                CardExpYear = cardExpYear,
                 Allowed = false
             };
+
+            if (type.Equals(PaymentType.CreditCard))
+            {
+                paymentEntity.CreditCardNumber = creditCardNumber;
+                paymentEntity.CardExpMonth = cardExpMonth;
+                paymentEntity.CardExpYear = cardExpYear;
+            }
 
             await _context.Payments.AddAsync(paymentEntity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
