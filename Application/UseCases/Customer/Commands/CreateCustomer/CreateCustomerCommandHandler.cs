@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Customer.Commands.CreateCustomer
 {
-    public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand>
+    public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, int>
     {
         private readonly IApplicationDbContext _context;
         private readonly IApplicationIdentityDbContext _identityContext;
@@ -20,7 +20,7 @@ namespace Application.UseCases.Customer.Commands.CreateCustomer
             _identityContext = identityContext;
         }
 
-        public async Task<Unit> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
             var userEntity = await _identityContext.Users
                 .Include(u => u.Customer)
@@ -49,7 +49,7 @@ namespace Application.UseCases.Customer.Commands.CreateCustomer
             _identityContext.Users.Update(userEntity);
             await _identityContext.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
+            return customerEntity.Id;
         }
     }
 }

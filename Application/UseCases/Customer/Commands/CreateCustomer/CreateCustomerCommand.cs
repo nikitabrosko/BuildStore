@@ -2,7 +2,7 @@
 
 namespace Application.UseCases.Customer.Commands.CreateCustomer
 {
-    public class CreateCustomerCommand : IRequest
+    public class CreateCustomerCommand : IRequest<int>
     {
         public string UserName { get; set; }
 
