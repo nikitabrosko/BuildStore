@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Subcategory.Commands.UpdateSubcategory
 {
-    public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategoryCommand, int>
+    public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategoryCommand>
     {
         private readonly IApplicationDbContext _context;
 
@@ -17,7 +17,7 @@ namespace Application.UseCases.Subcategory.Commands.UpdateSubcategory
             _context = context;
         }
 
-        public async Task<int> Handle(UpdateSubcategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateSubcategoryCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Categories
                 .OfType<Domain.Entities.Subcategory>()
@@ -44,14 +44,17 @@ namespace Application.UseCases.Subcategory.Commands.UpdateSubcategory
             entity.Name = request.Name;
             entity.Description = request.Description;
 
-            await _context.SaveChangesAsync(cancellationToken);
-
-            if (entity.Category is Domain.Entities.Subcategory subcategory)
+            if (request.NewCategoryId is not null)
             {
-                return subcategory.Category.Id;
+                var newCategory = await _context.Categories
+                    .SingleOrDefaultAsync(c => c.Id.Equals(request.NewCategoryId), cancellationToken);
+
+                entity.Category = newCategory;
             }
 
-            return entity.Category.Id;
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
         }
     }
 }
