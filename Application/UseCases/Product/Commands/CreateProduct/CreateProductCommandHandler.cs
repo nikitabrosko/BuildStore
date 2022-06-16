@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Product.Commands.CreateProduct
 {
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, int>
+    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand>
     {
         private readonly IApplicationDbContext _context;
 
@@ -19,7 +19,7 @@ namespace Application.UseCases.Product.Commands.CreateProduct
             _context = context;
         }
 
-        public async Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var supplier = await _context.Suppliers
                 .Include(s => s.Products)
@@ -71,24 +71,21 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                     $"{nameof(Domain.Entities.Product)} with this name and supplier is already exists!");
             }
 
-            if (request.CategoryName != null)
+            var category = await _context.Categories
+                .Include(c => c.Products)
+                .SingleOrDefaultAsync(c => c.Id.Equals(request.CategoryId), cancellationToken);
+
+            if (category is null)
             {
-                var category = await _context.Categories
-                    .Include(c => c.Products)
-                    .SingleOrDefaultAsync(c => c.Name.Equals(request.CategoryName), cancellationToken);
-
-                if (category is null)
-                {
-                    throw new NotFoundException(nameof(Category), request.CategoryName);
-                }
-
-                entity.Category = category;
+                throw new NotFoundException(nameof(Category), request.CategoryId);
             }
+
+            entity.Category = category;
 
             await _context.Products.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return request.CategoryName != null ? entity.Category.Id : entity.Supplier.Id;
+            return Unit.Value;
         }
     }
 }

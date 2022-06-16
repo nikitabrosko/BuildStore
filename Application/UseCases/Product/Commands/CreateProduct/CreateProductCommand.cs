@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.Product.Commands.CreateProduct
 {
-    public class CreateProductCommand : IRequest<int>
+    public class CreateProductCommand : IRequest
     {
         public string Name { get; set; }
 
@@ -15,7 +15,7 @@ namespace Application.UseCases.Product.Commands.CreateProduct
 
         public int SupplierId { get; set; }
 
-        public string CategoryName { get; set; }
+        public int CategoryId { get; set; }
 
         public float Discount { get; set; }
 
