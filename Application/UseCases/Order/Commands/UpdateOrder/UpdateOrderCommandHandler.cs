@@ -28,17 +28,8 @@ namespace Application.UseCases.Order.Commands.UpdateOrder
                 throw new NotFoundException(nameof(Domain.Entities.Order), request.Id);
             }
 
-            if (request.Delivery != null)
-            {
-                entity.Delivery = request.Delivery;
-                entity.DeliveryId = request.Delivery.Id;
-            }
-
-            if (request.Payment != null)
-            {
-                entity.Payment = request.Payment;
-                entity.PaymentId = request.Payment.Id;
-            }
+            entity.Payment.Allowed = request.PaymentAllowed;
+            entity.Delivery.Fulfilled = request.DeliveryFulfilled;
 
             _context.Orders.Update(entity);
             await _context.SaveChangesAsync(cancellationToken);

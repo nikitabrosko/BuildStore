@@ -6,8 +6,8 @@ namespace Application.UseCases.Order.Commands.UpdateOrder
     {
         public int Id { get; set; }
 
-        public Domain.Entities.Delivery Delivery { get; set; }
+        public bool DeliveryFulfilled { get; set; }
 
-        public Domain.Entities.Payment Payment { get; set; }
+        public bool PaymentAllowed { get; set; }
     }
 }
