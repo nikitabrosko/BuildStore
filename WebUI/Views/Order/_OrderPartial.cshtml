@@ -1,0 +1,38 @@
+﻿@model WebUI.Models.Order.ModelForOrderPartial
+
+@{
+    var id = $"productModal{Model.ElementId}";
+}
+
+<td class="product-price">@Model.Order.Id</td>
+<td class="product-price">@Model.Order.Date</td>
+
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#showAdditionalInfoDeliveryModal"
+       data-complete="@Model.Order.Delivery.Fulfilled" data-type="@Model.Order.Delivery.Type">
+        <i class="fa fa-info"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#showAdditionalInfoPaymentModal"
+       data-allowed="@Model.Order.Payment.Allowed" data-type="@Model.Order.Delivery.Type">
+        <i class="fa fa-info"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#@id">
+        <i class="fa fa-info"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a href="#" data-toggle="modal" data-target="#updateOrderModal"
+       data-id="@Model.Order.Id" data-elementid="@Model.ElementId"
+       data-paymentallowed="@Model.Order.Payment.Allowed" data-deliverycomplete="@Model.Order.Delivery.Fulfilled">
+        <i class="fa fa-pencil"></i>
+    </a>
+</td>
+<td class="product-remove">
+    <a style="cursor:pointer" onclick="jQueryAjaxDelete('@Url.Action("Delete", "Order", new { id = Model.Order.Id }, Context.Request.Scheme)', '@Model.ElementId')">
+        <i class="fa fa-times"></i>
+    </a>
+</td>

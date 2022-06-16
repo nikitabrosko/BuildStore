@@ -1,126 +1,603 @@
 ﻿@using Application.UseCases.Order.Queries.GetOrdersWithPagination
-@model Application.Common.Models.PaginatedList<Domain.Entities.Order>
+@using Application.UseCases.Order.Queries.SearchOrdersWithPagination
+@model WebUI.Models.Order.ModelForOrders
 
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Товары</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<h2 style="text-align: center;margin: 2%;">Заказы</h2>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <!-- Place favicon.ico in the root directory -->
+    <!-- all css here -->
+    <!-- bootstrap v3.3.6 css -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <!-- animate css -->
+    <link rel="stylesheet" href="~/css/animate.css">
+    <!-- jquery-ui.min css -->
+    <link rel="stylesheet" href="~/css/jquery-ui.min.css">
+    <!-- meanmenu css -->
+    <link rel="stylesheet" href="~/css/meanmenu.min.css">
+    <!-- owl.carousel css -->
+    <link rel="stylesheet" href="~/css/owl.carousel.css">
+    <!-- slick css -->
+    <link rel="stylesheet" href="~/css/slick.css">
+    <!-- font-awesome css -->
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="~/css/style.css">
+    <!-- responsive css -->
+    <link rel="stylesheet" href="~/css/responsive.css">
+    <!-- modernizr js -->
+    <script src="~/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <!-- Add your site or application content here -->
+    <!-- header start -->
+    <header class="header-pos">
+        <!-- header-bottom-area start -->
+        <div class="header-bottom-area">
+            <div class="container">
+                <div class="inner-container">
+                    <div class="row">
+                        <div class="col-md-2 col-sm-4 col-xs-5">
+                            <div class="logo">
+                                <a href="index.html"><img src="img/logo-white-text.png" alt="" /></a>
+                            </div>
+                        </div>
+                        <div class="col-md-8 hidden-xs hidden-sm">
+                            <div class="main-menu">
+                                <nav>
+                                    <ul>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                        </li>
+                                        <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                        <li class="static">
+                                            <a href="shop.html">каталог</a>
+                                            <div class="mega-menu">
+                                                <div class="mega-left">
+                                                    @foreach (var category in Model.CategoriesForHeader)
+                                                    {
+                                                        <span>
+                                                            <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
 
-<table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Дата</th>
-            <th scope="col">Id Доставки</th>
-            <th scope="col">Id Платежа</th>
-            <th scope="col">Товары</th>
-            <th scope="col">Удалить</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model.Items)
-        {
-            <tr>
-                <td>@order.Id</td>
-                <td>@order.Date</td>
-                <td>
-                    <a onclick="showInPopup('@Url.Action("Get", "Delivery", new {id = order.DeliveryId}, Context.Request.Scheme)', 'Доставка № @order.DeliveryId')">
-                        @order.DeliveryId
-                    </a>
-                </td>
-                <td>
-                    <a onclick="showInPopup('@Url.Action("Get", "Payment", new {id = order.PaymentId}, Context.Request.Scheme)', 'Платёж № @order.PaymentId')">
-                        @order.PaymentId
-                    </a>
-                </td>
-                <td>
-                    <a onclick="showInPopup('@Url.Action("GetOrderProducts", "Order", new {orderId = order.Id},
-                                                 Context.Request.Scheme)', 'Товары заказа № @order.Id')">
-                        Просмотреть
-                    </a>
-                </td>
-                @if (Model.Items.Count is 1 && Model.TotalPages > 1)
-                {
-                    <td>
-                        <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" style="color:red"
-                           asp-route-returnUrl="@Url.PageLink(null, null, new {PageNumber = Model.PageNumber - 1, Model.PageSize})">Удалить</a>
-                    </td>
-                }
-                else
-                {
-                    <td>
-                        <a asp-action="Delete" asp-controller="Order" asp-route-id="@order.Id" style="color:red"
-                           asp-route-returnUrl="@Url.PageLink(null, null, new {Model.PageNumber, Model.PageSize})">Удалить</a>
-                    </td>
-                }
-            </tr>
-        }
-    </tbody>
-</table>
+                                                            @foreach (var subcategory in category.Subcategories)
+                                                            {
+                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>}
+                                                        </span>}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-8 col-xs-7 header-right">
+                            <div class="user-meta">
+                                <a href="#"><i class="fa fa-cog"></i></a>
+                                <ul>
+                                    <li><a asp-action="Index" asp-controller="Category">Категории</a></li>
+                                    <li><a asp-action="Index" asp-controller="Subcategory">Подкатегории</a></li>
+                                    <li><a asp-action="Index" asp-controller="Supplier">Поставщики</a></li>
+                                    <li><a asp-action="Index" asp-controller="Product">Товары</a></li>
+                                    <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
+                                    <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
+                                    <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                </ul>
+                            </div>
+                            <div class="header-search">
+                                <i class="fa fa-search"></i>
+                                <div class="header-form">
+                                    <form asp-action="Search" asp-controller="Product" method="post">
+                                        <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров" />
 
-<nav>
-    <ul class="pagination justify-content-center">
-        @if (Model.HasPreviousPage)
-        {
-            <li class="page-item">
-                @Html.ActionLink("Previous", "Index", "Order",
-                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
-                new { @class = "page-link" })
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                @Html.ActionLink("Previous", "Index", "Order",
-                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber - 1 },
-                new { @class = "page-link" })
-            </li>
-        }
-        @for (int i = 1; i <= Model.TotalPages; i++)
-        {
-            if (Model.PageNumber.Equals(i))
-            {
-                <li class="page-item active">
-                    @Html.ActionLink($"{i}", "Index", "Order",
-                    new GetOrdersWithPaginationQuery { PageNumber = i },
-                    new { @class = "page-link" })
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    @Html.ActionLink($"{i}", "Index", "Order",
-                    new GetOrdersWithPaginationQuery { PageNumber = i },
-                    new { @class = "page-link" })
-                </li>
-            }
-        }
-        @if (Model.HasNextPage)
-        {
-            <li class="page-item">
-                @Html.ActionLink("Next", "Index", "Order",
-                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
-                new { @class = "page-link" })
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                @Html.ActionLink("Next", "Index", "Order",
-                new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber + 1 },
-                new { @class = "page-link" })
-            </li>
-        }
-    </ul>
-</nav>
+                                        <button type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- header-bottom-area end -->
+        <!-- mobile-menu-area start -->
+        <div class="mobile-menu-area visible-xs visible-sm">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mobile-menu">
+                            <nav id="dropdown">
+                                <ul>
+                                    <li>
+                                        <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                    </li>
+                                    <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                    <li>
+                                        <a href="shop.html">каталог</a>
+                                        <ul>
+                                            @foreach (var category in Model.CategoriesForHeader)
+                                            {
+                                                <li>
+                                                    <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
+                                                    <ul>
+                                                        @foreach (var subcategory in category.Subcategories)
+                                                        {
+                                                            <li>
+                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                    <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- mobile-menu-area end -->
+    </header>
+    <!-- header end -->
+    <!-- breadcrumb-area start -->
+    <div class="breadcrumb-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-list">
+                        <h1>Заказы</h1>
+                        <ul>
+                            <li><a asp-action="Index" asp-controller="Home">Главная страница</a> <span class="divider">|</span></li>
+                            <li>Заказы</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- breadcrumb-area end -->
+    <!-- cart-main-area start -->
+    <div class="cart-main-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="table-content table-responsive">
+                        <table style="margin-bottom: 20px; margin-top: 20px;">
+                            <thead>
+                                <tr>
+                                    <th class="product-price">Id</th>
+                                    <th class="product-name">Дата</th>
+                                    <th class="product-remove">Доставка</th>
+                                    <th class="product-remove">Платеж</th>
+                                    <th class="product-price">Товары</th>
+                                    <th class="product-remove">Редактировать</th>
+                                    <th class="product-remove">Удалить</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ var counter = 0; }
+                                @foreach (var order in Model.Orders.Items)
+                                {
+                                    counter++;
+                                    var id = $"order-{counter}";
+                                    <tr id="@id">
+                                        @await Html.PartialAsync("_OrderPartial", new WebUI.Models.Order.ModelForOrderPartial { Order = order, ElementId = id })
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="shop-breadcrumb" style="text-align:center; width:100%">
+                    <ul>
+                        @if (Model.Orders.HasPreviousPage)
+                        {
+                            <li>
+                                @Html.ActionLink("<", "Index", "Order",
+                                    new GetOrdersWithPaginationQuery { PageSize = Model.Orders.PageSize, PageNumber = Model.Orders.PageNumber - 1 })
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="disabled">
+                                @Html.ActionLink("<", "Index", "Order",
+                                    new GetOrdersWithPaginationQuery { PageSize = Model.Orders.PageSize, PageNumber = Model.Orders.PageNumber - 1 })
+                            </li>
+                        }
+                        @for (int i = 1; i <= Model.Orders.TotalPages; i++)
+                        {
+                            if (Model.Orders.PageNumber.Equals(i))
+                            {
+                                <li class="active">
+                                    @Html.ActionLink($"{i}", "Index", "Order",
+                                        new GetOrdersWithPaginationQuery { PageSize = Model.Orders.PageSize, PageNumber = i })
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    @Html.ActionLink($"{i}", "Index", "Order",
+                                        new GetOrdersWithPaginationQuery { PageSize = Model.Orders.PageSize, PageNumber = i })
+                                </li>
+                            }
+                        }
+                        @if (Model.Orders.HasNextPage)
+                        {
+                            <li>
+                                @Html.ActionLink(">", "Index", "Order",
+                                    new GetOrdersWithPaginationQuery { PageSize = Model.Orders.PageSize, PageNumber = Model.Orders.PageNumber + 1 })
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="disabled">
+                                @Html.ActionLink(">", "Index", "Order",
+                                    new GetOrdersWithPaginationQuery { PageSize = Model.Orders.PageSize, PageNumber = Model.Orders.PageNumber + 1 })
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- cart-main-area end -->
+    <!-- footer start -->
+    <footer>
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="footer-logo">
+                            <img src="img/logo-white-text.png" alt="" />
+                            <p>BuildStore - это интернет-магазин, специализирующийся на продаже строительных материалов и им подобным.<br />Сервис предлагает доставку до дома, низкие цены и удобный интерфейс.</p>
+                            <div class="widget-icon">
+                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
+                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                <a href="https://www.instagram.com/nikitos.26_/"><i class="fa fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- footer-top-area start -->
+        <div class="footer-top-area">
+            <div class="container">
+                <div class="row">
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>КОНТАКТЫ</h3>
+                            <ul class="footer-contact">
+                                <li>
+                                    <i class="fa fa-map-marker"> </i>
+                                    Адрес: Республика Беларусь, г.Гродно, ул.Тавлая, д.44
+                                </li>
+                                <li>
+                                    <i class="fa fa-envelope"> </i>
+                                    Email: Nikita.brosko@mail.ru
+                                </li>
+                                <li>
+                                    <i class="fa fa-phone"> </i>
+                                    Номер телефона: +375(33)669-45-81
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 hidden-sm">
+                        <div class="footer-widget">
+                            <h3>My account</h3>
+                            <ul class="footer-menu">
+                                <li><a href="#">Order Status</a></li>
+                                <li><a href="#">Register</a></li>
+                                <li><a href="#">Sign-up</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>about us</h3>
+                            <ul class="footer-menu">
+                                <li><a href="#">Delivery</a></li>
+                                <li><a href="#">Payment</a></li>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                    <!-- footer-widget start -->
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="footer-widget">
+                            <h3>РАЗРАБОТЧИК</h3>
+                            <ul class="footer-contact">
+                                <li>
+                                    ФИО: Броско Никита Сергеевич
+                                </li>
+                                <li>
+                                    Категория: Дипломный проект
+                                </li>
+                                <li>
+                                    Тема: "Разработка интернет-магазина по продаже строительных материалов"
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- footer-widget end -->
+                </div>
+            </div>
+        </div>
+        <!-- footer-top-area end -->
+        <!-- footer-bottom-area start -->
+        <div class="footer-bottom-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="copyright">
+                            <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. All Rights Reserved</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="payment-img">
+                            <img src="img/payment.png" alt="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- footer-bottom-area end -->
+    </footer>
+    <!-- footer end -->
 
-<div>
-    @if (Model.HasPreviousPage)
-    {
-        @Html.ActionLink("Previous page", "Index", "Order",
-            new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber - 1 })
+    <div class="modal fade" id="updateOrderModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;">Редактирование заказа</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <form enctype="multipart/form-data" asp-action="Update" asp-controller="Order" method="post">
+                            <input hidden id="id-input" name="id" />
+                            <input hidden id="element-id-input" name="elementId" />
+                            <div style="display: flex;">
+                                <label>Доставка выполнена?</label>
+                                <input type="checkbox" id="delivery-complete-update-input" name="isDeliveryComplete" style="width: 25px; height: 25px; margin: -3px 5px 5px 5px;" />
+                            </div>
+                            <div style="display: flex;">
+                                <label>Платеж одобрен?</label>
+                                <input type="checkbox" id="payment-allowed-update-input" name="isPaymentAllowed" style="width: 25px; height: 25px; margin: -3px 5px 5px 5px;" />
+                            </div>
+                            <button class="btn btn-account-change" type="button" id="submit-button" onclick="jQueryAjaxPostFormForOrder(this.form)">Сохранить</button>
+                        </form>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    @{ 
+        var newCounter = 0;
     }
-    @if (Model.HasNextPage)
+    @foreach (var order in Model.Orders.Items)
     {
-        @Html.ActionLink("Next page", "Index", "Order",
-            new GetOrdersWithPaginationQuery { PageNumber = Model.PageNumber + 1 })
+        newCounter++;
+        var elementId = $"productModalorder-{newCounter}";
+        <div class="modal fade" id="@elementId" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 style="margin: 0;float: left;" id="supplier-header-id">Товары в заказе</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-content table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="product-price">Id</th>
+                                        <th class="product-name">Товар</th>
+                                        <th class="product-price">Количество</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var productsDictionary in order.ProductsDictionary)
+                                    {
+                                        <tr>
+                                            <td class="product-price">@productsDictionary.Product.Id</td>
+                                            <td class="product-name">@productsDictionary.Product.Name</td>
+                                            <td class="product-price">@productsDictionary.Count</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- .modal-body -->
+                </div><!-- .modal-content -->
+            </div><!-- .modal-dialog -->
+        </div>
     }
-</div>
+
+    <div class="modal fade" id="showAdditionalInfoDeliveryModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;">Доставка</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <div>
+                            <label>Тип доставки</label>
+                            <input disabled type="text" id="delivery-type-show-input" />
+                        </div>
+                        <div>
+                            <label>Выполнена?</label>
+                            <input disabled type="checkbox" id="complete-show-input" />
+                        </div>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="showAdditionalInfoPaymentModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="margin: 0;float: left;">Платеж</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-filed">
+                        <div>
+                            <label>Тип платежа</label>
+                            <input disabled type="text" id="payment-type-show-input" />
+                        </div>
+                        <div>
+                            <label>Выполнен?</label>
+                            <input disabled type="checkbox" id="allowed-show-input" />
+                        </div>
+                    </div><!-- .modal-product -->
+                </div><!-- .modal-body -->
+            </div><!-- .modal-content -->
+        </div><!-- .modal-dialog -->
+    </div>
+
+    <!-- all js here -->
+    <!-- jquery latest version -->
+    <script src="~/js/vendor/jquery-1.12.0.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="~/js/bootstrap.min.js"></script>
+    <!-- owl.carousel js -->
+    <script src="~/js/owl.carousel.min.js"></script>
+    <!-- meanmenu js -->
+    <script src="~/js/jquery.meanmenu.js"></script>
+    <!-- jquery-ui js -->
+    <script src="~/js/jquery-ui.min.js"></script>
+    <!-- wow js -->
+    <script src="~/js/wow.min.js"></script>
+    <!-- plugins js -->
+    <script src="~/js/plugins.js"></script>
+    <!-- main js -->
+    <script src="~/js/main.js"></script>
+    <!-- site js -->
+    <script src="~/js/site.js"></script>
+
+    <script>
+        $('#updateOrderModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var deliveryComplete = button.data('deliverycomplete')
+            var paymentAllowed = button.data('paymentallowed')
+            var id = button.data('id')
+            var elementId = button.data('elementid')
+
+            var modal = $(this)
+
+            if (deliveryComplete == 'True') {
+                modal.find('#delivery-complete-update-input').prop('checked', true)
+            } else {
+                modal.find('#delivery-complete-update-input').prop('checked', false)
+            }
+
+            if (paymentAllowed == 'True') {
+                modal.find('#payment-allowed-update-input').prop('checked', true)
+            } else {
+                modal.find('#payment-allowed-update-input').prop('checked', false)
+            }
+            
+            modal.find('#id-input').val(id)
+            modal.find('#element-id-input').val(elementId)
+        })
+
+        $('#showAdditionalInfoDeliveryModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var type = button.data('type')
+            var complete = button.data('complete')
+            var modal = $(this)
+
+            if (complete == 'True') {
+                modal.find('#complete-show-input').prop('checked', true)
+            } else {
+                modal.find('#complete-show-input').prop('checked', false)
+            }
+
+            modal.find('#delivery-type-show-input').val(type)
+        })
+
+        $('#showAdditionalInfoPaymentModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var type = button.data('type')
+            var allowed = button.data('allowed')
+            var modal = $(this)
+
+            if (allowed == 'True') {
+                modal.find('#allowed-show-input').prop('checked', true)
+            } else {
+                modal.find('#allowed-show-input').prop('checked', false)
+            }
+
+            modal.find('#payment-type-show-input').val(type)
+        })
+
+        jQueryAjaxPostFormForOrder = (form) => {
+            if ($('#delivery-complete-update-input').val() == 'on') {
+                $('#delivery-complete-update-input').val('true');
+            }
+
+            if ($('#payment-allowed-update-input').val() == 'on') {
+                $('#payment-allowed-update-input').val('true');
+            }
+
+            var modal = $('#updateOrderModal')
+            var elementId = modal.find('#element-id-input').val()
+
+            $.ajax({
+                type: 'POST',
+                url: form.action,
+                data: new FormData(form),
+                processData: false,
+                contentType: false,
+
+                success: function (res) {
+                    modal.modal('hide');
+                    $('#' + elementId).html(res);
+                },
+
+                error: function (err) {
+                    console.log(err);
+                },
+
+                failure: function (fail) {
+                    console.log(fail);
+                }
+            })
+        }
+    </script>
+</body>
+</html>
