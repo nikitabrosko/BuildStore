@@ -47,11 +47,11 @@ namespace Application.UseCases.ShoppingCart.Commands.AddProduct
             if (productsDictionaryEntity is null)
             {
                 await _context.ProductsDictionaries.AddAsync(new Domain.Entities.ProductsDictionary
-                    {Product = productEntity, Count = 1, ShoppingCart = shoppingCartEntity}, cancellationToken);
+                    {Product = productEntity, Count = request.Amount, ShoppingCart = shoppingCartEntity}, cancellationToken);
             }
             else
             {
-                shoppingCartEntity.ProductsDictionary.Single(p => p.Equals(productsDictionaryEntity)).Count += 1;
+                shoppingCartEntity.ProductsDictionary.Single(p => p.Equals(productsDictionaryEntity)).Count += request.Amount;
             }
 
             await _context.SaveChangesAsync(cancellationToken);
