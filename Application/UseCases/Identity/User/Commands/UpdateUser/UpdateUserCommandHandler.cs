@@ -9,13 +9,11 @@ namespace Application.UseCases.Identity.User.Commands.UpdateUser
 {
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
     {
-        private readonly IApplicationIdentityDbContext _context;
         private readonly UserManager<Domain.IdentityEntities.User> _userManager;
 
-        public UpdateUserCommandHandler(UserManager<Domain.IdentityEntities.User> userManager, IApplicationIdentityDbContext context)
+        public UpdateUserCommandHandler(UserManager<Domain.IdentityEntities.User> userManager)
         {
             _userManager = userManager;
-            _context = context;
         }
 
         public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -45,7 +43,7 @@ namespace Application.UseCases.Identity.User.Commands.UpdateUser
                 await _userManager.AddPasswordAsync(entity, request.Password);
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await _userManager.UpdateAsync(entity);
 
             return Unit.Value;
         }
