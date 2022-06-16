@@ -1,0 +1,187 @@
+﻿@model WebUI.Models.ShoppingCart.ModelForCheckoutForm
+
+@{
+    Model.Order.ProductsDictionary = Model.ShoppingCart.ProductsDictionary;
+    Model.Customer.UserName = User.Identity.Name;
+}
+
+<form asp-action="Checkout" asp-controller="ShoppingCart" method="post" id="checkoutForm" >
+    @Html.HiddenFor(m => m.Customer.UserName)
+    <div class="col-lg-6 col-md-6">
+        <div class="checkbox-form">
+            <h3>Соствление заказа</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="checkout-form-list">
+                        <label>Имя <span class="required">*</span></label>
+                        <input type="text" placeholder="Иван" asp-for="Customer.FirstName" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="checkout-form-list">
+                        <label>Фамилия <span class="required">*</span></label>
+                        <input type="text" placeholder="Иванов" asp-for="Customer.LastName" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="checkout-form-list">
+                        <label>Страна <span class="required">*</span></label>
+                        <input type="text" placeholder="Беларусь" asp-for="Customer.Country" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="checkout-form-list">
+                        <label>Город <span class="required">*</span></label>
+                        <input type="text" placeholder="Гродно" asp-for="Customer.City" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="checkout-form-list">
+                        <label>Адрес <span class="required">*</span></label>
+                        <input type="text" placeholder="Адрес" asp-for="Customer.Address" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="checkout-form-list">
+                        <label>Email адрес <span class="required">*</span></label>
+                        <input type="email" placeholder="Example@gmail.com" value="@Model.EmailAddress" asp-for="EmailAddress" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="checkout-form-list">
+                        <label>Номер телефона  <span class="required">*</span></label>
+                        <input type="text" placeholder="+375(33)111-11-11" asp-for="Customer.Phone" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="order-notes">
+                        <div class="checkout-form-list">
+                            <label>Комментарий к заказу</label>
+                            <textarea asp-for="EmailMessage" style="resize: vertical;" maxlength="3000" id="checkout-mess" cols="30" rows="10" placeholder="Комментарий к заказу, например дополнительная информация о доставке (подъезд, этаж)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6">
+        <div class="your-order">
+            <h3>Ваш заказ</h3>
+            <div class="your-order-table table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="product-name">Товар</th>
+                            <th class="product-total">Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var productsDictionary in Model.ShoppingCart.ProductsDictionary)
+                        {
+                            <tr class="cart_item">
+                                <td class="product-name">
+                                    @productsDictionary.Product.Name <strong class="product-quantity"> × @productsDictionary.Count</strong>
+                                </td>
+                                <td class="product-total">
+                                    @{ var sum = productsDictionary.Product.Price * productsDictionary.Count; }
+                                    <span class="amount">BYN @sum</span>
+                                </td>
+                            </tr>
+}
+                    </tbody>
+                    <tfoot>
+                        <tr class="shipping">
+                            <th>Доставка</th>
+                            <td>
+                                <ul>
+                                    @foreach (var type in Enum.GetValues(typeof(Domain.Entities.DeliveryType)))
+                                    {
+                                        <li>
+                                            <input type="radio" asp-for="Order.DeliveryType" value="@type" />
+                                            <label>
+                                                @type
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr class="order-total">
+                            <th>ИТОГО</th>
+                            <td>
+                                <strong><span class="amount">BYN @Model.ShoppingCart.ProductsDictionary.Sum(p => p.Product.Price * p.Count)</span></strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <input hidden asp-for="Order.PaymentType" id="payment-type" />
+            <div class="payment-method">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#bankAccountType" aria-expanded="true" aria-controls="bankAccountType">
+                                    Перечисление на банковский счёт
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="bankAccountType" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <p>Совершите ваш платёж прямо на наш банковский счёт. Пожалуйста, укажите детали вашего заказа, как комментарий к платежу.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#checkType" aria-expanded="false" aria-controls="checkType">
+                                    Платёж по чеку
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="checkType" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <p>Пожалуйста, вышлите ваш чек в BuildStore, по адресу: Республика Беларусь, г.Гродно, ул.Тавлая, д.44</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#creditCardType" aria-expanded="false" aria-controls="creditCardType">
+                                    Кредитная карта
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="creditCardType" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    <div class="checkout-form-list">
+                                        <label>Номер карты</label>
+                                        <input type="text" asp-for="Order.CreditCardNumber" placeholder="0000 0000 0000 0000" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="checkout-form-list">
+                                        <label>Месяц</label>
+                                        <input type="number" asp-for="Order.CardExpMonth" placeholder="6" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="checkout-form-list">
+                                        <label>Год</label>
+                                        <input type="number" asp-for="Order.CardExpYear" placeholder="2023" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-button-payment">
+                    <input onclick="FillForm()" type="submit" value="Разместить заказ" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

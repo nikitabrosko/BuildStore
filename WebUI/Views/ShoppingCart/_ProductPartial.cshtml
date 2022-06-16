@@ -1,0 +1,43 @@
+﻿@model WebUI.Models.ShoppingCart.ModelForProductPartial
+
+@{ string ConvertPicture(byte[] picture)
+   {
+        var base64 = Convert.ToBase64String(picture);
+        return $"data:image/jpg;base64,{base64}";
+   } 
+}
+
+<td class="product-thumbnail">
+    <a asp-action="Get" asp-controller="Product" asp-route-id="@Model.ProductsDictionary.Product.Id">
+        <img src="@ConvertPicture(Model.ProductsDictionary.Product.Images.First().Picture)" alt="@Model.ProductsDictionary.Product.Name" />
+    </a>
+</td>
+<td class="product-name">
+    <a asp-action="Get" asp-controller="Product" asp-route-id="@Model.ProductsDictionary.Product.Id">
+        @Model.ProductsDictionary.Product.Name
+    </a>
+</td>
+<td class="product-price">
+    BYN @Model.ProductsDictionary.Product.Price
+</td>
+<td class="product-quantity">
+    <a onclick="jQueryAjaxForShoppingCart('@Url.Action("RemoveProductFromShoppingCart", "ShoppingCart" , new { id = Model.ProductsDictionary.Product.Id }, Context.Request.Scheme)', '#shopping-cart' ,
+       '@Url.Action("GetProduct", "ShoppingCart", new { productsDictionaryId = Model.ProductsDictionary.Id, elementId = Model.ElementId }, Context.Request.Scheme)' , '#@Model.ElementId' )">
+        <i class="fa fa-minus"></i>
+    </a>
+    @Model.ProductsDictionary.Count
+    <a onclick="jQueryAjaxForShoppingCart('@Url.Action("AddProductToShoppingCart", "ShoppingCart" , new { id = Model.ProductsDictionary.Product.Id }, Context.Request.Scheme)', '#shopping-cart' ,
+       '@Url.Action("GetProduct", "ShoppingCart", new { productsDictionaryId = Model.ProductsDictionary.Id, elementId = Model.ElementId }, Context.Request.Scheme)' , '#@Model.ElementId' )">
+        <i class="fa fa-plus"></i>
+    </a>
+</td>
+<td class="product-subtotal">
+    @{ var sum = Model.ProductsDictionary.Product.Price * Model.ProductsDictionary.Count; }
+    BYN @sum
+</td>
+<td class="product-remove">
+    <a onclick="jQueryAjaxForShoppingCart('@Url.Action("DeleteProductsDictionary", "ShoppingCart" , new { id = Model.ProductsDictionary.Id }, Context.Request.Scheme)', '#shopping-cart' ,
+       '@Url.Action("GetProduct", "ShoppingCart", new { productsDictionaryId = Model.ProductsDictionary.Id, elementId = Model.ElementId }, Context.Request.Scheme)' , '#@Model.ElementId' )">
+        <i class="fa fa-times"></i>
+    </a>
+</td>
