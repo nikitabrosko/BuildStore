@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Domain.Entities
 {
@@ -26,6 +27,11 @@ namespace Domain.Entities
         public Order()
         {
             ProductsDictionary = new HashSet<ProductsDictionary>();
+        }
+
+        public IQueryable<Order> AsQueryable()
+        {
+            throw new NotImplementedException();
         }
     }
 }

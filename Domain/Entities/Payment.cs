@@ -21,6 +21,8 @@
 
     public enum PaymentType
     {
+        BankAccount,
+        Check,
         CreditCard
     }
 }
