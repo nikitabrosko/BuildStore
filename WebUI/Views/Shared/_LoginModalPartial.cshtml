@@ -1,0 +1,112 @@
+﻿@model Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="login-title" style="margin: 0;float: left;">Вход</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="login-content">
+                    <h4>Для выполнения операции вам необходимо авторизоваться</h4>
+                    <div id="login-error"></div>
+                    <form asp-action="Login" asp-controller="Account" id="login-account-form">
+                        <input hidden asp-for="@Model.ReturnUrl" />
+                        <div class="login-content-div" id="login-user-name">
+                            <label>Имя пользователя</label>
+                            <input type="text" asp-for="Name" id="Name-login" />
+                        </div>
+                        <div class="login-content-div" id="login-password">
+                            <label>Пароль</label>
+                            <input type="password" asp-for="Password" id="Password-login" />
+                        </div>
+                        <div class="login-lost">
+                            <span class="log-rem">
+                                <input type="checkbox" asp-for="RememberMe" />
+                                <label>Запомнить меня!</label>
+                            </span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <input class="login-sub" type="button" onclick="checkUserNameLoginAjax(this.form, '@Url.Action("CheckUserName", "Account", new { username="a" })', '@Url.Action("CheckPassword", "Account")', '#login-error')" value="Войти" />
+                            <a class="login-sub" asp-action="Index" asp-controller="Account" style="display: flex; align-items: center;">Регистрация</a>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div>
+<!-- END Modal -->
+
+<script>
+    checkUserNameLoginAjax = (form, checkUserNameActionUrl, checkPasswordActionUrl, loginErrorId) => {
+            var username = $('#Name-login').val();
+            checkUserNameActionUrl = checkUserNameActionUrl.slice(0, -1) + username;
+
+            $.ajax({
+                type: 'GET',
+                url: checkUserNameActionUrl,
+
+                success: function (res) {
+                    if (res === true) {
+                        if ($('#login-error-name').length > 0) {
+                            $('#login-error-name').remove();
+                        }
+
+                        checkPasswordLoginAjax(form, checkPasswordActionUrl, loginErrorId);
+                    } else {
+                        if ($('#login-error-password').length > 0) {
+                            $('#login-error-password').remove();
+                        }
+
+                        if ($('#login-error-name').length == 0) {
+                            $(loginErrorId).append('<p class="error" id="login-error-name">Данного пользователя не существует!</p>');
+                        }
+                    }
+                },
+
+                error: function (err) {
+                    console.log(err);
+                },
+
+                failure: function (fail) {
+                    console.log(fail);
+                }
+            })
+        }
+
+        checkPasswordLoginAjax = (form, checkPasswordActionUrl, loginErrorId) => {
+            var username = $('#Name-login').val();
+            var password = $('#Password-login').val();
+            checkPasswordActionUrl = checkPasswordActionUrl + '?username=' + username + '&password=' + password;
+
+            $.ajax({
+                type: 'GET',
+                url: checkPasswordActionUrl,
+
+                success: function (res) {
+                    if (res === true) {
+                        if ($('#login-error-password').length > 0) {
+                            $('#login-error-password').remove();
+                        }
+
+                        form.submit();
+                    } else {
+                        if ($('#login-error-password').length == 0) {
+                            $(loginErrorId).append('<p class="error" id="login-error-password">Неверный пароль!</p>');
+                        }
+                    }
+                },
+
+                error: function (err) {
+                    console.log(err);
+                },
+
+                failure: function (fail) {
+                    console.log(fail);
+                }
+            })
+        }
+</script>

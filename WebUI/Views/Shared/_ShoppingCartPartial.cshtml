@@ -1,9 +1,50 @@
-﻿@model int
+﻿@model Domain.Entities.ShoppingCart
 
-@{
-    Layout = null;
+@{ string ConvertPicture(byte[] picture)
+    {
+        var base64 = Convert.ToBase64String(picture);
+        return $"data:image/jpg;base64,{base64}";
+    } 
 }
 
-<link rel="stylesheet" href="~/css/shoppingCart.css" />
+<div class="my-cart">
+    <div class="total-cart">
+        <a asp-action="Index" asp-controller="ShoppingCart">
+            <i class="fa fa-shopping-cart"></i>
+            @{ var shoppingCartProductsCount = Model.ProductsDictionary.Sum(p => p.Count); }
+            <span>@shoppingCartProductsCount</span>
+        </a>
+    </div>
 
-<span class="productsCount" style="position: absolute;">@Model</span>
+    <ul>
+        @foreach (var productsDictionary in Model.ProductsDictionary)
+        {
+            <li>
+                <div class="cart-img">
+                    <a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">
+                        <img width="105" height="140" alt="@productsDictionary.Product.Name"
+                             src="@ConvertPicture(productsDictionary.Product.Images.First().Picture)">
+                    </a>
+                </div>
+                <div class="cart-info">
+                    <h4><a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">@productsDictionary.Product.Name</a></h4>
+                    <span>BYN @productsDictionary.Product.Price<span> x @productsDictionary.Count</span></span>
+                </div>
+                <div class="del-icon">
+                    <a onclick="jQueryAjaxGet('@Url.Action("DeleteProductsDictionary", "ShoppingCart", new { id = productsDictionary.Id }, Context.Request.Scheme)', '#shopping-cart')">
+                        <i class="fa fa-times-circle"></i>
+                    </a>
+                </div>
+            </li>
+        }
+        <li class="cart-border">
+            <div class="subtotal-text">ИТОГО: </div>
+            @{ var shoppingCartSum = Model.ProductsDictionary.Sum(p => p.Product.Price * p.Count); }
+            <div class="subtotal-price">BYN @shoppingCartSum</div>
+        </li>
+        <li>
+            <a class="cart-button" asp-action="Index" asp-controller="ShoppingCart">корзина</a>
+            <a class="checkout" asp-action="Checkout" asp-controller="ShoppingCart">заказать</a>
+        </li>
+    </ul>
+</div>
