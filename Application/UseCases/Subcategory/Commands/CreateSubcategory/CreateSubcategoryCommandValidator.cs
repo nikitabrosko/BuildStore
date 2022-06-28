@@ -7,8 +7,8 @@ namespace Application.UseCases.Subcategory.Commands.CreateSubcategory
         public CreateSubcategoryCommandValidator()
         {
             RuleFor(v => v.Name)
-                .MaximumLength(100).WithMessage("Name length cannot be more than 100!")
-                .MinimumLength(3).WithMessage("Name length cannot be less than 3!")
+                .MaximumLength(50).WithMessage("Name length cannot be more than 50!")
+                .MinimumLength(2).WithMessage("Name length cannot be less than 2!")
                 .NotEmpty().WithMessage("Name cannot be empty")
                 .NotNull().WithMessage("Name cannot be null");
 
