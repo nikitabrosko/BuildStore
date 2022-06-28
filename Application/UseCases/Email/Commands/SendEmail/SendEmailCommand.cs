@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.UseCases.Email.Commands.SendEmail
 {
@@ -9,5 +10,7 @@ namespace Application.UseCases.Email.Commands.SendEmail
         public string Subject { get; set; }
 
         public string Content { get; set; }
+
+        public byte[] Attachment { get; set; }
     }
 }

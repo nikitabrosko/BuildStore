@@ -31,7 +31,14 @@ namespace Application.UseCases.Email.Commands.SendEmail
                                   $"</div>";
             }
 
-            await _emailSender.SendEmailAsync(new Message(new[] {request.EmailAddress}, request.Subject, request.Content), cancellationToken);
+            if (request.Attachment is null)
+            {
+                await _emailSender.SendEmailAsync(new Message(new[] { request.EmailAddress }, request.Subject, request.Content), cancellationToken);
+            }
+            else
+            {
+                await _emailSender.SendEmailAsync(new Message(new[] { request.EmailAddress }, request.Subject, request.Content, request.Attachment), cancellationToken);
+            }
 
             return Unit.Value;
         }

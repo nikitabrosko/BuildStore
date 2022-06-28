@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Common.Interfaces;
 using Application.Common.Models;
@@ -36,7 +38,15 @@ namespace Application.Common.Behaviors
             emailMessage.From.Add(new MailboxAddress(_emailConfiguration.Username, _emailConfiguration.From));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) {Text = message.Content};
+
+            var bodyBuilder = new BodyBuilder { HtmlBody = message.Content };
+
+            if (message.Attachment is not null && message.Attachment.Any())
+            {
+                bodyBuilder.Attachments.Add("Order.pdf", message.Attachment, ContentType.Parse("application/pdf"));
+            }
+
+            emailMessage.Body = bodyBuilder.ToMessageBody();
 
             return emailMessage;
         }

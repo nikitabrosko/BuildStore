@@ -4,6 +4,7 @@ using Application.Common.Interfaces;
 using Application.Common.Models;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,6 +27,13 @@ namespace Application
                 .Get<EmailConfiguration>());
 
             services.AddScoped<IEmailSender, EmailSender>();
+
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
 
             return services;
         }
