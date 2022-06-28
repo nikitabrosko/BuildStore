@@ -12,12 +12,12 @@ namespace Application.UseCases.Product.Commands.CreateProduct
 
             RuleFor(v => v.Name)
                 .MaximumLength(100).WithMessage("Name length cannot be more than 100!")
-                .MinimumLength(3).WithMessage("Name length cannot be less than 3!")
+                .MinimumLength(2).WithMessage("Name length cannot be less than 2!")
                 .NotEmpty().WithMessage("Name cannot be empty!")
                 .NotNull().WithMessage("Name cannot be null!");
 
             RuleFor(v => v.Description)
-                .MaximumLength(500).WithMessage("Description length cannot be more than 500!")
+                .MaximumLength(1000).WithMessage("Description length cannot be more than 1000!")
                 .MinimumLength(50).WithMessage("Description length cannot be less than 50!")
                 .NotEmpty().WithMessage("Description cannot be empty!")
                 .NotNull().WithMessage("Description cannot be null!");

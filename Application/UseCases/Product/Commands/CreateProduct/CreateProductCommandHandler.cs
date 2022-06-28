@@ -6,6 +6,7 @@ using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.UseCases.Product.Commands.CreateProduct
@@ -40,6 +41,24 @@ namespace Application.UseCases.Product.Commands.CreateProduct
                 Discount = request.Discount,
                 Supplier = supplier
             };
+
+            if (request.Pictures.Length is 1)
+            {
+                var picture = request.Pictures.First();
+                request.Pictures = new IFormFile[3];
+                request.Pictures[0] = picture;
+                request.Pictures[1] = picture;
+                request.Pictures[2] = picture;
+            }
+            else if (request.Pictures.Length is 2)
+            {
+                var pictureFirst = request.Pictures.First();
+                var pictureSecond = request.Pictures[1];
+                request.Pictures = new IFormFile[3];
+                request.Pictures[0] = pictureFirst;
+                request.Pictures[1] = pictureSecond;
+                request.Pictures[2] = pictureFirst;
+            }
 
             var productsImages = new ProductImage[request.Pictures.Length];
 
