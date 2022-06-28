@@ -16,6 +16,7 @@ using Application.UseCases.Identity.User.Queries.GetUser;
 using Application.Common.Exceptions;
 using Application.UseCases.Subcategory.Queries.GetSubcategory;
 using Domain.Entities;
+using Application.UseCases.Product.Queries.GetProduct;
 
 namespace WebUI.Controllers
 {
@@ -287,6 +288,16 @@ namespace WebUI.Controllers
         public IActionResult ShopSearchPost([FromForm] SearchPaginatedProductsWithSubcategoryQuery query)
         {
             return RedirectToAction("ShopSearch", "Category", query);
+        }
+
+        [HttpGet("{shoppingCartId:int}/{productId:int}")]
+        public async Task<IActionResult> GetProductActions([FromRoute] int shoppingCartId, [FromRoute] int productId)
+        {
+            return View("_ProductActionsPartial", new ModelForProductActionsPartial 
+            {
+                ShoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = shoppingCartId }),
+                Product = await Mediator.Send(new GetProductQuery { Id = productId })
+            });
         }
     }
 }

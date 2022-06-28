@@ -1,6 +1,7 @@
 ﻿using Application.UseCases.Category.Queries.GetCategories;
 using Application.UseCases.Identity.User.Queries.GetUser;
 using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
+using Application.UseCases.Product.Queries.GetProduct;
 using Application.UseCases.Product.Queries.GetProducts;
 using Application.UseCases.Product.Queries.GetProductsWithPagination;
 using Application.UseCases.Product.Queries.SearchProductsWithPagination;
@@ -254,6 +255,16 @@ namespace WebUI.Controllers
 
                 return View("Error", modelForError);
             }
+        }
+
+        [HttpGet("{shoppingCartId:int}/{productId:int}")]
+        public async Task<IActionResult> GetProductActions([FromRoute] int shoppingCartId, [FromRoute] int productId)
+        {
+            return View("_ProductActionsPartial", new ModelForProductActionsPartial
+            {
+                ShoppingCart = await Mediator.Send(new GetShoppingCartQuery { Id = shoppingCartId }),
+                Product = await Mediator.Send(new GetProductQuery { Id = productId })
+            });
         }
     }
 }
