@@ -17,6 +17,26 @@
     });
 }
 
+jQueryAjaxGetAsyncOff = (url, id) => {
+    $.ajax({
+        type: 'GET',
+        url: url,
+        async: false,
+
+        success: function (res) {
+            $(id).html(res);
+        },
+
+        error: function (err) {
+            console.log(err);
+        },
+
+        failure: function (fail) {
+            console.log(fail);
+        }
+    });
+}
+
 async function jQueryAjaxGetForShoppingCart(url, id) {
     await $.ajax({
         type: 'GET',
@@ -91,6 +111,29 @@ jQueryAjaxPostForm = (form, elementId) => {
         data: new FormData(form),
         processData: false,
         contentType: false,
+
+        success: function (res) {
+            $(elementId).html(res);
+        },
+
+        error: function (err) {
+            console.log(err);
+        },
+
+        failure: function (fail) {
+            console.log(fail);
+        }
+    })
+}
+
+jQueryAjaxPostFormAsyncOff = (form, elementId) => {
+    $.ajax({
+        type: 'POST',
+        url: form.action,
+        data: new FormData(form),
+        processData: false,
+        contentType: false,
+        async: false,
 
         success: function (res) {
             $(elementId).html(res);
