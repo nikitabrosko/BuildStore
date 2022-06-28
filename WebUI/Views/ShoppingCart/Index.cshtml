@@ -1,6 +1,5 @@
 ﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 @model WebUI.Models.ShoppingCart.ModelForShoppingCart
-@inject Microsoft.AspNetCore.Identity.SignInManager<Domain.IdentityEntities.User> SignInManager
 
 <!doctype html>
 <html class="no-js" lang="">
@@ -260,119 +259,122 @@
 		</div>
 		<!-- cart-main-area end -->	
 		<!-- footer start -->
-			<footer>
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="footer-logo">
-                            <img src="~/img/logo6.png" alt="" />
-                            <p>BuildStore - это интернет-магазин, специализирующийся на продаже строительных материалов и им подобным.<br />Сервис предлагает доставку до дома, низкие цены и удобный интерфейс.</p>
-                            <div class="widget-icon">
-                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
-                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
-                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
-                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
-                                <a href="https://www.instagram.com/nikitos.26_/"><i class="fa fa-instagram"></i></a>
+        <footer>
+            <div class="footer-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="footer-logo">
+                                <img src="~/img/logo6.png" alt="" />
+                                <p>BuildStore - это интернет-магазин, специализирующийся на продаже строительных материалов и им подобным.<br />Сервис предлагает доставку до дома, низкие цены и удобный интерфейс.</p>
+                                <div class="widget-icon">
+                                    <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
+                                    <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                    <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                    <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                    <a href="https://www.instagram.com/nikitos.26_/"><i class="fa fa-instagram"></i></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- footer-top-area start -->
-        <div class="footer-top-area">
-            <div class="container">
-                <div class="row">
-                    <!-- footer-widget start -->
-                    <div class="col-lg-3 col-md-3 col-sm-4">
-                        <div class="footer-widget">
-                            <h3>КОНТАКТЫ</h3>
-                            <ul class="footer-contact">
-                                <li>
-                                    <i class="fa fa-map-marker"> </i>
-                                    Адрес: Республика Беларусь, г.Гродно, ул.Тавлая, д.44
-                                </li>
-                                <li>
-                                    <i class="fa fa-envelope"> </i>
-                                    Email: Nikita.brosko@mail.ru
-                                </li>
-                                <li>
-                                    <i class="fa fa-phone"> </i>
-                                    Номер телефона: +375(33)669-45-81
-                                </li>
-                            </ul>
+            <!-- footer-top-area start -->
+            <div class="footer-top-area">
+                <div class="container">
+                    <div class="row">
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="footer-widget">
+                                <h3>КОНТАКТЫ</h3>
+                                <ul class="footer-contact">
+                                    <li>
+                                        <i class="fa fa-map-marker"> </i>
+                                        Адрес: Республика Беларусь, г.Гродно, ул.Тавлая, д.44
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-envelope"> </i>
+                                        Email: Nikita.brosko@mail.ru
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-phone"> </i>
+                                        Номер телефона: +375(33)669-45-81
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <!-- footer-widget end -->
-                    <!-- footer-widget start -->
-                    <div class="col-lg-3 col-md-3 hidden-sm">
-                        <div class="footer-widget">
-                            <h3>Мой аккаунт</h3>
-                            <ul class="footer-menu">
-                                <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
-                                <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
-                                @if (User.Identity.IsAuthenticated) 
-                                { 
-                                    <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
-                                }
-                            </ul>
+                        <!-- footer-widget end -->
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 hidden-sm">
+                            <div class="footer-widget">
+                                <h3>Мой аккаунт</h3>
+                                <ul class="footer-menu">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
+                                        <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
+                                    }
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <!-- footer-widget end -->
-                    <!-- footer-widget start -->
-                    <div class="col-lg-3 col-md-3 col-sm-4">
-                        <div class="footer-widget">
-                            <h3>О нас</h3>
-                            <ul class="footer-menu">
-                                <li><a asp-action="About" asp-controller="Home">О нас</a></li>
-                                <li><a asp-action="Contacts" asp-controller="Home">Контакты</a></li>
-                            </ul>
+                        <!-- footer-widget end -->
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="footer-widget">
+                                <h3>О нас</h3>
+                                <ul class="footer-menu">
+                                    <li><a asp-action="About" asp-controller="Home">О нас</a></li>
+                                    <li><a asp-action="Contacts" asp-controller="Home">Контакты</a></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <!-- footer-widget end -->
-                    <!-- footer-widget start -->
-                    <div class="col-lg-3 col-md-3 col-sm-4">
-                        <div class="footer-widget">
-                            <h3>РАЗРАБОТЧИК</h3>
-                            <ul class="footer-contact">
-                                <li>
-                                    ФИО: Броско Никита Сергеевич
-                                </li>
-                                <li>
-                                    Категория: Дипломный проект
-                                </li>
-                                <li>
-                                    Тема: "Разработка интернет-магазина по продаже строительных материалов"
-                                </li>
-                            </ul>
+                        <!-- footer-widget end -->
+                        <!-- footer-widget start -->
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="footer-widget">
+                                <h3>РАЗРАБОТЧИК</h3>
+                                <ul class="footer-contact">
+                                    <li>
+                                        ФИО: Броско Никита Сергеевич
+                                    </li>
+                                    <li>
+                                        Категория: Дипломный проект
+                                    </li>
+                                    <li>
+                                        Тема: "Разработка интернет-магазина по продаже строительных материалов"
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <!-- footer-widget end -->
-                </div>
-            </div>
-        </div>
-        <!-- footer-top-area end -->
-        <!-- footer-bottom-area start -->
-        <div class="footer-bottom-area">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="copyright">
-                            <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. Все права защищены</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="payment-img">
-                            <img src="~/img/payment.png" alt="" />
-                        </div>
+                        <!-- footer-widget end -->
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- footer-bottom-area end -->
-    </footer>
+            <!-- footer-top-area end -->
+            <!-- footer-bottom-area start -->
+            <div class="footer-bottom-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="copyright">
+                                <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. Все права защищены</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="payment-img">
+                                <img src="~/img/payment.png" alt="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- footer-bottom-area end -->
+        </footer>
 		<!-- footer end -->
 
 		<!-- all js here -->

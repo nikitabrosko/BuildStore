@@ -157,21 +157,21 @@
                                                                      PageNumber = i,
                                                                      SubcategoryId = Model.CategoryId
                                                                  }, Context.Request.Scheme)', '#products-partial')">@i</a>
-                                                            </li>
-                                                        }
-                                                        else
-                                                        {
-                                                            <li>
-                                                                <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Category",
+                        </li>
+                        }
+                    else
+                    {
+                        <li>
+                            <a onclick="jQueryAjaxGetForCategory('@Url.Action("GetProducts", "Category",
                                                                  new GetPaginatedProductsWithSubcategoryQuery
                                                                  {
                                                                      PageSize = Model.Products.PageSize,
                                                                      PageNumber = i,
                                                                      SubcategoryId = Model.CategoryId
                                                                  }, Context.Request.Scheme)', '#products-partial')">@i</a>
-                                                            </li>
-                                                        }
-                                                    }
+                        </li>
+                    }
+                }
                 @if (Model.Products.HasNextPage)
                 {
                     <li>
@@ -241,11 +241,11 @@
                                                                      Pattern = Model.SearchPattern
                                                                  }, Context.Request.Scheme)', '#products-partial')">@i</a>
                                                             </li>
-                                                        }
-                                                        else
-                                                        {
-                                                            <li>
-                                                                <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Category",
+                    }
+                    else
+                    {
+                        <li>
+                            <a onclick="jQueryAjaxGetForCategory('@Url.Action("SearchProducts", "Category",
                                                                  new SearchPaginatedProductsWithSubcategoryQuery
                                                                  {
                                                                      PageSize = Model.Products.PageSize,
@@ -253,9 +253,9 @@
                                                                      SubcategoryId = Model.CategoryId,
                                                                      Pattern = Model.SearchPattern
                                                                  }, Context.Request.Scheme)', '#products-partial')">@i</a>
-                                                            </li>
-                                                        }
-                                                    }
+                        </li>
+                        }
+                }
                 @if (Model.Products.HasNextPage)
                 {
                     <li>

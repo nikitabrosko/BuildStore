@@ -1,5 +1,6 @@
 ﻿@using Application.UseCases.Identity.User.Queries.GetUsersWithRolesWithPagination
 @using Application.UseCases.Identity.User.Queries.SearchUsersWithRolesWithPagination
+@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 @model WebUI.Models.User.ModelForUsers
 
 <!doctype html>
@@ -11,7 +12,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="~/img/favicon.ico">
     <!-- Place favicon.ico in the root directory -->
     <!-- all css here -->
     <!-- bootstrap v3.3.6 css -->
@@ -49,7 +50,7 @@
                     <div class="row">
                         <div class="col-md-2 col-sm-4 col-xs-5">
                             <div class="logo">
-                                <a href="index.html"><img src="img/logo-white-text.png" alt="" /></a>
+                                <a asp-action="Index" asp-controller="Home"><img src="~/img/logo6.png" alt="" /></a>
                             </div>
                         </div>
                         <div class="col-md-8 hidden-xs hidden-sm">
@@ -59,20 +60,26 @@
                                         <li>
                                             <a asp-action="Index" asp-controller="Home">главная страница</a>
                                         </li>
-                                        <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                        <li>
+                                            <a asp-action="About" asp-controller="Home">о нас</a>
+                                        </li>
                                         <li class="static">
-                                            <a href="shop.html">каталог</a>
+                                            <a asp-action="Shop" asp-controller="Home">каталог</a>
                                             <div class="mega-menu">
                                                 <div class="mega-left">
                                                     @foreach (var category in Model.CategoriesForHeader)
                                                     {
                                                         <span>
-                                                            <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
+                                                            @Html.ActionLink($"{category.Name}", "Shop", "Category",
+                                                                       new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
 
                                                             @foreach (var subcategory in category.Subcategories)
                                                             {
-                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>}
-                                                        </span>}
+                                                                @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                                       new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
+                                                            }
+                                                        </span>
+                                                    }
                                                 </div>
                                             </div>
                                         </li>
@@ -98,8 +105,8 @@
                             <div class="header-search">
                                 <i class="fa fa-search"></i>
                                 <div class="header-form">
-                                    <form asp-action="Search" asp-controller="Product" method="post">
-                                        <input type="text" id="searchInput" class="form-control" name="text" placeholder="Поиск товаров" />
+                                    <form asp-action="ShopSearchPost" asp-controller="Home" method="post">
+                                        <input type="text" id="searchInput" class="form-control" name="pattern" placeholder="Поиск товаров" />
 
                                         <button type="submit">
                                             <i class="fa fa-search"></i>
@@ -126,17 +133,19 @@
                                     </li>
                                     <li><a asp-action="About" asp-controller="Home">о нас</a></li>
                                     <li>
-                                        <a href="shop.html">каталог</a>
+                                        <a asp-action="Shop" asp-controller="Home">каталог</a>
                                         <ul>
                                             @foreach (var category in Model.CategoriesForHeader)
                                             {
                                                 <li>
-                                                    <a asp-action="Get" asp-controller="Category" asp-route-id="@category.Id" class="mega-title">@category.Name</a>
+                                                    @Html.ActionLink($"{category.Name}", "Shop", "Category",
+                                                                       new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
                                                     <ul>
                                                         @foreach (var subcategory in category.Subcategories)
                                                         {
                                                             <li>
-                                                                <a asp-action="Get" asp-controller="Subcategory" asp-route-id="@subcategory.Id">@subcategory.Name</a>
+                                                                @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                                           new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
                                                             </li>
                                                         }
                                                     </ul>
@@ -375,7 +384,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="footer-logo">
-                            <img src="img/logo-white-text.png" alt="" />
+                            <img src="~/img/logo6.png" alt="" />
                             <p>BuildStore - это интернет-магазин, специализирующийся на продаже строительных материалов и им подобным.<br />Сервис предлагает доставку до дома, низкие цены и удобный интерфейс.</p>
                             <div class="widget-icon">
                                 <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
@@ -417,11 +426,18 @@
                     <!-- footer-widget start -->
                     <div class="col-lg-3 col-md-3 hidden-sm">
                         <div class="footer-widget">
-                            <h3>My account</h3>
+                            <h3>Мой аккаунт</h3>
                             <ul class="footer-menu">
-                                <li><a href="#">Order Status</a></li>
-                                <li><a href="#">Register</a></li>
-                                <li><a href="#">Sign-up</a></li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                }
+                                else
+                                {
+                                    <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
+                                    <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
+                                }
                             </ul>
                         </div>
                     </div>
@@ -429,12 +445,10 @@
                     <!-- footer-widget start -->
                     <div class="col-lg-3 col-md-3 col-sm-4">
                         <div class="footer-widget">
-                            <h3>about us</h3>
+                            <h3>О нас</h3>
                             <ul class="footer-menu">
-                                <li><a href="#">Delivery</a></li>
-                                <li><a href="#">Payment</a></li>
-                                <li><a href="#">About Us</a></li>
-                                <li><a href="#">Contact Us</a></li>
+                                <li><a asp-action="About" asp-controller="Home">О нас</a></li>
+                                <li><a asp-action="Contacts" asp-controller="Home">Контакты</a></li>
                             </ul>
                         </div>
                     </div>
@@ -467,12 +481,12 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="copyright">
-                            <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. All Rights Reserved</p>
+                            <p>Copyright © <a asp-action="Index" asp-controller="Home">BuildStore</a>. Все права защищены</p>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="payment-img">
-                            <img src="img/payment.png" alt="" />
+                            <img src="~/img/payment.png" alt="" />
                         </div>
                     </div>
                 </div>
@@ -535,24 +549,24 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-filed">
-                        <form enctype="multipart/form-data" asp-action="Update" asp-controller="User" method="post">
+                        <form enctype="multipart/form-data" asp-action="Update" asp-controller="User" method="post" id="update-user-form">
                             <input hidden id="id-input" name="id" />
                             <input hidden id="element-id-input" name="elementId" />
                             <div>
                                 <label>Введите новое имя</label>
-                                <input type="text" id="name-update-input" name="name" />
+                                <input type="text" id="name-update-input" name="name" placeholder="Example" />
                             </div>
                             <div>
                                 <label>Введите новый Email</label>
-                                <input type="email" id="email-update-input" name="email" />
+                                <input type="email" id="email-update-input" name="email" placeholder="example@gmail.com" />
                             </div>
                             <div>
                                 <label>Введите новый пароль</label>
-                                <input type="password" name="password" />
+                                <input type="password" name="password" id="update-password" placeholder="********" />
                             </div>
                             <div>
                                 <label>Подтверждение пароля</label>
-                                <input type="password" />
+                                <input type="password" placeholder="********" />
                             </div>
                             <button class="btn btn-account-change" type="button" id="submit-button" onclick="jQueryAjaxPostFormForUser(this.form)">Сохранить</button>
                         </form>
@@ -571,24 +585,24 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-filed">
-                        <form enctype="multipart/form-data" asp-action="Create" asp-controller="User" method="post">
+                        <form enctype="multipart/form-data" asp-action="Create" asp-controller="User" method="post" id="create-user-form">
                             <input hidden name="pageSize" value="@Model.Users.PageSize" />
                             <input hidden name="pageNumber" value="@Model.Users.PageNumber" />
                             <div>
                                 <label>Введите имя</label>
-                                <input type="text" id="name-create-input" name="name" />
+                                <input type="text" id="name-create-input" name="name" placeholder="Example" />
                             </div>
                             <div>
                                 <label>Введите Email</label>
-                                <input type="email" id="email-create-input" name="email" />
+                                <input type="email" id="email-create-input" name="email" placeholder="example@gmail.com" />
                             </div>
                             <div>
                                 <label>Пароль</label>
-                                <input type="password" name="password" />
+                                <input type="password" name="password" id="create-password" placeholder="********" />
                             </div>
                             <div>
                                 <label>Подтверждение пароля</label>
-                                <input type="password" />
+                                <input type="password" name="passwordConfirmation" placeholder="********" />
                             </div>
                             <button class="btn btn-account-change" type="submit">Создать</button>
                         </form>
@@ -657,7 +671,112 @@
     <!-- site js -->
     <script src="~/js/site.js"></script>
 
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
     <script>
+        $("#create-user-form").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 40
+                },
+                email: {
+                    required: true,
+                    minlength: 5,
+                    maxlength: 50,
+                    email: true,
+                    regex: "^([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+@@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$"
+                },
+                password: {
+                    required: true,
+                    minlength: 4,
+                    maxlength: 64,
+                    regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{4,64}$"
+                },
+                passwordConfirmation: {
+                    equalTo: "#create-password"
+                }
+            },
+            messages: {
+                name: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 2 символов!",
+                    maxlength: "Введите не более 40 символов!"
+                },
+                email: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 5 символов!",
+                    maxlength: "Введите не более 50 символов!",
+                    email: "Введите валидный email!",
+                    regex: "Введите валидный email!"
+                },
+                password: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 4 символов!",
+                    maxlength: "Введите не более 64 символов!",
+                    regex: "Введите валидный пароль!"
+                },
+                passwordConfirmation: {
+                    required: "Это поле является обязательным!",
+                    equalTo: "Неверный подтверждающий пароль!"
+                }
+            },
+            errorElement: "p"
+        });
+
+        $("#update-user-form").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 40
+                },
+                email: {
+                    required: true,
+                    minlength: 5,
+                    maxlength: 50,
+                    email: true,
+                    regex: "^([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+@@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$"
+                },
+                password: {
+                    required: true,
+                    minlength: 4,
+                    maxlength: 64,
+                    regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{4,64}$"
+                },
+                passwordConfirmation: {
+                    equalTo: "#update-password"
+                }
+            },
+            messages: {
+                name: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 2 символов!",
+                    maxlength: "Введите не более 40 символов!"
+                },
+                email: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 5 символов!",
+                    maxlength: "Введите не более 50 символов!",
+                    email: "Введите валидный email!",
+                    regex: "Введите валидный email!"
+                },
+                password: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 4 символов!",
+                    maxlength: "Введите не более 64 символов!",
+                    regex: "Введите валидный пароль!"
+                },
+                passwordConfirmation: {
+                    required: "Это поле является обязательным!",
+                    equalTo: "Неверный подтверждающий пароль!"
+                }
+            },
+            errorElement: "p"
+        });
+
         $('#updateUserModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget)
             var name = button.data('name')

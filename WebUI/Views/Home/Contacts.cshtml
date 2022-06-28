@@ -1,6 +1,9 @@
 ﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory
 @model WebUI.Models.Home.ModelForContacts
-@inject Microsoft.AspNetCore.Identity.SignInManager<Domain.IdentityEntities.User> SignInManager
+
+@{ 
+    var returnUrl = Url.Action();
+}
 
 <!doctype html>
 <html class="no-js" lang="">
@@ -98,7 +101,7 @@
                                         <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
                                         <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
                                         <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
                              }
@@ -111,7 +114,7 @@
                                     <a style="cursor:pointer"><i class="fa fa-cog"></i></a>
                                     <ul>
                                         <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
                             }
@@ -221,7 +224,7 @@
                             <p>Заполните форму ниже для обратной связи.</p>
                         </div>
                         <div class="row">
-                            <form asp-action="Feedback" asp-controller="Email" method="post">
+                            <form asp-action="Feedback" asp-controller="Email" method="post" id="feedback-form">
                                 <div class="input-filed">
                                     <div class="col-md-6">
                                         <input name="name" type="text" placeholder="Ваше Имя" />
@@ -322,12 +325,15 @@
                         <div class="footer-widget">
                             <h3>Мой аккаунт</h3>
                             <ul class="footer-menu">
-                                <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
-                                <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
                                 @if (User.Identity.IsAuthenticated) 
                                 { 
                                     <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
+                                }
+                                else
+                                {
+                                    <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
+                                    <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
                                 }
                             </ul>
                         </div>
@@ -405,7 +411,43 @@
     <script src="~/js/main.js"></script>
     <!-- site js -->
     <script src="~/js/site.js"></script>
+    
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
     <script>
+        $("#feedback-form").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 100
+                },
+                email: {
+                    required: true,
+                    minlength: 5,
+                    maxlength: 50,
+                    email: true,
+                    regex: "^([a-zA-Z0-9_-]+\\.)*[a-zA-Z0-9_-]+@@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$"
+                }
+            },
+            messages: {
+                name: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 2 символов!",
+                    maxlength: "Введите не более 100 символов!"
+                },
+                email: {
+                    required: "Это поле является обязательным!",
+                    minlength: "Введите не менее 5 символов!",
+                    maxlength: "Введите не более 50 символов!",
+                    email: "Введите валидный email!",
+                    regex: "Введите валидный email!"
+                }
+            },
+            errorElement: "p"
+        });
+
         waitForElm('ymaps').then(function () {
             screen_check();
         })

@@ -7,11 +7,11 @@
         <form asp-action="Login" asp-controller="Account" id="login-account-form">
             <div class="login-content-div" id="login-user-name">
                 <label>Имя пользователя</label>
-                <input type="text" asp-for="Name" id="Name-login" />
+                <input type="text" asp-for="Name" id="Name-login" placeholder="Example" />
             </div>
             <div class="login-content-div" id="login-password">
                 <label>Пароль</label>
-                <input type="password" asp-for="Password" id="Password-login" />
+                <input type="password" asp-for="Password" id="Password-login" placeholder="********" />
             </div>
             <div class="login-lost">
                 <span class="log-rem">

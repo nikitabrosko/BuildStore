@@ -1,6 +1,5 @@
 ﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 @model WebUI.Models.Account.ModelForMyAccount
-@inject Microsoft.AspNetCore.Identity.SignInManager<Domain.IdentityEntities.User> SignInManager
 
 <!doctype html>
 <html class="no-js" lang="">
@@ -320,12 +319,15 @@
                         <div class="footer-widget">
                             <h3>Мой аккаунт</h3>
                             <ul class="footer-menu">
-                                <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
-                                <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
-                                @if (User.Identity.IsAuthenticated) 
-                                { 
+                                @if (User.Identity.IsAuthenticated)
+                                {
                                     <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
                                     <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                }
+                                else
+                                {
+                                    <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
+                                    <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
                                 }
                             </ul>
                         </div>
@@ -400,7 +402,7 @@
                             <form asp-action="ChangeUserName" asp-controller="Account" method="post" id="change-username-form">
                                 <div>
                                     <label>Введите новое имя пользователя</label>
-                                    <input type="text" id="name-input" name="userName">
+                                    <input type="text" id="name-input" name="userName" placeholder="Ваш логин">
                                 </div>
                                 <button id="name-change-submit" type="button" class="btn btn-account-change" onclick="checkUserNameRegisterAjax(this.form, '@Url.Action("CheckUserName", "Account", new { username="a" })', '#name-input-error')">Изменить</button>
                             </form>
@@ -424,7 +426,7 @@
                             <form asp-action="ChangeEmail" asp-controller="Account" method="post" id="change-email-form">
                                 <div>
                                     <label>Введите новый Email</label>
-                                    <input type="text" id="email-input" name="email">
+                                    <input type="text" id="email-input" name="email" placeholder="Ваш email">
                                 </div>
                                 <button type="submit" class="btn btn-account-change">Изменить</button>
                             </form>
@@ -448,11 +450,11 @@
                             <form asp-action="ChangePassword" asp-controller="Account" method="post" id="change-password-form">
                                 <div>
                                     <label>Введите новый пароль</label>
-                                    <input type="password" id="password-input" name="password">
+                                    <input type="password" id="password-input" name="password" placeholder="********">
                                 </div>
                                 <div>
                                     <label>Подтвердите пароль</label>
-                                    <input type="password" name="passwordConfirmation">
+                                    <input type="password" name="passwordConfirmation" placeholder="********">
                                 </div>
                                 <button type="submit" class="btn btn-account-change">Изменить</button>
                             </form>

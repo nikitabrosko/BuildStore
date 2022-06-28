@@ -1,13 +1,14 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
+﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 @model WebUI.Models.Product.ModelForProductDetails
-@inject SignInManager<Domain.IdentityEntities.User> SignInManager
 
-@{ string ConvertPicture(byte[] picture)
-   {
+@{ 
+    string ConvertPicture(byte[] picture)
+    {
         var base64 = Convert.ToBase64String(picture);
         return $"data:image/jpg;base64,{base64}";
-   } 
+    }
+
+    var returnUrl = Url.Action();
 }
 
 <!doctype html>
@@ -50,49 +51,48 @@
     <!-- Add your site or application content here -->
     <!-- header start -->
     <header class="header-pos">
-		<!-- header-bottom-area start -->
-		<div class="header-bottom-area">
-			<div class="container">
-				<div class="inner-container">
-					<div class="row">
-						<div class="col-md-2 col-sm-4 col-xs-5">
-							<div class="logo">
-								<a asp-action="Index" asp-controller="Home"><img src="~/img/logo6.png" alt="" /></a>
-							</div>
-						</div>
-						<div class="col-md-8 hidden-xs hidden-sm">
-							<div class="main-menu">
-								<nav>
-									<ul>
-										<li>
-											<a asp-action="Index" asp-controller="Home">главная страница</a>
-										</li>
-										<li><a asp-action="About" asp-controller="Home">о нас</a></li>
-										<li class="static">
-											<a asp-action="Shop" asp-controller="Home">каталог</a>
-											<div class="mega-menu">
-												<div class="mega-left">
-													@foreach (var category in Model.Categories)
+        <!-- header-bottom-area start -->
+        <div class="header-bottom-area">
+            <div class="container">
+                <div class="inner-container">
+                    <div class="row">
+                        <div class="col-md-2 col-sm-4 col-xs-5">
+                            <div class="logo">
+                                <a asp-action="Index" asp-controller="Home"><img src="~/img/logo6.png" alt="" /></a>
+                            </div>
+                        </div>
+                        <div class="col-md-8 hidden-xs hidden-sm">
+                            <div class="main-menu">
+                                <nav>
+                                    <ul>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                        </li>
+                                        <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                        <li class="static">
+                                            <a asp-action="Shop" asp-controller="Home">каталог</a>
+                                            <div class="mega-menu">
+                                                <div class="mega-left">
+                                                    @foreach (var category in Model.Categories)
                                                     {
                                                         <span>
-                                                        @Html.ActionLink($"{category.Name}", "Shop", "Category",
-                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
+                                                            @Html.ActionLink($"{category.Name}", "Shop", "Category",
+                                                                       new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
 
-                                                        @foreach (var subcategory in category.Subcategories)
-                                                        {
-                                                            @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
-                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
-                                                        }
+                                                            @foreach (var subcategory in category.Subcategories)
+                                                            {
+                                                                @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                                       new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })}
                                                         </span>
                                                     }
-												</div>
-											</div>
-										</li>
-										<li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
-									</ul>
-								</nav>
-							</div>
-						</div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
                         <div class="col-md-2 col-sm-8 col-xs-7 header-right">
                             @if (User.IsInRole("admin"))
                             {
@@ -106,20 +106,20 @@
                                         <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
                                         <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
                                         <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
-                             }
-                            else if (SignInManager.IsSignedIn(User))
+                            }
+                            else if (User.Identity.IsAuthenticated)
                             {
                                 <div id="shopping-cart">
-                                            @await Html.PartialAsync("_ShoppingCartPartial", Model.ShoppingCart)
+                                    @await Html.PartialAsync("_ShoppingCartPartial", Model.ShoppingCart)
                                 </div>
                                 <div class="user-meta">
                                     <a style="cursor:pointer"><i class="fa fa-cog"></i></a>
                                     <ul>
                                         <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
                             }
@@ -152,54 +152,54 @@
                                 </div>
                             </div>
                         </div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- header-bottom-area end -->
-		<!-- mobile-menu-area start -->
-		<div class="mobile-menu-area visible-xs visible-sm">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="mobile-menu">
-							<nav id="dropdown">
-								<ul>
-									<li>
-										<a asp-action="Index" asp-controller="Home">главная страница</a>
-									</li>
-									<li><a asp-action="About" asp-controller="Home">о нас</a></li>
-									<li>
-										<a asp-action="Shop" asp-controller="Home">каталог</a>
-										<ul>
-											@foreach (var category in Model.Categories)
-											{
-											<li>
-												@Html.ActionLink($"{category.Name}", "Shop", "Category",
-                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
-												<ul>
-													@foreach (var subcategory in category.Subcategories)
-													{
-													<li>
-														@Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
-                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
-													</li>
-													}
-												</ul>
-											</li>
-											}
-										</ul>
-									</li>
-									<li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
-								</ul>
-							</nav>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- mobile-menu-area end -->
-	</header>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- header-bottom-area end -->
+        <!-- mobile-menu-area start -->
+        <div class="mobile-menu-area visible-xs visible-sm">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mobile-menu">
+                            <nav id="dropdown">
+                                <ul>
+                                    <li>
+                                        <a asp-action="Index" asp-controller="Home">главная страница</a>
+                                    </li>
+                                    <li><a asp-action="About" asp-controller="Home">о нас</a></li>
+                                    <li>
+                                        <a asp-action="Shop" asp-controller="Home">каталог</a>
+                                        <ul>
+                                            @foreach (var category in Model.Categories)
+                                            {
+                                                <li>
+                                                    @Html.ActionLink($"{category.Name}", "Shop", "Category",
+                                                                       new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = category.Id }, new { @class = "mega-title" })
+                                                    <ul>
+                                                        @foreach (var subcategory in category.Subcategories)
+                                                        {
+                                                            <li>
+                                                                @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                                           new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                    <li><a asp-action="Contacts" asp-controller="Home">контакты</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- mobile-menu-area end -->
+    </header>
     <!-- header end -->
     <!-- breadcrumb-area start -->
     <div class="breadcrumb-area">
@@ -221,272 +221,278 @@
     </div>
     <!-- breadcrumb-area end -->
     <!-- shop-area start -->
-		<div class="shop-area">
-			<div class="container">
-				<div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-					<!-- widget-categories start -->
-					<aside class="widget widget-categories">
-						<h3 class="sidebar-title">Категории</h3>
-						<ul class="sidebar-menu">
+    <div class="shop-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <!-- widget-categories start -->
+                    <aside class="widget widget-categories">
+                        <h3 class="sidebar-title">Категории</h3>
+                        <ul class="sidebar-menu">
                             @foreach (var category in Model.Categories)
                             {
-                            <li>
-                                @Html.ActionLink($"{category.Name}", "Shop", "Category",
-                                                               new GetPaginatedProductsWithSubcategoryQuery
-                                                               {
-                                                                   SubcategoryId = category.Id
-                                                               }, new { @class = "category-text" })
+                                <li>
+                                    @Html.ActionLink($"{category.Name}", "Shop", "Category",
+                                                                   new GetPaginatedProductsWithSubcategoryQuery
+                                                                   {
+                                                                       SubcategoryId = category.Id
+                                                                   }, new { @class = "category-text" })
 
-                                @{
-                                    var countOfCategoryProducts = 0;
+                                    @{
+                                        var countOfCategoryProducts = 0;
 
-                                    foreach (var subcategory in category.Subcategories)
-                                    {
-                                        countOfCategoryProducts += subcategory.Products.Count();
-
-                                        @if (subcategory.Subcategories is not null && subcategory.Subcategories.Count > 0)
+                                        foreach (var subcategory in category.Subcategories)
                                         {
-                                            foreach (var subSubcategory in subcategory.Subcategories)
-                                            {
-                                                countOfCategoryProducts += subSubcategory.Products.Count();
-                                            }
-                                        }
-                                    }
-                                }
-
-                                <span>(@countOfCategoryProducts)</span>
-                                <button class="category-expand">+</button>
-
-                                <ul class="category-ul" style="display: none">
-                                    @foreach (var subcategory in category.Subcategories)
-                                    {
-                                        var countOfSubcategoryProducts = subcategory.Products.Count();
-
-                                        @if (subcategory.Subcategories is not null && subcategory.Subcategories.Count > 0)
-                                        {
-                                            foreach (var subSubcategory in subcategory.Subcategories)
-                                            {
-                                                countOfSubcategoryProducts += subSubcategory.Products.Count();
-                                            }
-                                        }
-
-                                        <li>
-                                            @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
-                                               new GetPaginatedProductsWithSubcategoryQuery
-                                               {
-                                                   SubcategoryId = subcategory.Id
-                                               }, new { @class = "category-text" })
-                                            <span>(@countOfSubcategoryProducts)</span>
+                                            countOfCategoryProducts += subcategory.Products.Count();
 
                                             @if (subcategory.Subcategories is not null && subcategory.Subcategories.Count > 0)
                                             {
-                                                <button class="category-expand">+</button>
-
-                                                <ul class="category-ul" style="display: none">
-                                                    @foreach (var subSubcategory in subcategory.Subcategories)
-                                                    {
-                                                        var countOfSubSubcategoryProducts = subSubcategory.Products.Count();
-                                                        <li>
-                                                            @Html.ActionLink($"{subSubcategory.Name}", "Shop", "Category",
-                                                               new GetPaginatedProductsWithSubcategoryQuery
-                                                               {
-                                                                   SubcategoryId = subSubcategory.Id
-                                                               }, new { @class = "category-text" })
-                                                            <span>(@countOfSubSubcategoryProducts)</span>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            }
-                                        </li>
-                                    }
-                                </ul>
-                            </li>
-                            }
-							</ul>
-					</aside>
-					<!-- widget-categories end -->
-					</div>
-                    <div class="col-md-9">
-                        <div class="row">
-                            <div class="col-md-4 col-sm-5 col-xs-12">
-                                <div class="single-pro-tab-content">
-                                    <!-- Tab panes -->
-                                    <div class="tab-content">
-                                        @{var counter = 0;}
-                                        @foreach (var image in Model.Product.Images)
-                                        {
-                                            counter++;
-                                            if (counter is 1)
-                                            {
-                                                <div role="tabpanel" class="tab-pane active" id="image-@counter"><a><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></div>
-                                            }
-                                            else
-                                            {
-                                                <div role="tabpanel" class="tab-pane" id="image-@counter"><a><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></div>
+                                                foreach (var subSubcategory in subcategory.Subcategories)
+                                                {
+                                                    countOfCategoryProducts += subSubcategory.Products.Count();
+                                                }
                                             }
                                         }
-                                    </div>
-                                    <!-- Nav tabs -->
-                                    <ul class="single-product-tab" role="tablist">
-                                        @{counter = 0;}
-                                        @foreach (var image in Model.Product.Images)
+                                    }
+
+                                    <span>(@countOfCategoryProducts)</span>
+                                    <button class="category-expand">+</button>
+
+                                    <ul class="category-ul" style="display: none">
+                                        @foreach (var subcategory in category.Subcategories)
                                         {
-                                            counter++;
-                                            if (counter is 1)
+                                            var countOfSubcategoryProducts = subcategory.Products.Count();
+
+                                            @if (subcategory.Subcategories is not null && subcategory.Subcategories.Count > 0)
                                             {
-                                                <li role="presentation" class="active"><a href="#image-@counter" aria-controls="image-@counter" role="tab" data-toggle="tab"><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></li>
+                                                foreach (var subSubcategory in subcategory.Subcategories)
+                                                {
+                                                    countOfSubcategoryProducts += subSubcategory.Products.Count();
+                                                }
                                             }
-                                            else
-                                            {
-                                                <li role="presentation"><a href="#image-@counter" aria-controls="image-@counter" role="tab" data-toggle="tab"><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></li>
-                                            }
+
+                                            <li>
+                                                @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                   new GetPaginatedProductsWithSubcategoryQuery
+                                                   {
+                                                       SubcategoryId = subcategory.Id
+                                                   }, new { @class = "category-text" })
+                                                <span>(@countOfSubcategoryProducts)</span>
+
+                                                @if (subcategory.Subcategories is not null && subcategory.Subcategories.Count > 0)
+                                                {
+                                                    <button class="category-expand">+</button>
+
+                                                    <ul class="category-ul" style="display: none">
+                                                        @foreach (var subSubcategory in subcategory.Subcategories)
+                                                        {
+                                                            var countOfSubSubcategoryProducts = subSubcategory.Products.Count();
+                                                            <li>
+                                                                @Html.ActionLink($"{subSubcategory.Name}", "Shop", "Category",
+                                                                   new GetPaginatedProductsWithSubcategoryQuery
+                                                                   {
+                                                                       SubcategoryId = subSubcategory.Id
+                                                                   }, new { @class = "category-text" })
+                                                                <span>(@countOfSubSubcategoryProducts)</span>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </li>
                                         }
                                     </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-7 col-sm-7 col-xs-12 shop-list shop-details">
-                                <div class="product-content">
-                                    <h3><a asp-action="Details" asp-controller="Product" asp-route-id="@Model.Product.Id">@Model.Product.Name</a></h3>
-                                    <div class="price">
-                                        <span>BYN @Model.Product.Price</span>
-                                    </div>
-                                    <p>@Model.Product.Description</p>
-                                    <div class="product-action">
-                                        <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
-                                            <div class="cart-plus">
-                                                <input hidden name="id" value="@Model.Product.Id" />
-                                                <div class="cart-plus-minus">
-                                                    <input name="amount" type="number" value="1" min="1">
-                                                    <div class="dec qtybutton">-</div>
-                                                    <div class="inc qtybutton">+</div>
-                                                </div>
-                                            </div>
-                                            <div class="button-cart">
-                                                <button type="button" onclick="jQueryAjaxPostForm(this.form, '#shopping-cart')"><i class="fa fa-shopping-cart"></i> Добавить в корзину</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
-                                <div class="product-tabs">
-                                    <div>
-                                        <!-- Nav tabs -->
-                                        <ul class="pro-details-tab" role="tablist">
-                                            <li role="presentation" class="active"><a href="#tab-desc" aria-controls="tab-desc" role="tab" data-toggle="tab">Основная информация</a></li>
-                                            <li role="presentation"><a href="#page-info" aria-controls="page-info" role="tab" data-toggle="tab">Описание</a></li>
-                                        </ul>
-                                        <!-- Tab panes -->
-                                        <div class="tab-content">
-                                            <div role="tabpanel" class="tab-pane active" id="tab-desc">
-                                                <div class="product-tab-desc">
-                                                    <p>Основная инфомрация о товаре</p>
-                                                    <ul id="product-desc-t">
-                                                        @if (Model.Product.Supplier is not null)
-                                                        {
-                                                            <li>Поставщик: @Model.Product.Supplier.CompanyName</li>
-                                                        }
-
-                                                        @if (Model.Product.Category is not null)
-                                                        {
-                                                            <li>Категория товара: @Html.ActionLink($"{@Model.Product.Category.Name}", "Shop", "Category", new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = Model.Product.Category.Id })</li>
-                                                        }
-
-                                                        <li>Вес: @Model.Product.Weight</li>
-                                                        <li>Количество на единицу товара: @Model.Product.QuantityPerUnit</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div role="tabpanel" class="tab-pane" id="page-info">
-                                                <div class="product-tab-desc">
-                                                    <p>@Model.Product.Description</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @if (Model.RelatedProducts is not null)
-                        {
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="section-title">
-                                        <h2>Товары от того же поставщика</h2>
-                                        <div class="title-icon">
-                                            <span><i class="fa fa-angle-left"></i> <i class="fa fa-angle-right"></i></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="related-curosel">
-                                    @{ var counterRelated = 0; }
-                                    @foreach (var product in Model.RelatedProducts)
+                                </li>
+                            }
+                        </ul>
+                    </aside>
+                    <!-- widget-categories end -->
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-5 col-xs-12">
+                            <div class="single-pro-tab-content">
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    @{var counter = 0;}
+                                    @foreach (var image in Model.Product.Images)
                                     {
-                                        counterRelated++;
-                                        <!-- single-product start -->
-                                        <div class="col-md-12">
-                                            <div class="single-product">
-                                                <div class="product-img">
-                                                    <a asp-action="Details" asp-controller="Product" asp-route-id="@product.Id">
-                                                        <img src="@ConvertPicture(product.Images.First().Picture)" alt="@product.Name" />
-                                                        <img class="secondary-img" src="@ConvertPicture(product.Images.Last().Picture)" alt="@product.Name" />
-                                                    </a>
-                                                    <div class="product-action" style="max-width:150px">
-                                                        <div class="button-top">
-                                                            <a href="#" data-toggle="modal" data-target="#productModal"
-                                                               data-name="@product.Name" data-price="@product.Price" data-description="@product.Description"
-                                                               data-image="@ConvertPicture(product.Images.First().Picture)" data-id="@product.Id">
-                                                                <i class="fa fa-search"></i>
-                                                            </a>
-                                                        </div>
-                                                        <div class="button-cart">
-                                                            @if (SignInManager.IsSignedIn(User))
-                                                            {
-                                                                @if (Model.ShoppingCart is not null && Model.ShoppingCart.ProductsDictionary.Any(p => p.Product.Name.Equals(product.Name)))
-                                                                {
-                                                                    <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = product.Id }, Context.Request.Scheme)', '#shopping-cart')">
-                                                                        <i class="fa fa-shopping-cart"></i> В корзине
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    var idRelated = $"cart-button-{counterRelated}";
-                                                                    <button id="@idRelated" onclick="addToCartAndChangeText('#@idRelated', '@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = product.Id }, Context.Request.Scheme)', '#shopping-cart')">
-                                                                        <i class="fa fa-shopping-cart"></i> В корзину
-                                                                    </button>
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                <button href="#" data-toggle="modal" data-target="#loginModal">
-                                                                    <i class="fa fa-shopping-cart"></i> В корзину
-                                                                </button>
-                                                            }
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content">
-                                                    <h3><a asp-action="Details" asp-controller="Product" asp-route-id="@product.Id">@product.Name</a></h3>
-                                                    <div class="price">
-                                                        <span>BYN @product.Price</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- single-product end -->
+                                        counter++;
+                                        if (counter is 1)
+                                        {
+                                            <div role="tabpanel" class="tab-pane active" id="image-@counter"><a><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></div>
+                                        }
+                                        else
+                                        {
+                                            <div role="tabpanel" class="tab-pane" id="image-@counter"><a><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></div>
+                                        }
                                     }
                                 </div>
+                                <!-- Nav tabs -->
+                                <ul class="single-product-tab" role="tablist">
+                                    @{counter = 0;}
+                                    @foreach (var image in Model.Product.Images)
+                                    {
+                                        counter++;
+                                        if (counter is 1)
+                                        {
+                                            <li role="presentation" class="active"><a href="#image-@counter" aria-controls="image-@counter" role="tab" data-toggle="tab"><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></li>
+                                        }
+                                        else
+                                        {
+                                            <li role="presentation"><a href="#image-@counter" aria-controls="image-@counter" role="tab" data-toggle="tab"><img src="@ConvertPicture(image.Picture)" alt="@Model.Product.Name" /></a></li>
+                                        }
+                                    }
+                                </ul>
                             </div>
-                        }
+                        </div>
+                        <div class="col-md-7 col-sm-7 col-xs-12 shop-list shop-details">
+                            <div class="product-content">
+                                <h3><a asp-action="Details" asp-controller="Product" asp-route-id="@Model.Product.Id">@Model.Product.Name</a></h3>
+                                <div class="price">
+                                    <span>BYN @Model.Product.Price</span>
+                                </div>
+                                <p>@Model.Product.Description</p>
+                                <div class="product-action">
+                                    <div class="button-cart">
+                                        @if (!User.Identity.IsAuthenticated)
+                                        {
+                                            <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
+                                                <div class="cart-plus">
+                                                    <input hidden name="id" value="@Model.Product.Id" />
+                                                    <div class="cart-plus-minus">
+                                                        <input name="amount" type="number" value="1" min="1">
+                                                        <div class="dec qtybutton">-</div>
+                                                        <div class="inc qtybutton">+</div>
+                                                    </div>
+                                                </div>
+                                                <button href="#" data-toggle="modal" data-target="#loginModal" type="button"><i class="fa fa-shopping-cart"></i> Добавить в корзину</button>
+                                            </form>
+                                        }
+                                        else if (!User.IsInRole("admin"))
+                                        {
+                                            @if (Model.ShoppingCart is not null && Model.ShoppingCart.ProductsDictionary.Any(p => p.Product.Name.Equals(Model.Product.Name)))
+                                            {
+                                                <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
+                                                    <div class="cart-plus">
+                                                        <input hidden name="id" value="@Model.Product.Id" />
+                                                        <div class="cart-plus-minus">
+                                                            <input name="amount" type="number" value="1" min="1">
+                                                            <div class="dec qtybutton">-</div>
+                                                            <div class="inc qtybutton">+</div>
+                                                        </div>
+                                                    </div>
+                                                    <button id="modal-add-to-cart-button" type="button" onclick="addToCartAndChangeTextFormModal('#modal-add-to-cart-button', this.form, '#shopping-cart')"><i class="fa fa-shopping-cart"></i> Товар в корзине</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
+                                                    <div class="cart-plus">
+                                                        <input hidden name="id" value="@Model.Product.Id" />
+                                                        <div class="cart-plus-minus">
+                                                            <input name="amount" type="number" value="1" min="1">
+                                                            <div class="dec qtybutton">-</div>
+                                                            <div class="inc qtybutton">+</div>
+                                                        </div>
+                                                    </div>
+                                                    <button id="modal-add-to-cart-button" type="button" onclick="addToCartAndChangeTextFormModal('#modal-add-to-cart-button', this.form, '#shopping-cart')"><i class="fa fa-shopping-cart"></i> Добавить в корзину</button>
+                                                </form>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-				</div>
-			</div>
-		</div>
-		<!-- shop-area end -->
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="product-tabs">
+                                <div>
+                                    <!-- Nav tabs -->
+                                    <ul class="pro-details-tab" role="tablist">
+                                        <li role="presentation" class="active"><a href="#tab-desc" aria-controls="tab-desc" role="tab" data-toggle="tab">Основная информация</a></li>
+                                        <li role="presentation"><a href="#page-info" aria-controls="page-info" role="tab" data-toggle="tab">Описание</a></li>
+                                    </ul>
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane active" id="tab-desc">
+                                            <div class="product-tab-desc">
+                                                <p>Основная инфомрация о товаре</p>
+                                                <ul id="product-desc-t">
+                                                    @if (Model.Product.Supplier is not null)
+                                                    {
+                                                        <li>Поставщик: @Model.Product.Supplier.CompanyName</li>
+                                                    }
+
+                                                    @if (Model.Product.Category is not null)
+                                                    {
+                                                        <li>Категория товара: @Html.ActionLink($"{@Model.Product.Category.Name}", "Shop", "Category", new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = Model.Product.Category.Id })</li>
+                                                    }
+
+                                                    <li>Вес: @Model.Product.Weight</li>
+                                                    <li>Количество на единицу товара: @Model.Product.QuantityPerUnit</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane" id="page-info">
+                                            <div class="product-tab-desc">
+                                                <p>@Model.Product.Description</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.RelatedProducts is not null)
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="section-title">
+                                    <h2>Товары от того же поставщика</h2>
+                                    <div class="title-icon">
+                                        <span><i class="fa fa-angle-left"></i> <i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="related-curosel">
+                                @foreach (var product in Model.RelatedProducts.Skip(1))
+                                {
+                                    <!-- single-product start -->
+                                    <div class="col-md-12">
+                                        <div class="single-product">
+                                            <div class="product-img">
+                                                <a asp-action="Details" asp-controller="Product" asp-route-id="@product.Id">
+                                                    <img src="@ConvertPicture(product.Images.First().Picture)" alt="@product.Name" />
+                                                    <img class="secondary-img" src="@ConvertPicture(product.Images.Last().Picture)" alt="@product.Name" />
+                                                </a>
+                                                <div class="product-action" style="max-width:150px" id="product-action-@product.Id">
+                                                    @await Html.PartialAsync("_ProductActionsPartial", 
+                                                   new WebUI.Models.Product.ModelForProductActionsPartial 
+                                                   { 
+                                                       ShoppingCart = Model.ShoppingCart, 
+                                                       Product = product 
+                                                   })
+                                                </div>
+                                            </div>
+                                            <div class="product-content">
+                                                <h3><a asp-action="Details" asp-controller="Product" asp-route-id="@product.Id">@product.Name</a></h3>
+                                                <div class="price">
+                                                    <span>BYN @product.Price</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- single-product end -->
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- shop-area end -->
     <!-- footer start -->
     <footer>
         <div class="footer-top">
@@ -538,10 +544,10 @@
                         <div class="footer-widget">
                             <h3>Мой аккаунт</h3>
                             <ul class="footer-menu">
-                                @if (User.Identity.IsAuthenticated) 
-                                { 
+                                @if (User.Identity.IsAuthenticated)
+                                {
                                     <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                 }
                                 else
                                 {
@@ -628,27 +634,24 @@
                                     <p class="price"><span class="special-price"><span class="amount" id="modal-product-price"></span></span></p>
                                 </div>
                                 <div class="quick-add-to-cart">
-                                    <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
-                                        <input hidden name="id" id="modal-product-id" />
+                                    @if (!User.Identity.IsAuthenticated)
+                                    {
                                         <div class="numbers-row">
-                                            <input name="amount" type="number" id="french-hens" value="1">
+                                            <input name="amount" type="number" value="1">
                                         </div>
-                                        @if (SignInManager.IsSignedIn(User))
-                                        {
-                                            @if (Model.ShoppingCart is not null && Model.ShoppingCart.ProductsDictionary.Any(p => p.Product.Name.Equals(Model.Product.Name)))
-                                            {
-                                                <button class="single_add_to_cart_button" id="modal-add-to-cart-button" type="button" onclick="addToCartAndChangeTextFormModal('#modal-add-to-cart-button', this.form, '#shopping-cart')">Товар в корзине</button>
-                                            }
-                                            else
-                                            {
-                                                <button class="single_add_to_cart_button" id="modal-add-to-cart-button" type="button" onclick="addToCartAndChangeTextFormModal('#modal-add-to-cart-button', this.form, '#shopping-cart')">Добавить в корзину</button>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <button href="#" data-toggle="modal" data-target="#loginModal" class="single_add_to_cart_button" type="button">Добавить в корзину</button>
-                                        }
-                                    </form>
+                                        <button href="#" data-toggle="modal" data-target="#loginModal" class="single_add_to_cart_button" type="button">Добавить в корзину</button>
+                                    }
+                                    else if (!User.IsInRole("admin"))
+                                    {
+                                        <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
+                                            <input hidden name="id" id="modal-product-id" />
+                                            <div class="numbers-row">
+                                                <input name="amount" type="number" id="french-hens" value="1">
+                                            </div>
+                                            <button id="product-modal-form-button" class="single_add_to_cart_button" type="button" onclick="addToCartAndChangeTextFormModal('#product-modal-form-button', this.form, '#shopping-cart',
+                                                '/api/ProductGetProductActions', '#product-action-', @Model.ShoppingCart.Id, $('#modal-product-id').val())">Добавить в корзину</button>
+                                        </form>
+                                    }
                                 </div>
                                 <div class="quick-desc" id="modal-product-description">
 
@@ -689,21 +692,49 @@
             updateProductsHeight();
         })
 
-        addToCartAndChangeText = (elementId, url, shoppingCartId) => {
-            jQueryAjaxGet(url, shoppingCartId);
-            $(elementId).html('<i class="fa fa-shopping-cart"></i> В корзине')
+        $('#productModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var name = button.data('name')
+            var price = button.data('price')
+            var description = button.data('description')
+            var image = button.data('image')
+            var id = button.data('id')
+            var productInCart = button.data('productincart')
+
+            var modal = $(this)
+            modal.find('#modal-product-name').text(name)
+            modal.find('#modal-product-price').text('BYN ' + price)
+            modal.find('#modal-product-description').text(description)
+            modal.find('#modal-product-image').attr('src', image)
+            modal.find('#modal-product-image').attr('alt', name)
+            modal.find('#modal-product-id').val(id)
+            
+            if (productInCart == 'True') {
+                modal.find('#product-modal-form-button').text('В корзине')
+            } else {
+                modal.find('#product-modal-form-button').text('В корзину')
+            }
+		})
+
+        addToCartAndChangeText = (url, shoppingCartId, productActionUrl, productActionId) => {
+            jQueryAjaxGetAsyncOff(url, shoppingCartId);
+            console.log(productActionUrl);
+            jQueryAjaxGet(productActionUrl, productActionId);
         }
 
-        addToCartAndChangeTextFormModal = (elementId, form, shoppingCartId) => {
-            jQueryAjaxPostForm(form, shoppingCartId);
-            $(elementId).html('Товар в корзине')
+        addToCartAndChangeTextFormModal = (elementId, form, shoppingCartElementId, productActionUrl, productActionId, shoppingCartId, productId) => {
+            productActionUrl = productActionUrl + '/' + shoppingCartId + '/' + productId;
+
+            jQueryAjaxPostFormAsyncOff(form, shoppingCartElementId);
+            $(elementId).html('В корзине');
+            jQueryAjaxGet(productActionUrl, productActionId + productId);
         }
 
         $('.category-expand').click(function () {
-			var ul = $(this).next('ul');
-			var display = ul.css('display');
+            var ul = $(this).next('ul');
+            var display = ul.css('display');
 
-			if (display == 'block') {
+            if (display == 'block') {
                 $(this).text('+');
                 ul.css('animation', 'fadeOut 300ms ease-in-out forwards')
                 setTimeout(function () { ul.css('display', 'none'); ul.parent().css('border-bottom', '1px groove #999'); }, 300);
@@ -714,23 +745,6 @@
                 ul.css('animation', 'fadeIn 300ms ease-in-out forwards')
                 ul.css('display', 'block');
             }
-        })
-
-        $('#productModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var name = button.data('name')
-            var price = button.data('price')
-            var description = button.data('description')
-            var image = button.data('image')
-            var id = button.data('id')
-
-            var modal = $(this)
-            modal.find('#modal-product-name').text(name)
-            modal.find('#modal-product-price').text('BYN ' + price)
-            modal.find('#modal-product-description').text(description)
-            modal.find('#modal-product-image').attr('src', image)
-            modal.find('#modal-product-image').attr('alt', name)
-            modal.find('#modal-product-id').val(id)
         })
 
         function updateProductsHeight() {
@@ -750,5 +764,21 @@
     </script>
 
     @await Html.PartialAsync("_LoginModalPartial", new Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery { ReturnUrl = Url.Action() })
+
+    <script>
+        $('#loginModal').on('show.bs.modal', function (event) {
+            $('.modal.fade.in').each(function () {
+                $(this).modal().hide();
+            })
+        })
+
+        $('#loginModal').on('hide.bs.modal', function (event) {
+            $('.modal.fade.in').each(function () {
+                if ($(this).attr('id') != 'loginModal') {
+                    $(this).modal().show();
+                }
+            })
+        })
+    </script>
 </body>
 </html>

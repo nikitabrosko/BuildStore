@@ -1,6 +1,5 @@
 ﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 @model WebUI.Models.ShoppingCart.ModelForCheckout
-@inject Microsoft.AspNetCore.Identity.SignInManager<Domain.IdentityEntities.User> SignInManager
 
 <!doctype html>
 <html class="no-js" lang="">
@@ -269,12 +268,15 @@
                         <div class="footer-widget">
                             <h3>Мой аккаунт</h3>
                             <ul class="footer-menu">
-                                <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
-                                <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
-                                @if (User.Identity.IsAuthenticated) 
-                                { 
+                                @if (User.Identity.IsAuthenticated)
+                                {
                                     <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
                                     <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                }
+                                else
+                                {
+                                    <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
+                                    <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
                                 }
                             </ul>
                         </div>

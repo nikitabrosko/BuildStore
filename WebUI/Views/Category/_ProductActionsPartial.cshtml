@@ -1,0 +1,62 @@
+﻿@model WebUI.Models.Category.ModelForProductActionsPartial
+
+@{ 
+    string ConvertPicture(byte[] picture)
+    {
+        var base64 = Convert.ToBase64String(picture);
+        return $"data:image/jpg;base64,{base64}";
+    }
+
+    bool CheckProductForExistsInCart(Domain.Entities.Product product)
+    {
+        var isProductInCart = Model.ShoppingCart.ProductsDictionary
+            .Select(p => p.Product)
+            .Contains(product);
+
+        return isProductInCart;
+    }
+}
+
+<div class="button-top">
+    @if (Model.ShoppingCart is not null)
+    {
+        <a href="#" data-toggle="modal" data-target="#productModal"
+           data-name="@Model.Product.Name" data-price="@Model.Product.Price" data-description="@Model.Product.Description"
+           data-image="@ConvertPicture(Model.Product.Images.First().Picture)" data-id="@Model.Product.Id" data-productincart="@CheckProductForExistsInCart(Model.Product)">
+            <i class="fa fa-search"></i>
+        </a>
+    }
+    else
+    {
+        <a href="#" data-toggle="modal" data-target="#productModal"
+           data-name="@Model.Product.Name" data-price="@Model.Product.Price" data-description="@Model.Product.Description"
+           data-image="@ConvertPicture(Model.Product.Images.First().Picture)" data-id="@Model.Product.Id">
+            <i class="fa fa-search"></i>
+        </a>
+    }
+</div>
+<div class="button-cart">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <button href="#" data-toggle="modal" data-target="#loginModal">
+            <i class="fa fa-shopping-cart"></i> Добавить в корзину
+        </button>
+    }
+    else if (!User.IsInRole("admin"))
+    {
+        @if (Model.ShoppingCart is not null && Model.ShoppingCart.ProductsDictionary.Any(p => p.Product.Name.Equals(Model.Product.Name)))
+        {
+            <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = Model.Product.Id }, Context.Request.Scheme)', '#shopping-cart')">
+                <i class="fa fa-shopping-cart"></i> Товар в корзине
+            </button>
+        }
+        else
+        {
+            <button onclick="addToCartAndChangeText('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = Model.Product.Id }, Context.Request.Scheme)', '#shopping-cart',
+                                                    '@Url.Action("GetProductActions", "Category", new { shoppingCartId = Model.ShoppingCart.Id, productId = Model.Product.Id } )',
+                                                    '#product-action-first-@Model.Product.Id', '#product-action-second-@Model.Product.Id')">
+                <i class="fa fa-shopping-cart"></i> Добавить в корзину
+            </button>
+        }
+    }
+</div>

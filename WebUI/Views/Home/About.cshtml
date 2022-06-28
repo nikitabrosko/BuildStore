@@ -1,6 +1,9 @@
 ﻿@using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory
 @model WebUI.Models.Home.ModelForAbout
-@inject Microsoft.AspNetCore.Identity.SignInManager<Domain.IdentityEntities.User> SignInManager
+
+@{ 
+    var returnUrl = Url.Action();
+}
 
 <!doctype html>
 <html class="no-js" lang="">
@@ -98,7 +101,7 @@
                                         <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
                                         <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
                                         <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
                              }
@@ -111,7 +114,7 @@
                                     <a style="cursor:pointer"><i class="fa fa-cog"></i></a>
                                     <ul>
                                         <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
                             }
@@ -288,10 +291,10 @@
                         <div class="team-img">
                             <img src="~/img/team/Korneplod1.jpg" alt="" style="width: 430px; height: 250px;" />
                             <div class="team-icon">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-linkedin"></i></a>
-                                <a href="#"><i class="fa fa-google-plus"></i></a>
+                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
                             </div>
                         </div>
                         <div class="team-info">
@@ -305,10 +308,10 @@
                         <div class="team-img">
                             <img src="~/img/team/Korneplod2.jpg" alt="" style="width: 430px; height: 250px;" />
                             <div class="team-icon">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-linkedin"></i></a>
-                                <a href="#"><i class="fa fa-google-plus"></i></a>
+                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
                             </div>
                         </div>
                         <div class="team-info">
@@ -322,10 +325,10 @@
                         <div class="team-img">
                             <img src="~/img/team/Korneplod3.jpg" alt="" style="width: 430px; height: 250px;" />
                             <div class="team-icon">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-linkedin"></i></a>
-                                <a href="#"><i class="fa fa-google-plus"></i></a>
+                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
                             </div>
                         </div>
                         <div class="team-info">
@@ -339,10 +342,10 @@
                         <div class="team-img">
                             <img src="~/img/team/Korneplod4.jpg" alt="" style="width: 430px; height: 250px;" />
                             <div class="team-icon">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-linkedin"></i></a>
-                                <a href="#"><i class="fa fa-google-plus"></i></a>
+                                <a href="https://github.com/nikitabrosko"><i class="fa fa-github"></i></a>
+                                <a href="https://twitter.com/NikitaBrosko"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.linkedin.com/in/nikita-brosko-458263200/"><i class="fa fa-linkedin"></i></a>
+                                <a href="https://vk.com/nikitabrosko"><i class="fa fa-vk"></i></a>
                             </div>
                         </div>
                         <div class="team-info">
@@ -406,12 +409,15 @@
                         <div class="footer-widget">
                             <h3>Мой аккаунт</h3>
                             <ul class="footer-menu">
-                                <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
-                                <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
                                 @if (User.Identity.IsAuthenticated) 
                                 { 
                                     <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
+                                }
+                                else
+                                {
+                                    <li><a asp-action="Index" asp-controller="Account">Регистрация</a></li>
+                                    <li><a asp-action="Index" asp-controller="Account">Авторизация</a></li>
                                 }
                             </ul>
                         </div>

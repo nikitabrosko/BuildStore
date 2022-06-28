@@ -1,13 +1,14 @@
-@using Microsoft.AspNetCore.Identity
 @using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory;
 @model WebUI.Models.Home.ModelForIndex
-@inject SignInManager<Domain.IdentityEntities.User> SignInManager
 
-@{ string ConvertPicture(byte[] picture)
-   {
+@{ 
+    string ConvertPicture(byte[] picture)
+    {
         var base64 = Convert.ToBase64String(picture);
         return $"data:image/jpg;base64,{base64}";
-   } 
+    }
+
+    var returnUrl = Url.Action();
 }
 
 <!doctype html>
@@ -110,7 +111,7 @@
                                     </ul>
                                 </div>
                              }
-                            else if (SignInManager.IsSignedIn(User))
+                            else if (User.Identity.IsAuthenticated)
                             {
                                 <div id="shopping-cart">
                                             @await Html.PartialAsync("_ShoppingCartPartial", Model.ShoppingCart)
@@ -180,10 +181,10 @@
 												<ul>
 													@foreach (var subcategory in category.Subcategories)
 													{
-													<li>
-														@Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
-                                                                   new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
-													</li>
+													    <li>
+														    @Html.ActionLink($"{subcategory.Name}", "Shop", "Category",
+                                                                       new GetPaginatedProductsWithSubcategoryQuery { SubcategoryId = subcategory.Id })
+													    </li>
 													}
 												</ul>
 											</li>
@@ -307,19 +308,13 @@
                                     <div class="price">
                                         <span>BYN @product.Price</span>
                                     </div>
-                                    <div class="product-action">
-                                        <div class="button-top">
-                                            <a href="#" data-toggle="modal" data-target="#productModal"
-                                               data-name="@product.Name" data-price="@product.Price" data-description="@product.Description" 
-                                               data-image="@ConvertPicture(product.Images.First().Picture)"  data-id="@product.Id">
-                                                <i class="fa fa-search"></i>
-                                            </a>
-                                        </div>
-                                        <div class="button-cart">
-                                            <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = product.Id }, Context.Request.Scheme)', '#shopping-cart')">
-                                                <i class="fa fa-shopping-cart"></i> Добавить в корзину
-                                            </button>
-                                        </div>
+                                    <div class="product-action" id="product-action-second-@product.Id">
+                                        @await Html.PartialAsync("_ProductActionsPartial",
+                                            new WebUI.Models.Home.ModelForProductActionsPartial
+                                            {
+                                                ShoppingCart = Model.ShoppingCart,
+                                                Product = product
+                                            })
                                     </div>
                                 </div>
                             </div>
@@ -357,18 +352,13 @@
                                         <img class="secondary-img" src="@ConvertPicture(productsList[i].Images.Last().Picture)" alt="@productsList[i].Name" width="480" height="606" />
                                     </a>
                                     <span class="tag-line">new</span>
-                                    <div class="product-action">
-                                        <div class="button-top">
-                                            <a href="#" data-toggle="modal" data-target="#productModal" data-name="@productsList[i].Name" data-price="@productsList[i].Price"
-                                               data-description="@productsList[i].Description" data-image="@ConvertPicture(productsList[i].Images.First().Picture)" data-id="@productsList[i].Id">
-                                                <i class="fa fa-search"></i>
-                                            </a>
-                                        </div>
-                                        <div class="button-cart">
-                                            <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = productsList[i].Id }, Context.Request.Scheme)', '#shopping-cart')">
-                                                <i class="fa fa-shopping-cart"></i> Добавить в корзину
-                                            </button>
-                                        </div>
+                                    <div class="product-action" id="product-action-second-@productsList[i].Id">
+                                        @await Html.PartialAsync("_ProductActionsPartial",
+                                            new WebUI.Models.Home.ModelForProductActionsPartial
+                                            {
+                                                ShoppingCart = Model.ShoppingCart,
+                                                Product = productsList[i]
+                                            })
                                     </div>
                                 </div>
                                 <div class="product-content">
@@ -387,18 +377,13 @@
                                         <img class="secondary-img" src="@ConvertPicture(productsList[i + 1].Images.Last().Picture)" alt="@productsList[i + 1].Name" width="480" height="606" />
                                     </a>
                                     <span class="tag-line">new</span>
-                                    <div class="product-action">
-                                        <div class="button-top">
-                                            <a href="#" data-toggle="modal" data-target="#productModal" data-name="@productsList[i + 1].Name" data-price="@productsList[i + 1].Price"
-                                               data-description="@productsList[i + 1].Description" data-image="@ConvertPicture(productsList[i + 1].Images.First().Picture)" data-id="@productsList[i+1].Id">
-                                                <i class="fa fa-search"></i>
-                                            </a>
-                                        </div>
-                                        <div class="button-cart">
-                                            <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = productsList[i+1].Id }, Context.Request.Scheme)', '#shopping-cart')">
-                                                <i class="fa fa-shopping-cart"></i> Добавить в корзину
-                                            </button>
-                                        </div>
+                                    <div class="product-action" id="product-action-second-@productsList[i + 1].Id">
+                                        @await Html.PartialAsync("_ProductActionsPartial",
+                                            new WebUI.Models.Home.ModelForProductActionsPartial
+                                            {
+                                                ShoppingCart = Model.ShoppingCart,
+                                                Product = productsList[i + 1]
+                                            })
                                     </div>
                                 </div>
                                 <div class="product-content">
@@ -557,13 +542,24 @@
                                     <p class="price"><span class="special-price"><span class="amount" id="modal-product-price"></span></span></p>
                                 </div>
                                 <div class="quick-add-to-cart">
-                                    <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
-                                        <input hidden name="id" id="modal-product-id" />
+                                    @if (!User.Identity.IsAuthenticated)
+                                    {
                                         <div class="numbers-row">
-                                            <input name="amount" type="number" id="french-hens" value="1">
+                                            <input name="amount" type="number" value="1">
                                         </div>
-                                        <button class="single_add_to_cart_button" type="button" onclick="jQueryAjaxPostForm(this.form, '#shopping-cart')">Добавить в корзину</button>
-                                    </form>
+                                        <button href="#" data-toggle="modal" data-target="#loginModal" class="single_add_to_cart_button" type="button">Добавить в корзину</button>
+                                    }
+                                    else if (!User.IsInRole("admin"))
+                                    {
+                                        <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
+                                            <input hidden name="id" id="modal-product-id" />
+                                            <div class="numbers-row">
+                                                <input name="amount" type="number" id="french-hens" value="1">
+                                            </div>
+                                            <button id="product-modal-form-button" class="single_add_to_cart_button" type="button" onclick="addToCartAndChangeTextFormModal('#product-modal-form-button', this.form, '#shopping-cart',
+                                                '', '#product-action-first-', '#product-action-second-', @Model.ShoppingCart.Id, $('#modal-product-id').val())">Добавить в корзину</button>
+                                        </form>
+                                    }
                                 </div>
                                 <div class="quick-desc" id="modal-product-description">
 
@@ -576,7 +572,7 @@
         </div>
         <!-- END Modal -->
     </div>
-    <!-- END QUICKVIEW PRODUCT -->
+	<!-- END QUICKVIEW PRODUCT -->
     <!-- all js here -->
     <!-- jquery latest version -->
     <script src="~/js/vendor/jquery-1.12.0.min.js"></script>
@@ -605,6 +601,7 @@
             var description = button.data('description')
             var image = button.data('image')
             var id = button.data('id')
+            var productInCart = button.data('productincart')
 
             var modal = $(this)
             modal.find('#modal-product-name').text(name)
@@ -613,6 +610,46 @@
             modal.find('#modal-product-image').attr('src', image)
             modal.find('#modal-product-image').attr('alt', name)
             modal.find('#modal-product-id').val(id)
+            
+            if (productInCart == 'True') {
+                modal.find('#product-modal-form-button').text('Товар в корзине')
+            } else {
+                modal.find('#product-modal-form-button').text('Добавить в корзину')
+            }
+		})
+
+        addToCartAndChangeText = (url, shoppingCartId, productActionUrl, productActionFirstId, productActionSecondId) => {
+            jQueryAjaxGetAsyncOff(url, shoppingCartId);
+            jQueryAjaxGet(productActionUrl, productActionFirstId);
+            jQueryAjaxGet(productActionUrl, productActionSecondId);
+        }
+
+        addToCartAndChangeTextFormModal = (elementId, form, shoppingCartElementId, productActionUrl, productActionFirstId, productActionSecondId, shoppingCartId, productId) => {
+            productActionUrl = productActionUrl + '/' + shoppingCartId + '/' + productId;
+
+            jQueryAjaxPostFormAsyncOff(form, shoppingCartElementId);
+            $(elementId).text('Товар в корзине');
+            jQueryAjaxGet(productActionUrl, productActionFirstId + productId);
+            jQueryAjaxGet(productActionUrl, productActionSecondId + productId);
+        }
+        
+    </script>
+
+    @await Html.PartialAsync("_LoginModalPartial", new Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery { ReturnUrl = returnUrl })
+
+    <script>
+        $('#loginModal').on('show.bs.modal', function (event) {
+            $('.modal.fade.in').each(function () {
+                $(this).modal().hide();
+            })
+        })
+
+        $('#loginModal').on('hide.bs.modal', function (event) {
+            $('.modal.fade.in').each(function () {
+                if ($(this).attr('id') != 'loginModal') {
+                    $(this).modal().show();
+                }
+            })
         })
     </script>
 </body>

@@ -2,14 +2,36 @@
 @using Application.UseCases.Product.Queries.GetProductsWithPagination
 @using Application.UseCases.Product.Queries.SearchProductsWithPagination
 @using Application.UseCases.Product.Queries.GetPaginatedProductsWithSubcategory
-@model WebUI.Models.Home.ModelForShop 
-@inject Microsoft.AspNetCore.Identity.SignInManager<Domain.IdentityEntities.User> SignInManager
+@model WebUI.Models.Home.ModelForShop
 
-@{ string ConvertPicture(byte[] picture)
-   {
+@{ 
+    string ConvertPicture(byte[] picture)
+    {
         var base64 = Convert.ToBase64String(picture);
         return $"data:image/jpg;base64,{base64}";
-   } 
+    }
+
+    var returnUrl = string.Empty;
+
+    if (Model.SearchPattern is null)
+    {
+        returnUrl = Url.Action("Shop", "Home",
+            new GetProductsWithPaginationQuery
+            {
+                PageSize = Model.ProductsPaginated.PageSize,
+                PageNumber = Model.ProductsPaginated.PageNumber
+            });
+    }
+    else
+    {
+        returnUrl = Url.Action("ShopSearch", "Home",
+            new SearchProductsWithPaginationQuery
+            {
+                PageSize = Model.ProductsPaginated.PageSize,
+                PageNumber = Model.ProductsPaginated.PageNumber,
+                Pattern = Model.SearchPattern
+            });
+    }
 }
 
 <!doctype html>
@@ -108,7 +130,7 @@
                                         <li><a asp-action="Index" asp-controller="Order">Заказы</a></li>
                                         <li><a asp-action="Index" asp-controller="Role">Роли</a></li>
                                         <li><a asp-action="Index" asp-controller="User">Пользователи</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
                              }
@@ -121,7 +143,7 @@
                                     <a style="cursor:pointer"><i class="fa fa-cog"></i></a>
                                     <ul>
                                         <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                        <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                        <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                     </ul>
                                 </div>
                             }
@@ -323,7 +345,7 @@
 					</aside>
 					<!-- widget-categories end -->
 					<!-- shop-filter start -->
-					<aside class="widget shop-filter">
+					@*<aside class="widget shop-filter">
 						<h3 class="sidebar-title">Фильтр по стоимости</h3>
 						<div class="info_widget">
 							<div class="price_filter">
@@ -334,7 +356,7 @@
 								</div>
 							</div>
 						</div>
-					</aside>
+					</aside>*@
 					
 					</div>
 					<!-- shop-filter end -->
@@ -370,7 +392,8 @@
                             <div role="tabpanel" class="tab-pane active" id="home">
                                 <div class="row">
                                     @foreach (var product in Model.ProductsPaginated.Items)
-                                    {<!-- single-product start -->
+                                    {
+                                        <!-- single-product start -->
                                         <div class="col-md-4 col-sm-4">
                                             <div class="single-product">
                                                 <div class="product-img">
@@ -378,29 +401,24 @@
                                                         <img src="@ConvertPicture(@product.Images.First().Picture)" alt="@product.Name" />
                                                         <img class="secondary-img" src="@ConvertPicture(@product.Images.Last().Picture)" alt="@product.Name" />
                                                     </a>
-                                                    <div class="product-action">
-                                                        <div class="button-top">
-                                                            <a href="#" data-toggle="modal" data-target="#productModal"
-                                                               data-name="@product.Name" data-price="@product.Price" data-description="@product.Description"
-                                                               data-image="@ConvertPicture(product.Images.First().Picture)" data-id="@product.Id">
-                                                                <i class="fa fa-search"></i>
-                                                            </a>
-                                                        </div>
-                                                        <div class="button-cart">
-                                                            <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = product.Id }, Context.Request.Scheme)', '#shopping-cart')">
-                                                                <i class="fa fa-shopping-cart"></i> Добавить в корзину
-                                                            </button>
-                                                        </div>
+                                                    <div class="product-action" id="product-action-first-@product.Id">
+                                                        @await Html.PartialAsync("_ProductActionsPartial", 
+                                                       new WebUI.Models.Home.ModelForProductActionsPartial 
+                                                       { 
+                                                           ShoppingCart = Model.ShoppingCart, 
+                                                           Product = product 
+                                                       })
                                                     </div>
                                                 </div>
                                                 <div class="product-content">
-                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                    <h3><a asp-action="Details" asp-controller="Product" asp-route-id="@product.Id">@product.Name</a></h3>
                                                     <div class="price">
                                                         <span>BYN @product.Price</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div> <!-- single-product end -->
+                                        </div> 
+                                        <!-- single-product end -->
                                     }
                                 </div>
                             </div>
@@ -418,24 +436,18 @@
                                                     </a>
                                                 </div>
                                                 <div class="product-content">
-                                                    <h3><a href="product-details.html">@product.Name</a></h3>
+                                                    <h3><a asp-action="Details" asp-controller="Product" asp-route-id="@product.Id">@product.Name</a></h3>
                                                     <div class="price">
                                                         <span>BYN @product.Price</span>
                                                     </div>
                                                     <p style="height: 180px; overflow: auto;">@product.Description</p>
-                                                    <div class="product-action">
-                                                        <div class="button-top">
-                                                            <a href="#" data-toggle="modal" data-target="#productModal"
-                                                               data-name="@product.Name" data-price="@product.Price" data-description="@product.Description"
-                                                               data-image="@ConvertPicture(product.Images.First().Picture)" data-id="@product.Id">
-                                                                <i class="fa fa-search"></i>
-                                                            </a>
-                                                        </div>
-                                                        <div class="button-cart">
-                                                            <button onclick="jQueryAjaxGet('@Url.Action("AddProductToShoppingCart", "ShoppingCart", new { id = product.Id }, Context.Request.Scheme)', '#shopping-cart')">
-                                                                <i class="fa fa-shopping-cart"></i> Добавить в корзину
-                                                            </button>
-                                                        </div>
+                                                    <div class="product-action" id="product-action-second-@product.Id">
+                                                        @await Html.PartialAsync("_ProductActionsPartial", 
+                                                       new WebUI.Models.Home.ModelForProductActionsPartial 
+                                                       { 
+                                                           ShoppingCart = Model.ShoppingCart, 
+                                                           Product = product 
+                                                       })
                                                     </div>
                                                 </div>
                                             </div>
@@ -665,7 +677,7 @@
                                 @if (User.Identity.IsAuthenticated) 
                                 { 
                                     <li><a asp-action="MyAccount" asp-controller="Account">Мой аккаунт</a></li>
-                                    <li><a asp-action="Logout" asp-controller="Account">Выйти</a></li>
+                                    <li><a asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@returnUrl">Выйти</a></li>
                                 }
                             </ul>
                         </div>
@@ -747,13 +759,24 @@
                                     <p class="price"><span class="special-price"><span class="amount" id="modal-product-price"></span></span></p>
                                 </div>
                                 <div class="quick-add-to-cart">
-                                    <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
-                                        <input hidden name="id" id="modal-product-id" />
+                                    @if (!User.Identity.IsAuthenticated)
+                                    {
                                         <div class="numbers-row">
-                                            <input name="amount" type="number" id="french-hens" value="1">
+                                            <input name="amount" type="number" value="1">
                                         </div>
-                                        <button class="single_add_to_cart_button" type="button" onclick="jQueryAjaxPostForm(this.form, '#shopping-cart')">Добавить в корзину</button>
-                                    </form>
+                                        <button href="#" data-toggle="modal" data-target="#loginModal" class="single_add_to_cart_button" type="button">Добавить в корзину</button>
+                                    }
+                                    else if (!User.IsInRole("admin"))
+                                    {
+                                        <form asp-action="AddProductToShoppingCart" asp-controller="ShoppingCart" method="post" class="cart">
+                                            <input hidden name="id" id="modal-product-id" />
+                                            <div class="numbers-row">
+                                                <input name="amount" type="number" id="french-hens" value="1">
+                                            </div>
+                                            <button id="product-modal-form-button" class="single_add_to_cart_button" type="button" onclick="addToCartAndChangeTextFormModal('#product-modal-form-button', this.form, '#shopping-cart',
+                                                '', '#product-action-first-', '#product-action-second-', @Model.ShoppingCart.Id, $('#modal-product-id').val())">Добавить в корзину</button>
+                                        </form>
+                                    }
                                 </div>
                                 <div class="quick-desc" id="modal-product-description">
 
@@ -813,6 +836,7 @@
             var description = button.data('description')
             var image = button.data('image')
             var id = button.data('id')
+            var productInCart = button.data('productincart')
 
             var modal = $(this)
             modal.find('#modal-product-name').text(name)
@@ -821,6 +845,12 @@
             modal.find('#modal-product-image').attr('src', image)
             modal.find('#modal-product-image').attr('alt', name)
             modal.find('#modal-product-id').val(id)
+            
+            if (productInCart == 'True') {
+                modal.find('#product-modal-form-button').text('Товар в корзине')
+            } else {
+                modal.find('#product-modal-form-button').text('Добавить в корзину')
+            }
 		})
 
 		function updateProductsHeight() {
@@ -847,27 +877,40 @@
 
 		$(document).ready(function () {
 			updateProductsHeight();
-		})
+        })
 
-		jQueryAjaxGetForCategory = (url, id) => {
-			$.ajax({
-                type: 'GET',
-                url: url,
+        addToCartAndChangeText = (url, shoppingCartId, productActionUrl, productActionFirstId, productActionSecondId) => {
+            jQueryAjaxGetAsyncOff(url, shoppingCartId);
+            jQueryAjaxGet(productActionUrl, productActionFirstId);
+            jQueryAjaxGet(productActionUrl, productActionSecondId);
+        }
 
-                success: function (res) {
-					$(id).html(res);
-					updateProductsHeight();
-                },
+        addToCartAndChangeTextFormModal = (elementId, form, shoppingCartElementId, productActionUrl, productActionFirstId, productActionSecondId, shoppingCartId, productId) => {
+            productActionUrl = productActionUrl + '/' + shoppingCartId + '/' + productId;
 
-                error: function (err) {
-                    console.log(err);
-                },
-
-                failure: function (fail) {
-                    console.log(fail);
-                }
-			})
+            jQueryAjaxPostFormAsyncOff(form, shoppingCartElementId);
+            $(elementId).text('Товар в корзине');
+            jQueryAjaxGet(productActionUrl, productActionFirstId + productId);
+            jQueryAjaxGet(productActionUrl, productActionSecondId + productId);
         }
 	</script>
+
+    @await Html.PartialAsync("_LoginModalPartial", new Application.UseCases.Identity.User.Queries.LoginUser.LoginUserQuery { ReturnUrl = returnUrl })
+
+    <script>
+        $('#loginModal').on('show.bs.modal', function (event) {
+            $('.modal.fade.in').each(function () {
+                $(this).modal().hide();
+            })
+        })
+
+        $('#loginModal').on('hide.bs.modal', function (event) {
+            $('.modal.fade.in').each(function () {
+                if ($(this).attr('id') != 'loginModal') {
+                    $(this).modal().show();
+                }
+            })
+        })
+    </script>
 </body>
 </html>

@@ -21,13 +21,13 @@
         {
             <li>
                 <div class="cart-img">
-                    <a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">
+                    <a asp-action="Details" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">
                         <img width="105" height="140" alt="@productsDictionary.Product.Name"
                              src="@ConvertPicture(productsDictionary.Product.Images.First().Picture)">
                     </a>
                 </div>
                 <div class="cart-info">
-                    <h4><a asp-action="Get" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">@productsDictionary.Product.Name</a></h4>
+                    <h4><a asp-action="Details" asp-controller="Product" asp-route-id="@productsDictionary.Product.Id">@productsDictionary.Product.Name</a></h4>
                     <span>BYN @productsDictionary.Product.Price<span> x @productsDictionary.Count</span></span>
                 </div>
                 <div class="del-icon">
