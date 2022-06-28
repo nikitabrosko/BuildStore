@@ -15,7 +15,7 @@ namespace Application.UseCases.Identity.User.Commands.UpdateUser
                 .MinimumLength(5).WithMessage("Email length cannot be less than 5!");
 
             RuleFor(v => v.Password)
-                .MaximumLength(30).WithMessage("Password length cannot be more than 64!")
+                .MaximumLength(64).WithMessage("Password length cannot be more than 64!")
                 .MinimumLength(4).WithMessage("Password length cannot be less than 4!");
         }
     }

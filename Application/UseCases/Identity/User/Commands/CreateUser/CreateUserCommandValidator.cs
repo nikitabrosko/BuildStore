@@ -19,7 +19,7 @@ namespace Application.UseCases.Identity.User.Commands.CreateUser
                 .NotNull().WithMessage("Email cannot be null!");
 
             RuleFor(v => v.Password)
-                .MaximumLength(30).WithMessage("Password length cannot be more than 30!")
+                .MaximumLength(64).WithMessage("Password length cannot be more than 64!")
                 .MinimumLength(4).WithMessage("Password length cannot be less than 4!")
                 .NotEmpty().WithMessage("Password cannot be empty!")
                 .NotNull().WithMessage("Password cannot be null!");
